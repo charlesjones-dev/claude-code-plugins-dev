@@ -1,0 +1,21 @@
+{
+  "name": "ai-git",
+  "version": "1.0.0",
+  "description": "AI-powered git automation - Intelligent git commands and agents that streamline version control workflows",
+  "author": {
+    "name": "Charles Jones",
+    "url": "https://charlesjones.dev"
+  },
+  "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev",
+  "license": "MIT",
+  "keywords": [
+    "git",
+    "commit",
+    "commits",
+    "ai",
+    "automation",
+    "productivity",
+    "devops",
+    "version-control"
+  ]
+}

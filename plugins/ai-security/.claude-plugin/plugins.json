@@ -1,0 +1,17 @@
+{
+  "name": "ai-security",
+  "version": "1.0.0",
+  "description": "AI-powered security auditing - Intelligent security scanning and vulnerability detection with comprehensive reporting",
+  "author": {
+    "name": "Charles Jones",
+    "url": "https://charlesjones.dev"
+  },
+  "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev",
+  "license": "MIT",
+  "keywords": [
+    "security",
+    "compliance",
+    "auditing",
+    "auditor"
+  ]
+}
