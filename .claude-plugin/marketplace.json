@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A curated list of custom Claude Code plugins, agents, and skills for developers.",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -65,6 +65,27 @@
         "analysis",
         "bottleneck",
         "scalability"
+      ],
+      "author": {
+        "name": "Charles Jones",
+        "url": "https://charlesjones.dev"
+      },
+      "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev"
+    },
+    {
+      "name": "ai-plugins",
+      "source": "./plugins/ai-plugins",
+      "description": "AI-powered plugin development - Intelligent plugin scaffolding and generation tools for Claude Code",
+      "version": "1.0.0",
+      "keywords": [
+        "ai",
+        "plugins",
+        "scaffolding",
+        "generation",
+        "development",
+        "automation",
+        "productivity",
+        "tools"
       ],
       "author": {
         "name": "Charles Jones",

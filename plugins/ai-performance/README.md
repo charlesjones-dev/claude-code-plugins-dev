@@ -305,7 +305,6 @@ This timestamp-based naming ensures multiple audits on the same day don't overwr
 
 - **Name:** AI-Performance
 - **Version:** 1.0.0
-- **Category:** Performance
 - **Type:** Comprehensive Performance Optimization Toolkit
 - **Features:**
   - Commands: `/performance-audit`

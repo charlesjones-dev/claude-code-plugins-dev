@@ -300,7 +300,6 @@ This timestamp-based naming ensures multiple audits on the same day don't overwr
 
 - **Name:** AI-Security
 - **Version:** 1.0.0
-- **Category:** Security
 - **Type:** Comprehensive Security Toolkit
 - **Features:**
   - Commands: `/security-audit`

@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2025-10-17
+
+### Added
+
+#### AI-Plugins Plugin (v1.0.0)
+
+- Initial release of AI-Plugins plugin for managing Claude Code plugins
+- Plugin management and discovery capabilities
+
 ## [1.0.0] - 2025-10-17
 
 ### Added
@@ -59,5 +68,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Plugin installation and usage instructions
 - License information (MIT)
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/releases/tag/v1.0.0

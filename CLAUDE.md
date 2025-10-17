@@ -6,6 +6,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a marketplace for custom Claude Code plugins, skills, and other extensions. The repository follows a structured plugin system where each plugin is self-contained with its own metadata and commands.
 
+## Official Documentation
+
+For detailed information about Claude Code plugins, refer to these official documentation resources:
+
+1. **[Plugins](https://docs.claude.com/en/docs/claude-code/plugins)**: Core concepts and guide for creating and using Claude Code plugins
+2. **[Plugins Reference](https://docs.claude.com/en/docs/claude-code/plugins-reference)**: Technical reference for plugin structure, metadata schemas, and command formats
+3. **[Plugin Marketplaces](https://docs.claude.com/en/docs/claude-code/plugin-marketplaces)**: Guide for creating and managing plugin marketplaces like this repository
+
+These documentation resources provide authoritative information on plugin development best practices, metadata schemas, and marketplace structure that should be consulted when developing new plugins.
+
 ## Architecture
 
 ### Marketplace Structure
@@ -17,7 +27,7 @@ The repository uses a two-level metadata system:
    - List of all available plugins with their source paths, descriptions, and categories
    - Plugin root directory location (`./plugins`)
 
-2. **Individual plugin manifests** (`plugins/{plugin-name}/.claude-plugin/plugins.json`): Each plugin has its own metadata including name, version, description, author, and license.
+2. **Individual plugin manifests** (`plugins/{plugin-name}/.claude-plugin/plugin.json`): Each plugin has its own metadata including name, version, description, author, and license.
 
 ### Plugin Organization
 
@@ -26,7 +36,7 @@ Plugins are organized under the `plugins/` directory:
 plugins/
   {plugin-name}/
     .claude-plugin/
-      plugins.json          # Plugin metadata
+      plugin.json          # Plugin metadata
     commands/
       {command-name}.md     # Command implementations
 ```
@@ -41,8 +51,28 @@ Plugins can include:
 
 ### Adding a New Plugin
 
+You can create a new plugin either manually or using the ai-plugins scaffolding tool:
+
+#### Option 1: Using the AI-Plugins Scaffolding Tool (Recommended)
+
+The ai-plugins plugin provides a `/scaffold-plugin` command that interactively creates a complete plugin structure:
+
+```bash
+/scaffold-plugin
+```
+
+This will:
+1. Ask interactive questions about your plugin (name, description, category, commands)
+2. Create the complete directory structure under `plugins/{plugin-name}/`
+3. Generate plugin.json with proper metadata
+4. Create command templates with instructions
+5. Optionally generate README and LICENSE files
+6. Automatically register the plugin in `.claude-plugin/marketplace.json`
+
+#### Option 2: Manual Plugin Creation
+
 1. Create the plugin directory structure under `plugins/{plugin-name}/`
-2. Add plugin metadata in `.claude-plugin/plugins.json` with:
+2. Add plugin metadata in `.claude-plugin/plugin.json` with:
    - name, version, description
    - author information
    - keywords for discoverability
@@ -76,7 +106,7 @@ This repository has specific requirements for git commit messages:
 ### Plugin Metadata
 
 When creating or updating plugins, ensure consistency between:
-1. The plugin's own `plugins.json` file
+1. The plugin's own `plugin.json` file
 2. The marketplace's root `marketplace.json` registry entry
 
 Both should have matching:

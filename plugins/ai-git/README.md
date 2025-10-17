@@ -184,7 +184,6 @@ No configuration needed! The plugin works out of the box and adapts to your repo
 
 - **Name:** AI-Git Plugin
 - **Version:** 1.0.0
-- **Category:** Productivity
 - **Type:** AI Instruction Plugin (Slash Commands & Agents)
 - **Commands:** `/commit-push` (more coming soon)
 - **License:** MIT
