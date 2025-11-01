@@ -128,42 +128,94 @@ Perform comprehensive security analysis on your codebase and generate a detailed
 
 **Note:** The `/security-audit` command will automatically check if you have proper file denial patterns configured. If you have fewer than 4 deny rules, it will recommend running `/security-init` first to ensure comprehensive protection.
 
+### `/security-scan-dependencies`
+
+Scan a deployed website for outdated dependencies, known CVEs, and security misconfigurations without requiring source code access.
+
+**What it does:**
+
+- 🌐 **Scans deployed websites** by URL (no source code needed)
+- 📚 **Detects frontend libraries** via CDN patterns, meta tags, and script analysis:
+  - jQuery, React, Vue, Angular, Bootstrap, Tailwind, and 20+ popular libraries
+- 🏢 **Identifies CMS platforms** with version detection:
+  - Open source: WordPress, Drupal, Joomla
+  - Enterprise .NET: Umbraco, Sitecore, Optimizely, Kentico
+- 🔒 **Analyzes HTTP security headers**:
+  - CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
+- 🔍 **Checks for known CVEs** in detected library versions with CVSS scoring
+- ⚡ **Uses Context7 integration** to verify latest available versions
+- 📊 **Generates comprehensive reports** with severity-based findings (C-001, H-001, M-001, L-001)
+
+**Use cases:**
+- Third-party website security assessment
+- Pre-acquisition technical due diligence
+- Client-side dependency auditing
+- Supply chain security analysis
+- Comparing with internal security scan results
+
 **Before (manual):**
 
 ```
-# Manual security review process
-- Review each file for SQL injection patterns
-- Check for XSS vulnerabilities
-- Analyze authentication/authorization logic
-- Review dependency vulnerabilities
-- Check for hardcoded secrets
-- Assess OWASP Top 10 compliance
-- Write detailed findings document
-- Create remediation plan
+# Manual website dependency analysis
+- View page source to find library CDN links
+- Open each CDN URL to check version comments
+- Search for CMS meta tags and headers
+- Manually check latest versions on documentation sites
+- Cross-reference versions with CVE databases
+- Analyze HTTP headers using browser dev tools
+- Compile findings into a spreadsheet
+- Research security implications
+- Write up remediation recommendations
 ```
 
 **After (with ai-security plugin):**
 
 ```
-/security-audit
-# ✨ AI analyzes entire codebase for vulnerabilities
-# ✨ Identifies security risks across OWASP Top 10 categories
-# ✨ Generates comprehensive audit report
-# ✨ Provides code examples and remediation steps
+/security-scan-dependencies
+# Enter website URL
+# Select scan scope (libraries, CMS, security headers, or all)
+# ✨ AI fetches and analyzes website
+# ✨ Detects all frontend libraries and versions
+# ✨ Identifies CMS platform and version
+# ✨ Audits security headers configuration
+# ✨ Uses Context7 to check for latest versions
+# ✨ Cross-references with CVE databases
+# ✨ Generates comprehensive security report
 # ✅ Report saved to /docs/security with timestamp
 ```
+
+**Comparison: `/security-audit` vs `/security-scan-dependencies`**
+
+| Feature | `/security-audit` | `/security-scan-dependencies` |
+|---------|-------------------|-------------------------------|
+| **Input** | Local source code (current directory) | Website URL (deployed site) |
+| **Analysis Type** | Static code analysis | Client-side dependency analysis |
+| **Detects** | Code vulnerabilities, OWASP Top 10 | Outdated libraries, CVEs, missing headers |
+| **Access Required** | Source code access | Public website access only |
+| **Use Case** | Your own codebases during development | Third-party websites, external audits |
+| **Report Focus** | Code-level security issues | Dependency versions, configuration |
 
 ## 🤖 Available Agents
 
 ### `security-auditor`
 
-Specialized agent that performs deep security analysis and generates comprehensive audit reports. Automatically invoked by `/security-audit` command.
+Specialized agent that performs deep security analysis of source code and generates comprehensive audit reports. Automatically invoked by `/security-audit` command.
+
+### `security-dependency-scanner`
+
+Specialized agent that scans deployed websites for outdated dependencies, CVEs, and security misconfigurations. Automatically invoked by `/security-scan-dependencies` command.
 
 ---
 
 ## 📚 Available Skills
 
 ### `security-auditing`
+
+Comprehensive methodology for conducting source code security audits with vulnerability detection, OWASP Top 10 compliance checking, and detailed reporting.
+
+### `security-dependency-scanning`
+
+Complete guide for web dependency security scanning including library detection, CMS fingerprinting, security header analysis, CVE identification, and Context7 integration.
 
 ---
 
@@ -184,12 +236,17 @@ Specialized agent that performs deep security analysis and generates comprehensi
 # Step 2: Restart Claude Code (required for settings to take effect)
 # Close and reopen Claude Code
 
-# Step 3: Run a security audit
+# Step 3: Run a security audit on your codebase
 /security-audit
 
 # Step 4: Review the generated report
 # Located at: /docs/security/{timestamp}-security-audit.md
 # Example: /docs/security/2025-10-17-143022-security-audit.md
+
+# Alternatively: Scan a deployed website
+/security-scan-dependencies
+# Enter target URL when prompted
+# Report saved to: /docs/security/{timestamp}-dependency-scan.md
 ```
 
 ---
@@ -308,9 +365,59 @@ Reports include before/after code examples showing:
 - Explanation of the fix
 - Best practices applied
 
+### `/security-scan-dependencies` Command
+
+#### Library Detection
+
+- **CDN Pattern Matching**: Identifies libraries from jsDelivr, unpkg, cdnjs, Google Hosted Libraries URLs
+- **Version Extraction**: Parses version numbers from filenames, CDN paths, and meta tags
+- **Global Variable Detection**: Documents detection of version-exposing globals (jQuery.fn.jquery, React.version)
+- **Build Artifact Analysis**: Detects Webpack, Vite, Parcel from bundle patterns
+
+#### CMS and Platform Detection
+
+**Open Source**:
+- **WordPress**: Meta generator, wp-content paths, wp-json API
+- **Drupal**: Meta generator, Drupal.settings, characteristic paths
+- **Joomla**: Meta generator, /media/jui/, XML version files
+
+**Enterprise .NET**:
+- **Umbraco**: /umbraco/ paths, Umbraco.Sys cookies, X-Umbraco-Version header
+- **Sitecore**: /sitecore/ paths, SC_ANALYTICS cookies, /-/media/ patterns
+- **Optimizely**: /episerver/ paths, X-Epi-ServerName header, EPiServer cookies
+- **Kentico**: /CMSPages/ paths, CMSPreferredCulture cookie, Kentico.Resource paths
+
+#### Security Headers Audit
+
+Checks for critical OWASP-recommended headers:
+- **Content-Security-Policy**: Mitigates XSS attacks (CRITICAL if missing)
+- **Strict-Transport-Security**: Enforces HTTPS (HIGH if missing)
+- **X-Frame-Options**: Prevents clickjacking (MEDIUM if missing)
+- **X-Content-Type-Options**: Prevents MIME sniffing (LOW if missing)
+- **Referrer-Policy**: Controls information leakage (LOW if missing)
+- **Permissions-Policy**: Restricts browser features (LOW if missing)
+
+#### CVE and Version Analysis
+
+- **Context7 Integration**: Uses MCP tools to verify latest stable versions
+- **Version Gap Calculation**: Documents how many versions behind detected libraries are
+- **CVE Cross-Reference**: Identifies known vulnerabilities with CVSS v3.1 scoring
+- **Risk Prioritization**: Categorizes findings as Critical (9.0-10.0), High (7.0-8.9), Medium (4.0-6.9), Low (0.1-3.9)
+
+#### Client-Side Scan Limitations
+
+This scan analyzes publicly accessible information only. It cannot detect:
+- Server-side vulnerabilities
+- Authentication/authorization flaws
+- Business logic issues
+- Vulnerabilities in password-protected areas
+- Infrastructure security issues
+
 ---
 
 ## ⚙️ How It Works
+
+### `/security-audit` - Source Code Analysis
 
 The `/security-audit` command uses Claude Code's specialized **security-auditor agent** to perform comprehensive security analysis:
 
@@ -335,6 +442,35 @@ The `/security-audit` command uses Claude Code's specialized **security-auditor 
    - Saves timestamped report to /docs/security folder
 
 The specialized agent brings deep security expertise and pattern recognition capabilities to identify vulnerabilities that might be missed by manual review.
+
+### `/security-scan-dependencies` - Website Analysis
+
+The `/security-scan-dependencies` command uses Claude Code's specialized **security-dependency-scanner agent** to analyze deployed websites:
+
+1. **Website Fetch**
+   - Uses WebFetch tool to retrieve HTML content and HTTP headers
+   - Handles redirects and error conditions
+   - Captures full page source for analysis
+
+2. **Dependency Detection**
+   - Parses HTML for script/link tags with CDN URLs
+   - Matches against known CDN patterns (jsDelivr, unpkg, cdnjs, Google Hosted)
+   - Extracts version numbers from URLs, filenames, and file contents
+   - Detects CMS platforms via meta tags, cookies, paths, and headers
+
+3. **Security Analysis**
+   - Audits HTTP security headers against OWASP recommendations
+   - Uses Context7 MCP to verify latest versions of detected libraries
+   - Cross-references versions with known CVE databases
+   - Applies CVSS v3.1 severity scoring
+
+4. **Report Generation**
+   - Categorizes findings by severity using C-001, H-001, M-001, L-001 format
+   - Documents version gaps and security risks
+   - Provides specific upgrade recommendations
+   - Saves timestamped report to /docs/security folder
+
+This specialized agent provides client-side security assessment without requiring source code access, making it ideal for third-party website evaluation and supply chain security analysis.
 
 ---
 
@@ -427,10 +563,12 @@ This timestamp-based naming ensures multiple audits on the same day don't overwr
 ## 📦 Plugin Details
 
 - **Name:** AI-Security
+- **Version:** 1.3.0
 - **Type:** Comprehensive Security Toolkit
 - **Features:**
-  - Commands: `/security-init`, `/security-audit`
-  - Agents: `security-auditor`
+  - Commands: `/security-init`, `/security-audit`, `/security-scan-dependencies`
+  - Agents: `security-auditor`, `security-dependency-scanner`
+  - Skills: `security-auditing`, `security-dependency-scanning`
 - **License:** MIT
 - **Author:** Charles Jones
 

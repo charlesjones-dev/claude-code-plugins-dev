@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.1] - 2025-11-01
+
+### Added
+
+#### AI-Security Plugin (v1.3.0)
+
+- `/security-scan-dependencies` command for scanning deployed websites
+  - Web dependency security scanning without source code access
+  - Interactive URL input and configurable scan scope (libraries, CMS, security headers, or comprehensive)
+  - Frontend library detection: jQuery, React, Vue, Angular, Bootstrap, Tailwind, and more via CDN pattern matching
+  - CMS platform detection with version identification:
+    - Open source: WordPress, Drupal, Joomla
+    - Enterprise .NET: Umbraco, Sitecore, Optimizely, Kentico
+  - HTTP security headers analysis (CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy)
+  - Context7 MCP integration for latest version verification
+  - Known CVE identification with CVSS v3.1 severity scoring
+  - Timestamped reports with severity-based findings (C-001, H-001, M-001, L-001 format)
+  - Hybrid Agent + Skill architecture with `security-dependency-scanner` agent and `security-dependency-scanning` skill
+- Use cases: Third-party website assessment, pre-acquisition due diligence, supply chain security analysis
+
 ## [1.5.0] - 2025-10-29
 
 ### Added
@@ -230,7 +250,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.4.1...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.1...HEAD
+[1.5.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.0...v1.5.1
+[1.5.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.4.1...v1.5.0
 [1.4.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.2.0...v1.3.0
