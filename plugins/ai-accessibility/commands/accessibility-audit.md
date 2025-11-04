@@ -45,9 +45,9 @@ If the user selects "a URL":
 
 If the user chooses to use Playwright MCP tools:
 
-1. **Check for Playwright MCP availability** by attempting to use any Playwright tool (e.g., check if `mcp__playwright__browser_snapshot` function exists in your available tools)
+1. **Check for Playwright MCP availability** by attempting to open a browser window using the `mcp__playwright__browser_navigate` tool. Navigate to a simple URL (e.g., "https://www.google.com/") to verify that Playwright MCP is properly installed and working. This is the ONLY method you should use to test availability - do not check for function existence or use any other testing method.
 
-2. **If Playwright MCP tools are NOT available:**
+2. **If Playwright MCP tools are NOT available** (the browser_navigate attempt fails):
    - Ask the user: "Playwright MCP tools are not installed. Would you like to create a .mcp.json configuration file to enable them?"
    - If the user says yes:
      a. Detect the operating system (Windows vs Linux/Mac)

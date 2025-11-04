@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.3] - 2025-01-04
+
+### Fixed
+
+#### Marketplace
+
+- Updated plugin versions in `marketplace.json` to match the versions in each `plugin.json` manifest
+
+#### AI-Accessibility Plugin (v1.1.1)
+
+- Accessibility scanning command `/accessibility-audit` now properly checks to see if Playwright MCP is installed before proceeding with an accessibility audit
+
 ## [1.5.2] - 2025-01-04
 
 ### Changed

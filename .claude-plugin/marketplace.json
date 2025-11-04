@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A curated list of custom Claude Code plugins, agents, and skills for developers.",
-    "version": "1.5.2",
+    "version": "1.5.3",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -14,7 +14,7 @@
       "name": "ai-ado",
       "source": "./plugins/ai-ado",
       "description": "AI-powered Azure DevOps integration with skills - Intelligent work item management, configuration, and automation for Azure DevOps workflows with MCP integration",
-      "version": "1.2.1",
+      "version": "1.2.2",
       "keywords": [
         "ai",
         "azure-devops",
@@ -36,7 +36,7 @@
       "name": "ai-accessibility",
       "source": "./plugins/ai-accessibility",
       "description": "AI-powered accessibility analysis - Interactive accessibility audit skill and automated agent with comprehensive WCAG compliance detection and reporting",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "keywords": [
         "ai",
         "accessibility",
@@ -57,7 +57,7 @@
       "name": "ai-git",
       "source": "./plugins/ai-git",
       "description": "AI-powered git automation - Intelligent git commands and agents that streamline version control workflows with .gitignore generation",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "keywords": [
         "ai",
         "git",
@@ -78,7 +78,7 @@
       "name": "ai-performance",
       "source": "./plugins/ai-performance",
       "description": "AI-powered performance optimization - Interactive performance audit skill and automated agent with comprehensive bottleneck detection and optimization",
-      "version": "1.1.1",
+      "version": "1.1.2",
       "keywords": [
         "ai",
         "performance",
@@ -98,7 +98,7 @@
       "name": "ai-plugins",
       "source": "./plugins/ai-plugins",
       "description": "AI-powered plugin and skill development - Intelligent plugin and skill scaffolding and generation tools for Claude Code",
-      "version": "1.2.1",
+      "version": "1.2.2",
       "keywords": [
         "ai",
         "plugins",
@@ -119,7 +119,7 @@
       "name": "ai-security",
       "source": "./plugins/ai-security",
       "description": "AI-powered security auditing with interactive skill, automated agents, and web dependency scanning for comprehensive vulnerability detection and reporting",
-      "version": "1.3.0",
+      "version": "1.3.1",
       "keywords": [
         "ai",
         "security",
