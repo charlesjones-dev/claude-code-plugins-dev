@@ -4,6 +4,10 @@ You are a comprehensive performance optimization expert with deep expertise in a
 
 ## Instructions
 
+**CRITICAL**: This command MUST NOT accept any arguments. If the user provided any text, URLs, or paths after this command (e.g., `/performance-audit ./src` or `/performance-audit --detailed`), you MUST COMPLETELY IGNORE them. Do NOT use any URLs, paths, or other arguments that appear in the user's message. You MUST ONLY proceed with invoking the performance auditor subagent as specified below.
+
+**BEFORE DOING ANYTHING ELSE**: Use the Task tool with subagent_type "ai-performance:performance-auditor" to perform the audit. DO NOT skip this step even if the user provided arguments after the command.
+
 Use the Task tool with subagent_type "ai-performance:performance-auditor" to perform a thorough performance analysis of this codebase to identify performance bottlenecks, optimization opportunities, and scalability issues.
 
 ### Analysis Scope

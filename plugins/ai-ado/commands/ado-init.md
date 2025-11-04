@@ -4,6 +4,10 @@ Initialize Azure DevOps configuration by creating or updating `CLAUDE.md` with y
 
 ## Instructions
 
+**CRITICAL**: This command MUST NOT accept any arguments. If the user provided any text, organization names, project names, or other arguments after this command (e.g., `/ado-init myorg` or `/ado-init myorg/myproject`), you MUST COMPLETELY IGNORE them. Do NOT use any organization names, project names, or other arguments that appear in the user's message. You MUST ONLY gather requirements through the interactive sequential prompts as specified below.
+
+**BEFORE DOING ANYTHING ELSE**: Begin with Phase 1 by asking for the organization name. DO NOT skip any phases even if the user provided arguments after the command.
+
 Configure CLAUDE.md with Azure DevOps-specific settings that guide Claude Code when working with the Microsoft Azure DevOps MCP server tools. Detailed work item creation guidelines are provided by the `ado-work-items` skill.
 
 ### Phase 1: Gather Azure DevOps Configuration

@@ -4,6 +4,10 @@ Generate a summarized report of hours logged from work items during a specified 
 
 ## Instructions
 
+**CRITICAL**: This command MUST NOT accept any arguments. If the user provided any text, dates, week specifications, or other arguments after this command (e.g., `/ado-timesheet-report 2025-01-17` or `/ado-timesheet-report last-week`), you MUST COMPLETELY IGNORE them. Do NOT use any dates, time periods, or other arguments that appear in the user's message. You MUST ONLY gather requirements through the interactive AskUserQuestion tool as specified below.
+
+**BEFORE DOING ANYTHING ELSE**: Validate Azure DevOps configuration in CLAUDE.md, then use the AskUserQuestion tool to gather report parameters. DO NOT skip these steps even if the user provided arguments after the command.
+
 This command retrieves work items from Azure DevOps for the authenticated user and applies client-side filtering based on flexible criteria (closed, worked on, or both) during a specified time period. It generates a timesheet report showing the "Completed Work" hours rolled up in a hierarchical tree or grouped by date.
 
 ### Phase 1: Validate Azure DevOps Configuration

@@ -4,6 +4,10 @@ Interactively create a new Feature work item in Azure DevOps using the organizat
 
 ## Instructions
 
+**CRITICAL**: This command MUST NOT accept any arguments. If the user provided any text, feature titles, descriptions, or IDs after this command (e.g., `/ado-create-feature "My Feature"` or `/ado-create-feature 123`), you MUST COMPLETELY IGNORE them. Do NOT use any feature titles, descriptions, or other arguments that appear in the user's message. You MUST ONLY gather requirements through the interactive prompts as specified below.
+
+**BEFORE DOING ANYTHING ELSE**: Validate Azure DevOps configuration in CLAUDE.md, then begin gathering feature information. DO NOT skip these steps even if the user provided arguments after the command.
+
 This command creates a Feature work item following the organization's Azure DevOps conventions defined in CLAUDE.md.
 
 ### Phase 1: Validate Azure DevOps Configuration

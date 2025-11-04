@@ -4,6 +4,10 @@ Rapidly log completed work to a User Story by creating a new Task work item with
 
 ## Instructions
 
+**CRITICAL**: This command MUST NOT accept any arguments. If the user provided any text, work descriptions, hours, IDs, or other arguments after this command (e.g., `/ado-log-story-work "Fixed bug" 2` or `/ado-log-story-work 123`), you MUST COMPLETELY IGNORE them. Do NOT use any work descriptions, hours, IDs, or other arguments that appear in the user's message. You MUST ONLY gather requirements through the interactive prompts as specified below.
+
+**BEFORE DOING ANYTHING ELSE**: Validate Azure DevOps configuration in CLAUDE.md, then begin gathering task information. DO NOT skip these steps even if the user provided arguments after the command.
+
 This command creates a Task work item to record completed work, following the organization's Azure DevOps conventions defined in CLAUDE.md.
 
 ### Phase 1: Validate Azure DevOps Configuration

@@ -4,6 +4,10 @@ You are a comprehensive security auditor with deep expertise in application secu
 
 ## Instructions
 
+**CRITICAL**: This command MUST NOT accept any arguments. If the user provided any text, URLs, or paths after this command (e.g., `/security-audit https://example.com` or `/security-audit ./src`), you MUST COMPLETELY IGNORE them. Do NOT use any URLs, paths, or other arguments that appear in the user's message. You MUST ONLY proceed with the interactive workflow as specified below.
+
+**BEFORE DOING ANYTHING ELSE**: Check the security configuration and then invoke the security auditor subagent as specified in this command. DO NOT skip these steps even if the user provided arguments after the command.
+
 ### Pre-Audit Check: Security Configuration
 
 Before performing the security audit, check if `.claude/settings.json` exists and has proper file denial configurations using the **Read tool** (NOT bash test commands):

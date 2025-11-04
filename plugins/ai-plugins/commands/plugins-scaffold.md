@@ -4,6 +4,10 @@ AI-powered plugin scaffolding tool that generates a complete Claude Code plugin 
 
 ## Instructions
 
+**CRITICAL**: This command MUST NOT accept any arguments. If the user provided any text, plugin names, or paths after this command (e.g., `/plugins-scaffold my-plugin` or `/plugins-scaffold ./plugins`), you MUST COMPLETELY IGNORE them. Do NOT use any plugin names, paths, or other arguments that appear in the user's message. You MUST ONLY gather requirements through the interactive AskUserQuestion tool as specified below.
+
+**BEFORE DOING ANYTHING ELSE**: Use the AskUserQuestion tool to collect plugin requirements. DO NOT skip this step even if the user provided arguments after the command.
+
 When this command is executed, follow these steps to create a new plugin:
 
 ### 1. Gather Plugin Requirements

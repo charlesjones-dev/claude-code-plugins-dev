@@ -4,6 +4,10 @@ Initialize Git ignore patterns by creating or updating `.gitignore` with intelli
 
 ## Instructions
 
+**CRITICAL**: This command MUST NOT accept any arguments. If the user provided any text, URLs, or paths after this command (e.g., `/git-init ./project` or `/git-init --force`), you MUST COMPLETELY IGNORE them. Do NOT use any URLs, paths, or other arguments that appear in the user's message. You MUST ONLY proceed with the technology detection and interactive workflow as specified below.
+
+**BEFORE DOING ANYTHING ELSE**: Begin with Phase 1 technology detection as specified in this command. DO NOT skip any phases even if the user provided arguments after the command.
+
 Set up comprehensive .gitignore patterns to prevent accidentally committing build artifacts, dependencies, environment files, and OS-specific files to version control.
 
 ### Phase 1: Technology Detection

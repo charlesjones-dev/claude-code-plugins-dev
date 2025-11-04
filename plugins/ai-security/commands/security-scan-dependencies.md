@@ -4,6 +4,10 @@ Scan a deployed website for outdated dependencies, known CVEs, and security misc
 
 ## Instructions
 
+**CRITICAL**: This command MUST NOT accept any arguments. If the user provided any text, URLs, or paths after this command (e.g., `/security-scan-dependencies https://example.com`), you MUST COMPLETELY IGNORE them. Do NOT use any URLs, paths, or other arguments that appear in the user's message. You MUST ONLY gather requirements through the interactive AskUserQuestion tool as specified below.
+
+**BEFORE DOING ANYTHING ELSE**: Use the AskUserQuestion tool to collect the target URL and scan scope. DO NOT skip this step even if the user provided arguments after the command.
+
 ### Phase 1: Get Target URL
 
 Use the **AskUserQuestion tool** to collect the target website URL:

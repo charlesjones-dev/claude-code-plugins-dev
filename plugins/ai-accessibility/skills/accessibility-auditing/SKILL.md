@@ -10,7 +10,7 @@ This skill provides elite accessibility expertise for identifying and eliminatin
 ## When to Use This Skill
 
 Invoke this skill when:
-- Auditing applications for WCAG 2.1 or 2.2 compliance
+- Auditing applications for WCAG 2.1 or 2.2 compliance (codebase or URL)
 - Reviewing new features for accessibility requirements
 - Investigating accessibility issues reported by users
 - Preparing for accessibility compliance certification
@@ -20,6 +20,7 @@ Invoke this skill when:
 - Reviewing ARIA implementation in custom components
 - Conducting form accessibility audits
 - Evaluating responsive and mobile accessibility
+- Performing visual accessibility testing on live websites (with Playwright MCP)
 
 ## Core Accessibility Expertise
 
@@ -175,6 +176,88 @@ To evaluate responsive accessibility, verify:
 - Pinch-zoom must not be disabled (user-scalable=no is a failure)
 - All pointer gestures need keyboard/single-pointer alternatives
 
+### 9. Playwright MCP Visual Accessibility Testing
+
+When conducting URL-based audits with Playwright MCP tools available, perform visual accessibility testing to complement code analysis:
+
+**Playwright MCP Tools for Accessibility**:
+
+1. **Browser Navigation**:
+   - Use `mcp__playwright__browser_navigate` to load the target URL
+   - Ensure the page loads completely before testing
+   - Test multiple viewport sizes for responsive accessibility
+
+2. **Accessibility Tree Snapshot**:
+   - Use `mcp__playwright__browser_snapshot` to capture the accessibility tree
+   - Analyze how assistive technologies perceive the page structure
+   - Verify semantic relationships and accessible names
+   - Check for proper ARIA roles and properties in the rendered DOM
+
+3. **Visual Screenshots**:
+   - Use `mcp__playwright__browser_take_screenshot` to capture page state
+   - Take screenshots of focus states, hover states, and error states
+   - Analyze visual color contrast ratios from rendered output
+   - Verify visual focus indicators are visible
+   - Save screenshots to `/docs/accessibility/screenshots/{timestamp}-{description}.png`
+
+4. **Keyboard Navigation Testing**:
+   - Use `mcp__playwright__browser_press_key` with 'Tab' to test tab order
+   - Verify logical focus order matches visual layout
+   - Test for keyboard traps (can tab in and out of all components)
+   - Press 'Enter' and 'Space' on interactive elements to verify activation
+   - Test 'Escape' key on modals and dismissible components
+   - Take screenshots of focus states for visual verification
+
+5. **Interactive Element Testing**:
+   - Use `mcp__playwright__browser_click` to test button/link functionality
+   - Use `mcp__playwright__browser_type` to test form inputs
+   - Use `mcp__playwright__browser_fill_form` to test form completion
+   - Verify error messages appear and are accessible
+   - Check that form validation is keyboard accessible
+
+6. **Color Contrast Measurement**:
+   - Take screenshots of text elements
+   - Use visual analysis to measure actual rendered contrast ratios
+   - Test both light and dark mode if available
+   - Verify focus indicators have 3:1 contrast with background
+
+7. **Touch Target Verification**:
+   - Use `mcp__playwright__browser_snapshot` to identify interactive element sizes
+   - Measure actual rendered dimensions of buttons, links, and controls
+   - Verify minimum 44×44 CSS pixel touch targets
+
+8. **Dynamic Content Testing**:
+   - Use `mcp__playwright__browser_wait_for` to test loading states
+   - Verify loading indicators are accessible
+   - Test live region announcements for dynamic content
+   - Check that error/success messages are properly announced
+
+**Playwright Audit Workflow**:
+
+1. Navigate to the target URL
+2. Capture initial accessibility snapshot
+3. Take full-page screenshot for visual analysis
+4. Test keyboard navigation (Tab, Enter, Space, Escape)
+5. Test form interactions if forms are present
+6. Capture screenshots of focus states and interactive states
+7. Analyze console for accessibility errors
+8. Document findings with visual evidence (screenshots)
+
+**Key Rules for Playwright Testing**:
+- Always capture accessibility snapshots to understand the assistive technology view
+- Take screenshots of problematic areas to include as visual evidence in reports
+- Test keyboard interaction patterns, not just visual appearance
+- Verify that visual focus indicators are clearly visible in screenshots
+- Measure actual rendered contrast, not just CSS color values
+- Include screenshot references in findings for visual issues
+
+**Limitations of Playwright Testing**:
+- Cannot replace manual screen reader testing
+- May not detect all semantic issues that affect AT users
+- Cannot test voice control or other assistive input methods
+- Automated contrast measurement may differ from human perception
+- Some dynamic behaviors may require manual verification
+
 ## WCAG Conformance Levels
 
 ### Level A (25 Criteria)
@@ -216,28 +299,27 @@ When conducting accessibility audits, follow this systematic approach:
 
 ### Step 1: Pre-Audit Configuration
 
-**IMPORTANT**: Before starting the audit, ask the user for configuration:
+**IMPORTANT**: The audit configuration should be provided by the invoking command. Expected configuration includes:
 
-1. **WCAG Version**: Ask "Which WCAG version should be used for this audit?"
-   - Options: WCAG 2.1 or WCAG 2.2
-   - Default: WCAG 2.2 (if not specified)
+1. **WCAG Version**: WCAG 2.1 or WCAG 2.2
+2. **Conformance Level**: A, AA, or AAA
+3. **Scope Type**:
+   - Entire codebase (all files in working directory)
+   - Specific directory (with directory path)
+   - URL (with target URL)
+4. **For URL Audits**:
+   - Target URL to test
+   - Whether Playwright MCP tools are available and should be used
 
-2. **Conformance Level**: Ask "Which conformance level should be targeted?"
-   - Options: A, AA, or AAA
-   - Default: AA (industry standard)
+If this configuration is not provided, use the **AskUserQuestion tool** to gather these details before proceeding.
 
-3. **Scope**: Ask "What scope should be audited?"
-   - Options:
-     - Entire codebase
-     - Specific directories (prompt for paths)
-     - Specific files (prompt for paths)
-   - Default: Entire codebase
+### Step 2: Analysis Execution
 
-Use the **AskUserQuestion tool** to gather these configuration details before proceeding with the audit.
+After gathering configuration, choose the appropriate analysis approach:
 
-### Step 2: Code Analysis
+#### For Codebase Analysis (Entire Solution or Specific Directory)
 
-After gathering configuration, systematically analyze:
+Systematically analyze the code:
 
 1. **Document Structure Analysis**
    - Scan for heading elements and validate hierarchy
@@ -250,13 +332,13 @@ After gathering configuration, systematically analyze:
    - Verify ARIA states match UI state
 
 3. **Keyboard Flow Verification**
-   - Trace tab order through interactive elements
+   - Trace tab order through interactive elements (code patterns)
    - Identify potential keyboard traps
-   - Check focus indicator visibility
+   - Check focus indicator styling in CSS
 
 4. **Color Contrast Analysis**
-   - Calculate contrast ratios for text elements
-   - Verify UI component contrast
+   - Calculate contrast ratios from CSS color values
+   - Verify UI component contrast from styles
    - Check for color-only information
 
 5. **Form Validation**
@@ -275,9 +357,70 @@ After gathering configuration, systematically analyze:
    - Identify missing text alternatives
 
 8. **Responsive/Touch Analysis**
-   - Measure touch target sizes
-   - Verify viewport scaling settings
-   - Check orientation support
+   - Analyze touch target sizes from CSS
+   - Verify viewport scaling settings in meta tags
+   - Check orientation support in CSS
+
+#### For URL Analysis with Playwright MCP
+
+When Playwright MCP tools are available, perform visual accessibility testing:
+
+1. **Initial Page Load**
+   - Navigate to URL using `mcp__playwright__browser_navigate`
+   - Wait for page to load completely
+   - Capture initial accessibility snapshot using `mcp__playwright__browser_snapshot`
+   - Take full-page screenshot for visual analysis
+
+2. **Document Structure Verification**
+   - Analyze accessibility tree for heading hierarchy
+   - Verify landmark regions in rendered DOM
+   - Check for skip navigation link presence
+
+3. **Visual Color Contrast Testing**
+   - Take screenshots of text elements and UI components
+   - Analyze actual rendered contrast ratios from screenshots
+   - Test different viewport sizes and color modes
+   - Document contrast failures with visual evidence
+
+4. **Keyboard Navigation Testing**
+   - Press Tab key to navigate through interactive elements
+   - Take screenshots of focus states for each major interactive element
+   - Verify focus indicators are visible (3:1 contrast)
+   - Test for keyboard traps (can navigate in and out)
+   - Test Enter/Space on buttons and links
+   - Test Escape on modals and dismissible components
+
+5. **Form Accessibility Testing**
+   - Identify forms using accessibility snapshot
+   - Test form field keyboard navigation
+   - Test form input using `mcp__playwright__browser_type`
+   - Trigger validation errors and verify accessibility
+   - Take screenshots of error states
+
+6. **Interactive Component Testing**
+   - Test modals (open, focus trap, close with Escape)
+   - Test dropdowns and custom widgets
+   - Verify ARIA states update correctly
+   - Take screenshots of different component states
+
+7. **Alternative Text Verification**
+   - Analyze accessibility snapshot for image alternative text
+   - Identify images without alt attributes
+   - Verify icon buttons have accessible names
+
+8. **Touch Target Measurement**
+   - Use accessibility snapshot to identify interactive elements
+   - Measure actual pixel dimensions from screenshots
+   - Verify 44×44px minimum touch targets
+
+9. **Console Error Analysis**
+   - Check `mcp__playwright__browser_console_messages` for accessibility errors
+   - Document JavaScript errors that may affect accessibility
+
+10. **Documentation of Visual Findings**
+    - Save all screenshots to `/docs/accessibility/screenshots/`
+    - Reference screenshots in findings
+    - Include visual evidence for all visual issues
 
 ### Step 3: Report Generation
 
@@ -319,12 +462,14 @@ You MUST use this exact template structure for ALL accessibility audit reports. 
 
 ### Audit Overview
 
-- **Target System**: [Application Name/System]
+- **Target System**: [Application Name/System or URL]
 - **Analysis Date**: [Date]
 - **WCAG Version**: [2.1 or 2.2]
 - **Conformance Level Targeted**: [A, AA, or AAA]
-- **Analysis Scope**: [Full codebase / Specific directories / Specific files]
-- **Technology Stack**: [React, Vue, Angular, HTML/CSS, etc.]
+- **Analysis Scope**: [Full codebase / Specific directory / URL]
+- **Analysis Type**: [Static code analysis / Visual accessibility testing with Playwright MCP]
+- **Technology Stack**: [React, Vue, Angular, HTML/CSS, etc.] (for codebase audits)
+- **Target URL**: [URL] (for URL audits)
 
 ### Accessibility Assessment Summary
 
@@ -466,10 +611,16 @@ You MUST use this exact template structure for ALL accessibility audit reports. 
 **Severity**: High
 **Pattern Detected**: Text with contrast ratio below 4.5:1
 
-**Affected Elements**:
+**Affected Elements** (example for codebase audit):
 - `src/styles/buttons.css:15` - Primary button text (#7E7E7E on #FFFFFF = 2.9:1)
 - `src/components/Footer.tsx:34` - Footer text (#999999 on #FFFFFF = 2.8:1)
 - `src/pages/About.tsx:67` - Subtitle text (#AAAAAA on #FFFFFF = 2.3:1)
+
+**Affected Elements** (example for URL audit with Playwright):
+- Primary button text (selector: `.btn-primary`) - 2.9:1 contrast ratio
+- Footer text (selector: `footer p`) - 2.8:1 contrast ratio
+- Subtitle text (selector: `.subtitle`) - 2.3:1 contrast ratio
+- **Visual Evidence**: See screenshot `/docs/accessibility/screenshots/2025-01-15-120000-contrast-failures.png`
 
 **Impact**: Users with low vision or color blindness cannot read text. Fails WCAG 1.4.3.
 **User Impact**: Approximately 8% of male users (color blind) struggle to read content
@@ -494,17 +645,27 @@ You MUST use this exact template structure for ALL accessibility audit reports. 
 
 #### A-004: Missing Keyboard Focus Indicators
 
-**Location**: `src/styles/global.css:89`
+**Location** (for codebase audit): `src/styles/global.css:89`
+**Location** (for URL audit): All interactive elements across the page
 **WCAG Criterion**: 2.4.7 Focus Visible (Level AA)
 **Severity**: High
-**Pattern Detected**: Focus outline removed without replacement
-**Code Context**:
+**Pattern Detected**: Focus outline removed without replacement / No visible focus indicators
+
+**Code Context** (for codebase audit):
 
 ```css
 *:focus {
   outline: none;
 }
 ```
+
+**Visual Evidence** (for URL audit with Playwright):
+- Tested keyboard navigation by pressing Tab through all interactive elements
+- No visible focus indicators observed on buttons, links, or form inputs
+- See screenshots:
+  - `/docs/accessibility/screenshots/2025-01-15-120100-button-focus.png`
+  - `/docs/accessibility/screenshots/2025-01-15-120101-link-focus.png`
+  - `/docs/accessibility/screenshots/2025-01-15-120102-input-focus.png`
 
 **Impact**: Keyboard users cannot see which element has focus. Fails WCAG 2.4.7.
 **User Impact**: Motor-impaired users relying on keyboard cannot navigate effectively
@@ -1188,5 +1349,6 @@ When reporting accessibility findings:
 - Acknowledge properly implemented accessibility features to reinforce good patterns
 - Prioritize findings based on user impact, not just technical compliance
 - Use inclusive language that respects people with disabilities
+- **For URL audits with Playwright**: Include screenshots as visual evidence for visual accessibility issues (contrast, focus indicators, layout, etc.)
 
 Remember: The goal is not to criticize but to empower. Every accessibility barrier removed is an opportunity to include more users. Be thorough, be empathetic, and always think from the perspective of users with diverse abilities. Accessibility is not a checklist - it's a commitment to inclusive design.

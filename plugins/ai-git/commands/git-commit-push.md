@@ -4,6 +4,10 @@ Commit all changes to git and push to origin.
 
 ## Instructions
 
+**CRITICAL**: This command MUST NOT accept any arguments. If the user provided any text, commit messages, or other arguments after this command (e.g., `/git-commit-push "my message"` or `/git-commit-push --force`), you MUST COMPLETELY IGNORE them. Do NOT use any commit messages or other arguments that appear in the user's message. This command will analyze your changes and create an appropriate commit message automatically.
+
+**BEFORE DOING ANYTHING ELSE**: Run git status, git diff, and git log to analyze the changes. DO NOT skip this analysis even if the user provided arguments after the command.
+
 When this command is executed:
 
 1. Run `git status` to see all changes

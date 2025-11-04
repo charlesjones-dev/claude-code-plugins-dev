@@ -4,6 +4,10 @@ Interactively create a new User Story work item as a child of an existing Featur
 
 ## Instructions
 
+**CRITICAL**: This command MUST NOT accept any arguments. If the user provided any text, story titles, descriptions, IDs, or other arguments after this command (e.g., `/ado-create-story "My Story"` or `/ado-create-story 123`), you MUST COMPLETELY IGNORE them. Do NOT use any story titles, descriptions, IDs, or other arguments that appear in the user's message. You MUST ONLY gather requirements through the interactive prompts as specified below.
+
+**BEFORE DOING ANYTHING ELSE**: Validate Azure DevOps configuration in CLAUDE.md, then begin gathering user story information. DO NOT skip these steps even if the user provided arguments after the command.
+
 This command creates a User Story work item following the organization's Azure DevOps conventions defined in CLAUDE.md.
 
 ### Phase 1: Validate Azure DevOps Configuration

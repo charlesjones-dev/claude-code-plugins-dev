@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.2] - 2025-01-04
+
+### Changed
+
+#### AI-Accessibility Plugin (v1.1.0)
+
+- **Added URL Accessibility Scanning** with optional Playwright MCP integration
+  - New "a URL" option in scope selection for scanning live websites
+  - Interactive Playwright MCP setup with automatic `.mcp.json` configuration
+  - OS detection for Windows vs Linux/Mac Playwright configuration
+  - Visual accessibility testing when Playwright MCP is available:
+    - Real-time color contrast measurements of rendered elements
+    - Visual verification of focus indicators
+    - Accessibility tree analysis as perceived by assistive technologies
+    - Keyboard navigation testing on live pages
+    - Touch target size verification with actual pixel measurements
+    - Screenshot-based visual accessibility assessment
+  - Enhanced audit reports with screenshot evidence for visual findings
+  - Screenshots saved to `/docs/accessibility/screenshots/` directory
+- Updated `/accessibility-audit` command to support URL scanning with Question 4 for Playwright MCP preference
+- Enhanced `accessibility-auditor` agent with dual analysis approach (codebase vs URL with Playwright)
+- Enhanced `accessibility-auditing` skill with Playwright MCP expertise and visual testing methodology
+
+#### All Plugins
+
+- **Improved Command Usage Documentation** to prevent erroneous argument passing
+  - Added prominent command usage note in README.md clarifying that all commands are invoked without arguments
+  - Added explicit "no arguments" instruction to all 13 command files across all plugins
+  - Commands now explicitly state they will ignore any passed arguments and prompt interactively for all necessary information
+  - Affected plugins:
+    - AI-Accessibility (v1.1.0): `/accessibility-audit`
+    - AI-Security (v1.3.1): `/security-audit`, `/security-init`, `/security-scan-dependencies`
+    - AI-Performance (v1.1.2): `/performance-audit`
+    - AI-Git (v1.1.1): `/git-init`, `/git-commit-push`
+    - AI-Plugins (v1.2.2): `/plugins-scaffold`
+    - AI-ADO (v1.2.2): `/ado-init`, `/ado-create-feature`, `/ado-create-story`, `/ado-create-task`, `/ado-log-story-work`, `/ado-timesheet-report`
+
 ## [1.5.1] - 2025-11-01
 
 ### Added
@@ -250,7 +287,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.1...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.2...HEAD
+[1.5.2]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.4.1...v1.5.0
 [1.4.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.4.0...v1.4.1

@@ -10,10 +10,11 @@ Provides AI-powered accessibility auditing tools including commands, agents, and
 
 ### 🔍 Important: What This Plugin Is (and Isn't)
 
-**This is a DEVELOPER-FOCUSED CODE ANALYSIS TOOL** designed to help developers with codebase access identify accessibility issues during development.
+**This is a DEVELOPER-FOCUSED ACCESSIBILITY TOOLKIT** designed to help developers identify accessibility issues through both static code analysis and visual testing (with optional Playwright MCP integration).
 
 #### ✅ What This Plugin IS:
 - **Static code analysis tool** for developers working with source code
+- **Visual accessibility testing tool** (with optional Playwright MCP integration for URL scanning)
 - **Pattern detection engine** that identifies accessibility anti-patterns in HTML, JSX, CSS
 - **Developer education tool** with WCAG knowledge and code remediation examples
 - **Complementary tool** to augment your accessibility workflow
@@ -21,8 +22,7 @@ Provides AI-powered accessibility auditing tools including commands, agents, and
 
 #### ❌ What This Plugin IS NOT:
 - **NOT a replacement for runtime accessibility testing services** that monitor live websites
-- **NOT a browser-based visual testing tool** (doesn't render pages or test visual appearance)
-- **NOT a complete accessibility solution** (catches code-level issues, not runtime/visual issues)
+- **NOT a complete accessibility solution** (automated testing catches ~30-40% of issues)
 - **NOT a substitute for manual screen reader testing** with assistive technologies
 - **NOT a replacement for user testing** with people with disabilities
 - **NOT a compliance certification tool** (doesn't provide legal compliance guarantees)
@@ -34,9 +34,11 @@ Provides AI-powered accessibility auditing tools including commands, agents, and
 │           Comprehensive Accessibility Strategy              │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
-│  1. Development Phase (Code-Level) ← THIS PLUGIN           │
+│  1. Development Phase ← THIS PLUGIN                        │
 │     • /accessibility-audit - Static code analysis          │
+│     • /accessibility-audit - URL scanning (Playwright MCP) │
 │     • WCAG pattern detection in source files               │
+│     • Visual accessibility testing (contrast, focus)        │
 │     • Early issue identification during development        │
 │                                                             │
 │  2. Runtime Testing Phase                                  │
@@ -58,7 +60,7 @@ Provides AI-powered accessibility auditing tools including commands, agents, and
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Best Practice**: Use this plugin during development to catch code-level issues early, then validate with runtime testing tools, manual testing, and user testing before deployment.
+**Best Practice**: Use this plugin during development to catch accessibility issues early (both code-level and visual), then validate with runtime testing tools, manual testing, and user testing before deployment.
 
 ### Why Use This Plugin?
 
@@ -90,7 +92,7 @@ This plugin provides:
 
 ### `/accessibility-audit`
 
-Perform comprehensive accessibility analysis on your codebase and generate a detailed WCAG compliance audit report with findings and remediation guidance.
+Perform comprehensive accessibility analysis on your codebase or live website and generate a detailed WCAG compliance audit report with findings and remediation guidance.
 
 **Interactive Configuration:**
 
@@ -98,19 +100,29 @@ Before starting the audit, the command will ask you:
 
 1. **WCAG Version**: Choose between WCAG 2.1 or WCAG 2.2
 2. **Conformance Level**: Choose A (minimum), AA (industry standard), or AAA (enhanced)
-3. **Scope**: Choose entire codebase, specific directories, or specific files
+3. **Scope**: Choose entire codebase, specific directory, or a URL
+4. **Visual Scanning** (if URL selected): Choose whether to use Playwright MCP tools for visual accessibility testing
 
 **What it analyzes:**
 
+**For Codebase Analysis:**
 - ✅ **Semantic HTML & Document Structure** - Heading hierarchy, landmarks, semantic elements
 - ✅ **ARIA Implementation** - Roles, states, properties, landmark regions
-- ✅ **Keyboard Navigation** - Tab order, focus management, keyboard traps, focus indicators
-- ✅ **Color Contrast** - Text and UI component contrast ratios for WCAG compliance
+- ✅ **Keyboard Navigation** - Tab order patterns, focus management code, keyboard trap detection
+- ✅ **Color Contrast** - CSS color values and contrast ratios
 - ✅ **Forms** - Label associations, error handling, required field indication
 - ✅ **Alternative Text** - Images, icons, multimedia text alternatives
 - ✅ **Interactive Components** - Buttons, links, modals, custom widgets
 - ✅ **Screen Reader Support** - Accessible names, announcements, compatibility
 - ✅ **Mobile Accessibility** - Touch target sizes, viewport scaling, orientation support
+
+**Additional for URL Analysis with Playwright MCP:**
+- ✅ **Visual Color Contrast Testing** - Real-time contrast measurements of rendered elements
+- ✅ **Actual Focus Indicator Visibility** - Visual verification of focus states
+- ✅ **Rendered DOM Structure** - Accessibility tree as perceived by assistive technologies
+- ✅ **Interactive Element Testing** - Keyboard navigation testing on live page
+- ✅ **Touch Target Size Verification** - Actual pixel measurements of interactive elements
+- ✅ **Screenshot-based Analysis** - Visual accessibility assessment with evidence
 
 **Before (manual):**
 
@@ -133,9 +145,11 @@ Before starting the audit, the command will ask you:
 ```
 /accessibility-audit
 # ✅ Choose WCAG version (2.1/2.2) and level (A/AA/AAA)
-# ✅ Select scope (entire codebase or specific paths)
-# ✨ AI analyzes codebase for accessibility barriers
+# ✅ Select scope (entire codebase, specific directory, or URL)
+# ✅ For URL: Choose whether to use Playwright MCP for visual testing
+# ✨ AI analyzes codebase or website for accessibility barriers
 # ✨ Identifies WCAG compliance issues with criterion references
+# ✨ Performs visual testing with screenshots (if Playwright enabled)
 # ✨ Generates comprehensive audit report with compliance matrix
 # ✨ Provides code examples and remediation steps
 # ✅ Report saved to /docs/accessibility with timestamp
@@ -145,7 +159,7 @@ Before starting the audit, the command will ask you:
 
 ### `accessibility-auditor`
 
-Specialized agent that performs deep accessibility analysis and generates comprehensive WCAG compliance audit reports. Automatically invoked by `/accessibility-audit` command.
+Specialized agent that performs deep accessibility analysis on codebases and live websites (with Playwright MCP) and generates comprehensive WCAG compliance audit reports. Automatically invoked by `/accessibility-audit` command.
 
 **Focus Areas:**
 - Semantic HTML and document structure
@@ -163,7 +177,7 @@ Specialized agent that performs deep accessibility analysis and generates compre
 
 ### `accessibility-auditing`
 
-Elite accessibility expertise skill that provides comprehensive WCAG knowledge, audit methodologies, and inclusive design guidance.
+Elite accessibility expertise skill that provides comprehensive WCAG knowledge, audit methodologies (for both codebase and URL analysis), and inclusive design guidance.
 
 **Expertise Areas:**
 - WCAG 2.1 and 2.2 conformance criteria (Levels A, AA, AAA)
@@ -175,6 +189,7 @@ Elite accessibility expertise skill that provides comprehensive WCAG knowledge, 
 - Interactive component accessibility (modals, dropdowns, tooltips)
 - Screen reader compatibility
 - Mobile and responsive accessibility
+- Playwright MCP visual accessibility testing
 
 ---
 
@@ -188,6 +203,7 @@ Elite accessibility expertise skill that provides comprehensive WCAG knowledge, 
 
 ### Usage
 
+**Codebase Analysis:**
 ```
 # Step 1: Run an accessibility audit
 /accessibility-audit
@@ -195,7 +211,7 @@ Elite accessibility expertise skill that provides comprehensive WCAG knowledge, 
 # Step 2: Answer configuration questions
 # - WCAG Version: 2.1 or 2.2
 # - Conformance Level: A, AA, or AAA
-# - Scope: Entire codebase or specific paths
+# - Scope: Entire solution or specific directory
 
 # Step 3: Review the generated report
 # Located at: /docs/accessibility/{timestamp}-accessibility-audit.md
@@ -203,6 +219,31 @@ Elite accessibility expertise skill that provides comprehensive WCAG knowledge, 
 
 # Step 4: Implement recommended fixes
 # Follow the prioritized remediation roadmap (Phase 1-4)
+```
+
+**URL Analysis with Playwright MCP:**
+```
+# Step 1: Run an accessibility audit
+/accessibility-audit
+
+# Step 2: Answer configuration questions
+# - WCAG Version: 2.1 or 2.2
+# - Conformance Level: A, AA, or AAA
+# - Scope: a URL
+# - Provide the URL to scan
+# - Visual Scanning: Yes - Use Playwright for visual scans
+
+# Step 3: If Playwright MCP is not installed, the command will:
+# - Offer to create .mcp.json configuration file
+# - Ask you to restart Claude Code
+# - After restart, run /accessibility-audit again
+
+# Step 4: Review the generated report with visual evidence
+# Located at: /docs/accessibility/{timestamp}-accessibility-audit.md
+# Screenshots: /docs/accessibility/screenshots/
+
+# Step 5: Implement recommended fixes
+# Follow the prioritized remediation roadmap
 ```
 
 ---
