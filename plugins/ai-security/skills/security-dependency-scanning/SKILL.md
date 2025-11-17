@@ -19,6 +19,27 @@ Invoke this skill when:
 - Analyzing supply chain security risks in web applications
 - Evaluating client-side dependency security without source code access
 
+## Required Tools
+
+**🚨 CRITICAL: Tool Requirements for Website Scanning 🚨**
+
+You MUST use ONLY these tools to fetch and analyze websites:
+- ✅ **WebFetch tool** - Primary method for fetching HTML and HTTP headers
+- ✅ **curl** (via Bash tool) - Alternative method: `curl -i https://example.com`
+
+You MUST NOT use these tools:
+- ❌ **Playwright** or any MCP browser automation tools
+- ❌ **Any browser-based tools** (mcp__playwright__browser_navigate, etc.)
+- ❌ **Any other MCP web browsing tools**
+
+**Why This Matters**:
+- HTTP security headers (Content-Security-Policy, HSTS, X-Frame-Options, etc.) are ONLY available via raw HTTP responses
+- Playwright and browser tools **cannot access** these critical security headers
+- Using browser tools will result in **incomplete and inaccurate security header analysis**
+- WebFetch and curl provide the raw HTTP response headers required for comprehensive security auditing
+
+**If you use Playwright or browser tools, the security scan will be incomplete and the report will be invalid.**
+
 ## Core Web Security Expertise
 
 ### 1. Frontend Library Detection
@@ -215,11 +236,25 @@ When scanning a deployed website, follow this systematic approach:
 ### Phase 1: URL Validation and Fetch
 
 1. **Validate Target URL**: Ensure proper URL format (http:// or https://)
-2. **Fetch Website Content**: Use WebFetch tool to retrieve:
+2. **Fetch Website Content**: Use **ONLY WebFetch tool or curl** to retrieve:
    - HTML content
-   - HTTP response headers
+   - HTTP response headers (CRITICAL: Only available via WebFetch/curl)
    - Status code
+   - **IMPORTANT**: DO NOT use Playwright, browser tools, or any MCP browser automation
+   - **REASON**: Security headers cannot be retrieved with browser automation tools
 3. **Handle Errors**: Document connection failures, timeouts, or HTTP errors
+
+**Example using WebFetch**:
+```
+WebFetch tool:
+  url: "https://example.com"
+  prompt: "Extract the full HTML content and list all HTTP response headers"
+```
+
+**Example using curl (alternative)**:
+```bash
+curl -i -L https://example.com
+```
 
 ### Phase 2: HTML Parsing and Library Detection
 
@@ -241,11 +276,15 @@ When scanning a deployed website, follow this systematic approach:
 
 ### Phase 4: Security Headers Audit
 
-1. **Extract Response Headers**: Parse HTTP headers from WebFetch response
+1. **Extract Response Headers**: Parse HTTP headers from WebFetch or curl response
+   - **CRITICAL**: This step REQUIRES WebFetch or curl - browser tools cannot provide headers
+   - Headers must include: Content-Security-Policy, Strict-Transport-Security, X-Frame-Options, etc.
 2. **Check Critical Headers**: Verify presence of CSP, HSTS, X-Frame-Options
 3. **Validate Configuration**: Assess header values for security best practices
 4. **Document Missing Headers**: List absent security headers with severity
 5. **Flag Deprecated Headers**: Identify X-XSS-Protection and other deprecated headers
+
+**Important**: If you cannot retrieve HTTP headers, the scan is incomplete and must not proceed. Always use WebFetch or curl to ensure header access.
 
 ### Phase 5: Version Gap Analysis
 
@@ -749,6 +788,8 @@ When determining severity for dependency vulnerabilities, apply these criteria:
 
 Before finalizing a web dependency scan report, verify:
 
+- ✓ **Have you used ONLY WebFetch or curl to fetch the website?** (NOT Playwright)
+- ✓ Have HTTP response headers been successfully retrieved and analyzed?
 - ✓ Have all script and link tags been parsed for library detection?
 - ✓ Have CDN patterns been checked against all major providers?
 - ✓ Has CMS detection been attempted using multiple methods?
