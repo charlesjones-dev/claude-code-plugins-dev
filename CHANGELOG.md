@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.4] - 2025-01-17
+
+### Fixed
+
+#### AI-Security Plugin (v1.3.2)
+
+- **Fixed `/security-scan-dependencies` to require WebFetch or curl for HTTP header retrieval**
+  - Updated command and skill documentation to explicitly prohibit Playwright or MCP browser tools
+  - Added critical tool requirement section explaining that HTTP security headers (especially Content-Security-Policy) can ONLY be retrieved via WebFetch or curl
+  - Browser automation tools cannot access raw HTTP response headers needed for security header analysis
+  - Added "Required Tools" section to `security-dependency-scanning` skill with approved/prohibited tool lists
+  - Enhanced scanning methodology with explicit WebFetch/curl usage examples
+  - Updated quality assurance checklist to verify correct tool usage
+  - Prevents incomplete security scans due to missing HTTP header analysis
+
 ## [1.5.3] - 2025-01-04
 
 ### Fixed
@@ -299,7 +314,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.2...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.4...HEAD
+[1.5.4]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.3...v1.5.4
+[1.5.3]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.2...v1.5.3
 [1.5.2]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.4.1...v1.5.0

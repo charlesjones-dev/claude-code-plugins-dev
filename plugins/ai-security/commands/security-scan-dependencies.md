@@ -50,6 +50,12 @@ Use the **Task tool** with subagent_type "ai-security:security-dependency-scanne
 
 **Important**: Pass the target URL and scan scope in the prompt to the agent.
 
+**🚨 CRITICAL TOOL REQUIREMENT 🚨**:
+- The agent MUST use ONLY the **WebFetch tool** or **curl** (via Bash tool) to fetch websites
+- DO NOT use Playwright, browser automation, or any other MCP tools for website scanning
+- **Reason**: HTTP security headers (especially Content-Security-Policy) can ONLY be retrieved via HTTP requests using WebFetch or curl. Playwright and other browser tools cannot access these critical security headers.
+- Using the wrong tool will result in incomplete security header analysis
+
 **Example Task Tool Invocation**:
 ```
 Task tool:
@@ -77,9 +83,9 @@ Task tool:
 **Agent Responsibilities**:
 The ai-security:security-dependency-scanner agent will:
 1. Load the security-dependency-scanning skill
-2. Fetch the target website using WebFetch tool
+2. Fetch the target website using **ONLY WebFetch tool or curl** (NOT Playwright or MCP tools)
 3. Parse HTML and detect dependencies based on scope
-4. Analyze HTTP security headers
+4. Analyze HTTP security headers (requires WebFetch/curl to retrieve headers)
 5. Use Context7 to check for latest versions
 6. Identify known CVEs in detected versions
 7. Generate comprehensive security report with findings
