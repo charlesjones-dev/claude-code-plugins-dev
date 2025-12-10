@@ -1,3 +1,8 @@
+---
+name: ado-log-story-work
+description: "Rapidly log completed work to a User Story by creating a Task with completed hours already set."
+---
+
 # Log Completed Work to User Story
 
 Rapidly log completed work to a User Story by creating a new Task work item with completed hours already set. This command is designed for quick logging of work done multiple times per day.

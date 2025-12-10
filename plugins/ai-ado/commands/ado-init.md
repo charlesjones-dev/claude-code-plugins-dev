@@ -1,3 +1,8 @@
+---
+name: ado-init
+description: "Initialize Azure DevOps configuration in CLAUDE.md with organization, project, and team settings."
+---
+
 # Azure DevOps Init
 
 Initialize Azure DevOps configuration by creating or updating `CLAUDE.md` with your organization, project, and team settings, and optionally configuring the Azure DevOps MCP server.

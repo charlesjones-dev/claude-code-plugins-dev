@@ -1,3 +1,8 @@
+---
+name: git-commit-push
+description: "Commit all changes to git with an auto-generated message and push to origin."
+---
+
 # Commit and Push
 
 Commit all changes to git and push to origin.

@@ -1,3 +1,8 @@
+---
+name: security-init
+description: "Initialize Claude Code security settings with intelligent file denial patterns based on your project's technology stack."
+---
+
 # Security Init
 
 Initialize Claude Code security settings by configuring `.claude/settings.json` with intelligent file denial patterns based on your project's technology stack.

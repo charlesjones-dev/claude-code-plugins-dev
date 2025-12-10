@@ -1,3 +1,8 @@
+---
+name: git-init
+description: "Initialize .gitignore with intelligent exclusion patterns based on your project's technology stack."
+---
+
 # Git Init
 
 Initialize Git ignore patterns by creating or updating `.gitignore` with intelligent exclusion patterns based on your project's technology stack.

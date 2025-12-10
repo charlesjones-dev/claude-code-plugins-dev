@@ -1,6 +1,6 @@
 {
   "name": "ai-security",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "AI-powered security auditing with interactive skill, automated agents, and web dependency scanning for comprehensive vulnerability detection and reporting",
   "author": {
     "name": "Charles Jones",

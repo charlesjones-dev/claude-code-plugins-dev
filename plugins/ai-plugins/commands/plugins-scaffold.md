@@ -1,3 +1,8 @@
+---
+name: plugins-scaffold
+description: "AI-powered plugin scaffolding tool that generates a complete Claude Code plugin structure based on user requirements."
+---
+
 # Scaffold Plugin
 
 AI-powered plugin scaffolding tool that generates a complete Claude Code plugin structure based on user requirements.

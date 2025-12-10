@@ -1,3 +1,8 @@
+---
+name: ado-timesheet-report
+description: "Generate a summarized report of hours logged from work items during a specified week."
+---
+
 # Generate Weekly Timesheet Report
 
 Generate a summarized report of hours logged from work items during a specified week, with flexible filtering options for closed, worked on, or both types of tasks. Report is organized in a hierarchical tree structure by Feature > User Story > Task.

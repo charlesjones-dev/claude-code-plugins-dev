@@ -1,5 +1,5 @@
 ---
-name: plan-phases
+name: workflow-plan-phases
 description: "Creates a structured implementation plan document with properly sized phases for efficient sub-agent execution."
 ---
 

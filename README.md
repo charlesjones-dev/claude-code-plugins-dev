@@ -1,6 +1,6 @@
 # Claude Code Plugins for Developers
 
-[![Version](https://img.shields.io/badge/version-1.6.0-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
+[![Version](https://img.shields.io/badge/version-1.6.1-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![GitHub Issues](https://img.shields.io/github/issues/charlesjones-dev/claude-code-plugins-dev.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/charlesjones-dev/claude-code-plugins-dev.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/stargazers)
@@ -24,7 +24,7 @@ This Claude Code plugin marketplace provides plugins that extend Claude Code's c
 | [ai-performance](plugins/ai-performance/) | AI-powered performance optimization and bottleneck detection | `/performance-audit` | `performance-auditor` | `performance-auditing` |
 | [ai-plugins](plugins/ai-plugins/) | AI-powered plugin and skill scaffolding and generation tools | `/plugins-scaffold` | - | `skills-scaffold`, `plugins-scaffold` |
 | [ai-security](plugins/ai-security/) | AI-powered security auditing with reproducible reports | `/security-init`, `/security-audit`, `/security-scan-dependencies` | `security-auditor`, `security-dependency-scanner` | `security-auditing`, `security-dependency-scanning` |
-| [ai-workflow](plugins/ai-workflow/) | AI-powered development workflow automation | `/plan-phases`, `/implement-phases`, `/preflight` | - | `plan-phases`, `implement-phases`, `preflight-checks` |
+| [ai-workflow](plugins/ai-workflow/) | AI-powered development workflow automation | `/workflow-plan-phases`, `/workflow-implement-phases`, `/workflow-preflight` | - | `plan-phases`, `implement-phases`, `preflight-checks` |
 
 > **📝 Note on Audit Plugins:** The `ai-accessibility`, `ai-security`, and `ai-performance` plugins are developer-focused analysis tools designed to identify issues during development. They perform static code analysis, with `ai-accessibility` and `ai-security` also offering URL scanning capabilities (`/accessibility-audit` with Playwright MCP and `/security-scan-dependencies` respectively). These plugins are meant to **complement** (not replace) runtime testing tools, professional services, and manual testing. Use these plugins to catch issues early in the development phase, then validate with specialized testing tools and services appropriate to your domain.
 

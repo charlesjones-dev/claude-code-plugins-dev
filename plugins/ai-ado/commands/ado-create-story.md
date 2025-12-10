@@ -1,3 +1,8 @@
+---
+name: ado-create-story
+description: "Interactively create a new User Story work item as a child of an existing Feature in Azure DevOps."
+---
+
 # Create Azure DevOps User Story
 
 Interactively create a new User Story work item as a child of an existing Feature in Azure DevOps using the organization's configured conventions and guidelines.

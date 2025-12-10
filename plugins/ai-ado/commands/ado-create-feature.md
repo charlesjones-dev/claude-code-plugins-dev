@@ -1,3 +1,8 @@
+---
+name: ado-create-feature
+description: "Interactively create a new Feature work item in Azure DevOps using configured conventions."
+---
+
 # Create Azure DevOps Feature
 
 Interactively create a new Feature work item in Azure DevOps using the organization's configured conventions and guidelines.

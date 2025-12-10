@@ -1,6 +1,6 @@
 {
   "name": "ai-plugins",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "AI-powered plugin and skill development - Intelligent plugin and skill scaffolding and generation tools for Claude Code",
   "author": {
     "name": "Charles Jones",

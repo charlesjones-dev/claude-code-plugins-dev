@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.1] - 2025-12-10
+
+### Changed
+
+#### All Plugins
+
+- **Added YAML frontmatter to all command files** with `name` and `description` attributes
+  - Standardizes command metadata across all 17 commands in 7 plugins
+  - Enables better command discovery and documentation
+  - Follows the pattern established by ai-workflow plugin
+
+#### AI-Workflow Plugin (v1.0.1)
+
+- **Renamed commands to use `workflow-` prefix** for consistency with other plugins
+  - `/plan-phases` → `/workflow-plan-phases`
+  - `/implement-phases` → `/workflow-implement-phases`
+  - `/preflight` → `/workflow-preflight`
+
 ## [1.6.0] - 2025-12-10
 
 ### Added
@@ -371,7 +389,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.1...HEAD
+[1.6.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.4...v1.6.0
 [1.5.4]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.3...v1.5.4
 [1.5.3]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.2...v1.5.3

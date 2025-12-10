@@ -1,5 +1,5 @@
 ---
-name: implement-phases
+name: workflow-implement-phases
 description: "Orchestrates multi-phase implementation from a plan document using intelligent parallel/sequential execution strategy."
 ---
 

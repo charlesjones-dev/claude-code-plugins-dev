@@ -1,3 +1,8 @@
+---
+name: security-scan-dependencies
+description: "Scan a deployed website for outdated dependencies, known CVEs, and security misconfigurations."
+---
+
 # Web Dependency Security Scan
 
 Scan a deployed website for outdated dependencies, known CVEs, and security misconfigurations without requiring source code access.

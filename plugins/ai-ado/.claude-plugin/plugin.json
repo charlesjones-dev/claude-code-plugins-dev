@@ -1,6 +1,6 @@
 {
   "name": "ai-ado",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "AI-powered Azure DevOps integration with skills - Intelligent work item management, configuration, and automation for Azure DevOps workflows with MCP integration",
   "author": {
     "name": "Charles Jones",

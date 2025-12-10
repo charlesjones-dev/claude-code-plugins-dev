@@ -1,5 +1,6 @@
 ---
-description: Run code quality checks (typecheck, lint, tests) - auto-detects configured tools and offers to fix issues
+name: workflow-preflight
+description: "Run code quality checks (typecheck, lint, tests) - auto-detects configured tools and offers to fix issues."
 argument-hint: [--fix | --check-only | --verbose]
 allowed-tools: Bash, Read, Glob, Grep
 ---

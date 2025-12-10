@@ -1,3 +1,8 @@
+---
+name: ado-create-task
+description: "Interactively create a new Task work item as a child of an existing User Story in Azure DevOps."
+---
+
 # Create Azure DevOps Task
 
 Interactively create a new Task work item as a child of an existing User Story in Azure DevOps using the organization's configured conventions and guidelines.
