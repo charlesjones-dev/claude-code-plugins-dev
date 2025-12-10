@@ -7,6 +7,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] - 2025-12-10
+
+### Added
+
+#### AI-Workflow Plugin (v1.0.0)
+
+- **New plugin for development workflow automation**
+  - Phase-based planning and implementation orchestration for efficient sub-agent execution
+  - Preflight code quality verification system
+
+- `/plan-phases` command for creating structured implementation plans
+  - Breaks features into context-efficient phases (30-50k tokens each)
+  - Whole number phases only (no sub-phases like 1.1, 1.2)
+  - Clear acceptance criteria per phase
+  - Dependency mapping with execution strategy recommendations
+  - Outputs structured markdown to `docs/plans/`
+
+- `/implement-phases` command for orchestrating multi-phase implementation
+  - Parses plan documents and extracts phase definitions
+  - Analyzes dependencies (explicit and implicit)
+  - Determines optimal execution strategy (parallel/sequential/mixed)
+  - Executes via Task() sub-agents with coordination directory
+  - Aggregates results and provides comprehensive summary
+
+- `/preflight` command for code quality checks
+  - Auto-detects configured quality tools across ecosystems (Node.js, Python, .NET, Go, Rust)
+  - Runs type checking, linting, formatting checks, and tests
+  - Interactive fix mode with user consent
+  - Supports `--fix`, `--check-only`, and `--verbose` arguments
+
+- `plan-phases` skill with methodology for context-efficient phase sizing and dependency analysis
+- `implement-phases` skill with dependency detection algorithms and execution patterns
+- `preflight-checks` skill with comprehensive reference for quality tools across languages
+
+### Changed
+
+#### AI-Accessibility Plugin (v1.2.0)
+
+- **Improved Playwright MCP detection flow** in `/accessibility-audit` command
+  - Added "Skip visual testing" option when Playwright MCP tools are unavailable
+  - Users can now proceed with code-based analysis without creating `.mcp.json`
+  - Better handles cases where Playwright is installed globally via Claude Code `/mcp` command
+- **Enhanced Accessibility Audit Skill with Improved Prompt Engineering**
+  - Improvements for more accurate and actionable reports
+  - Added **Code Context Accuracy** section with explicit guidance on when to include/omit code snippets
+    - MUST show code when elements exist but lack attributes (e.g., missing alt, missing labels)
+    - MUST omit code context when elements truly don't exist (e.g., no skip link present)
+    - Prevents placeholder/guessed code in reports
+  - Added **Specificity Requirements** section for precise element identification
+    - Location field must enumerate specific elements, not generic descriptions
+    - Code Context must show ALL affected elements (or first 3-5 if many)
+    - Remediation examples must use actual values from the codebase, not placeholders
+  - Enhanced **Severity Assessment Framework** with concrete examples for each level
+  - Added clickable WCAG Understanding document links to compliance matrix
+  - Standardized finding format with consistent bullet-point structure
+  - Improved guidance on text readability with complex backgrounds (gradients, images, patterns)
+
 ## [1.5.4] - 2025-01-17
 
 ### Fixed
@@ -314,7 +371,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.4...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.4...v1.6.0
 [1.5.4]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.3...v1.5.4
 [1.5.3]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.2...v1.5.3
 [1.5.2]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.1...v1.5.2
