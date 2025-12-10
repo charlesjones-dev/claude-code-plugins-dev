@@ -45,13 +45,27 @@ If the user selects "a URL":
 
 If the user chooses to use Playwright MCP tools:
 
-1. **Check for Playwright MCP availability** by attempting to open a browser window using the `mcp__playwright__browser_navigate` tool. Navigate to a simple URL (e.g., "https://www.google.com/") to verify that Playwright MCP is properly installed and working. This is the ONLY method you should use to test availability - do not check for function existence or use any other testing method.
+1. **Test Playwright availability** by calling `mcp__playwright__browser_navigate` with the user's target URL:
+   ```
+   mcp__playwright__browser_navigate(url: "<user's target URL>")
+   ```
 
-2. **If Playwright MCP tools are NOT available** (the browser_navigate attempt fails):
-   - Ask the user: "Playwright MCP tools are not installed. Would you like to create a .mcp.json configuration file to enable them?"
-   - If the user says yes:
+2. **If the navigation succeeds**:
+   - Playwright is available
+   - Proceed with the audit using Playwright tools for visual testing
+   - Pass this information to the ai-accessibility:accessibility-auditor subagent
+
+3. **If the navigation fails** (tool not found, error, etc.):
+   - Ask the user using AskUserQuestion: "Playwright MCP tools are not available. How would you like to proceed?"
+   - Header: "Playwright Setup"
+   - Options:
+     - **"Create .mcp.json config"**: Create a configuration file to enable Playwright MCP
+     - **"Skip visual testing"**: Proceed with code-based analysis only
+   - multiSelect: false
+
+   If user selects "Create .mcp.json config":
      a. Detect the operating system (Windows vs Linux/Mac)
-     b. Create `.mcp.json` in the current working directory with the appropriate configuration:
+     b. Create `.mcp.json` in the current working directory:
 
      **For Linux/Mac:**
      ```json
@@ -59,9 +73,7 @@ If the user chooses to use Playwright MCP tools:
        "mcpServers": {
          "playwright": {
            "command": "npx",
-           "args": [
-             "@playwright/mcp@latest"
-           ]
+           "args": ["@playwright/mcp@latest"]
          }
        }
      }
@@ -73,25 +85,18 @@ If the user chooses to use Playwright MCP tools:
        "mcpServers": {
          "playwright": {
            "command": "cmd",
-           "args": [
-             "/c",
-             "npx",
-             "@playwright/mcp@latest"
-           ]
+           "args": ["/c", "npx", "@playwright/mcp@latest"]
          }
        }
      }
      ```
 
-     c. After creating the file, inform the user:
-        - "The .mcp.json file has been created successfully."
-        - "You must restart Claude Code for the Playwright MCP tools to become available."
-        - "After restarting, run the /accessibility-audit command again."
-     d. **END THE COMMAND SESSION** - do not proceed with the audit
+     c. Inform the user they must restart Claude Code and run the command again
+     d. End the command session
 
-3. **If Playwright MCP tools ARE available:**
-   - Proceed with the audit and include visual accessibility testing using Playwright tools
-   - Pass the Playwright availability information to the ai-accessibility:accessibility-auditor subagent
+   If user selects "Skip visual testing":
+     - Proceed with code-based analysis only
+     - Inform the subagent that Playwright is not available
 
 Once the requirements are confirmed, use the Task tool with subagent_type "ai-accessibility:accessibility-auditor" to perform a thorough accessibility analysis and identify accessibility barriers, WCAG compliance issues, and opportunities for inclusive design improvement in the specified scope.
 

@@ -1,0 +1,25 @@
+{
+  "name": "ai-workflow",
+  "version": "1.0.0",
+  "description": "AI-powered development workflow automation - Phase-based planning, implementation orchestration, and preflight code quality checks for efficient sub-agent execution",
+  "author": {
+    "name": "Charles Jones",
+    "url": "https://charlesjones.dev"
+  },
+  "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev",
+  "license": "MIT",
+  "keywords": [
+    "workflow",
+    "planning",
+    "phases",
+    "orchestration",
+    "sub-agents",
+    "preflight",
+    "code-quality",
+    "typecheck",
+    "lint",
+    "testing",
+    "automation",
+    "productivity"
+  ]
+}
