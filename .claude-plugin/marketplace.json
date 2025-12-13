@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A curated list of custom Claude Code plugins, agents, and skills for developers.",
-    "version": "1.6.1",
+    "version": "1.6.2",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -142,7 +142,7 @@
       "name": "ai-workflow",
       "source": "./plugins/ai-workflow",
       "description": "AI-powered development workflow automation - Phase-based planning, implementation orchestration, and preflight code quality checks for efficient sub-agent execution",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "keywords": [
         "ai",
         "workflow",

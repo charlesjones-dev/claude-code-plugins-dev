@@ -18,7 +18,7 @@ Provides tools for managing complex development workflows including breaking fea
 
 ## Available Commands
 
-### `/plan-phases`
+### `/workflow-plan-phases`
 
 Create structured implementation plans from feature descriptions, optimized for context-efficient sub-agent execution.
 
@@ -35,8 +35,8 @@ Create structured implementation plans from feature descriptions, optimized for 
 **Usage:**
 
 ```
-/plan-phases "Build a user authentication system with OAuth, MFA, and session management"
-/plan-phases --output=docs/plans/auth-system.md "Build authentication system..."
+/workflow-plan-phases "Build a user authentication system with OAuth, MFA, and session management"
+/workflow-plan-phases --output=docs/plans/auth-system.md "Build authentication system..."
 ```
 
 **Before (manual planning):**
@@ -51,7 +51,7 @@ Create structured implementation plans from feature descriptions, optimized for 
 **After (with ai-workflow plugin):**
 
 ```
-/plan-phases "Build user authentication"
+/workflow-plan-phases "Build user authentication"
 # Answers clarifying questions
 # AI creates optimally-sized phases
 # Dependencies clearly mapped
@@ -59,7 +59,7 @@ Create structured implementation plans from feature descriptions, optimized for 
 # Plan saved to docs/plans/
 ```
 
-### `/implement-phases`
+### `/workflow-implement-phases`
 
 Orchestrate multi-phase implementation from a plan document using intelligent parallel/sequential execution.
 
@@ -76,9 +76,9 @@ Orchestrate multi-phase implementation from a plan document using intelligent pa
 **Usage:**
 
 ```
-/implement-phases @docs/plans/user-authentication.md
-/implement-phases @docs/plans/feature.md --phases=1,2,3
-/implement-phases @docs/plans/feature.md --strategy=parallel
+/workflow-implement-phases @docs/plans/user-authentication.md
+/workflow-implement-phases @docs/plans/feature.md --phases=1,2,3
+/workflow-implement-phases @docs/plans/feature.md --strategy=parallel
 ```
 
 **Execution Strategies:**
@@ -89,7 +89,7 @@ Orchestrate multi-phase implementation from a plan document using intelligent pa
 | **Sequential** | Linear dependency chain | Safest execution, full context from prior phases |
 | **Mixed** | Some independent, some dependent | Best of both worlds |
 
-### `/preflight`
+### `/workflow-preflight`
 
 Run comprehensive code quality checks before commits, PRs, or deployments.
 
@@ -104,10 +104,10 @@ Run comprehensive code quality checks before commits, PRs, or deployments.
 **Usage:**
 
 ```
-/preflight                  # Interactive mode (default)
-/preflight --fix            # Auto-fix all fixable issues
-/preflight --check-only     # Report only, no fixes
-/preflight --verbose        # Show detailed output
+/workflow-preflight                  # Interactive mode (default)
+/workflow-preflight --fix            # Auto-fix all fixable issues
+/workflow-preflight --check-only     # Report only, no fixes
+/workflow-preflight --verbose        # Show detailed output
 ```
 
 **Supported Ecosystems:**
@@ -133,7 +133,7 @@ Run comprehensive code quality checks before commits, PRs, or deployments.
 **After (with ai-workflow plugin):**
 
 ```
-/preflight
+/workflow-preflight
 # AI discovers configured tools
 # Runs all checks in optimal order
 # Shows clear summary
@@ -169,7 +169,7 @@ Methodology for analyzing plan documents and coordinating phase implementation. 
 - Error handling patterns
 - Results aggregation templates
 
-**Auto-loads when:** Implementing phases from a plan, orchestrating sub-agents, or when `/implement-phases` is invoked.
+**Auto-loads when:** Implementing phases from a plan, orchestrating sub-agents, or when `/workflow-implement-phases` is invoked.
 
 ### `preflight-checks`
 
@@ -197,16 +197,16 @@ Comprehensive reference for code quality tools across ecosystems. Provides:
 
 ```
 # Plan a new feature
-/plan-phases "Add user profile editing with avatar upload"
+/workflow-plan-phases "Add user profile editing with avatar upload"
 
 # Review the generated plan
 # Located at: docs/plans/user-profile-editing.md
 
 # Implement the phases
-/implement-phases @docs/plans/user-profile-editing.md
+/workflow-implement-phases @docs/plans/user-profile-editing.md
 
 # Run preflight checks before committing
-/preflight
+/workflow-preflight
 ```
 
 ---
@@ -309,7 +309,7 @@ Verify Fixes
 
 ### Preflight Integration
 
-- Run `/preflight` before every commit
+- Run `/workflow-preflight` before every commit
 - Use `--fix` in CI for automated formatting
 - Use `--check-only` in CI for validation gates
 - Align local checks with CI configuration
@@ -344,7 +344,7 @@ Plus improved code quality, fewer context overflows, and more efficient sub-agen
 - **Version:** 1.0.0
 - **Type:** Development Workflow Automation
 - **Features:**
-  - Commands: `/plan-phases`, `/implement-phases`, `/preflight`
+  - Commands: `/workflow-plan-phases`, `/workflow-implement-phases`, `/workflow-preflight`
   - Skills: `plan-phases`, `implement-phases`, `preflight-checks`
 - **License:** MIT
 - **Author:** Charles Jones

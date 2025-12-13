@@ -1,6 +1,6 @@
 ---
 name: plan-phases
-description: "Use when creating implementation plans, phase planning documents, breaking features into phases, or when /plan-phases command is invoked. Provides methodology for context-efficient phase sizing and dependency analysis."
+description: "Use when creating implementation plans, phase planning documents, breaking features into phases, or when /workflow-plan-phases command is invoked. Provides methodology for context-efficient phase sizing and dependency analysis."
 ---
 
 # Phase Planning Skill
@@ -410,3 +410,22 @@ Before delivering plan:
 - [ ] Dependencies are explicit and acyclic
 - [ ] Specifications are detailed enough to implement without guessing
 - [ ] File saved to docs/plans/{feature-name}.md
+
+---
+
+## IMPORTANT: Planning Only — Do Not Implement
+
+**This skill is for planning only. After creating the plan, STOP.**
+
+Do NOT:
+- Start implementing any phases
+- Write any code
+- Create any files other than the plan document
+- Begin execution automatically
+
+After the plan is complete:
+1. Present the plan document to the user
+2. Ask if they want to make any revisions
+3. Inform them to use `/workflow-implement-phases` or the `implement-phases` skill when ready to execute
+
+The user decides when to proceed with implementation.

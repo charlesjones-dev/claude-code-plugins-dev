@@ -1,6 +1,6 @@
 ---
 name: implement-phases
-description: "Use when implementing phases from a plan document, executing phased implementations, orchestrating sub-agents for phase work, or when /implement-phases command is invoked. Provides dependency analysis and parallel/sequential execution strategies."
+description: "Use when implementing phases from a plan document, executing phased implementations, orchestrating sub-agents for phase work, or when /workflow-implement-phases command is invoked. Provides dependency analysis and parallel/sequential execution strategies."
 ---
 
 # Phase Implementation Orchestration Skill

@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.2] - 2025-12-12
+
+### Fixed
+
+#### AI-Workflow Plugin (v1.0.2)
+
+- **Fixed `/workflow-plan-phases` proceeding to implementation after creating plan**
+  - Added explicit "Instructions" section with step-by-step workflow
+  - Added "Important" section emphasizing planning-only scope
+  - Command now stops after presenting the plan and directs users to `/workflow-implement-phases` for execution
+  - Updated skill file with "IMPORTANT: Planning Only — Do Not Implement" section
+
+- **Fixed `/workflow-implement-phases` not reading the plan file argument**
+  - Added explicit "Instructions" section telling Claude to read the plan file
+  - Added automatic plan discovery: if no file provided, searches `docs/plans/` and lets user pick
+  - Plan file argument is now optional (defaults to searching `docs/plans/`)
+  - Updated workflow step 1 to explicitly use Read tool for plan document
+
 ## [1.6.1] - 2025-12-10
 
 ### Changed
@@ -389,7 +407,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.1...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.2...HEAD
+[1.6.2]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.1...v1.6.2
 [1.6.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.4...v1.6.0
 [1.5.4]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.3...v1.5.4
