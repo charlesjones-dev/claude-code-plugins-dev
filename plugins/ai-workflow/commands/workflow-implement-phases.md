@@ -32,6 +32,15 @@ Read the plan file passed as an argument (e.g., `@docs/plans/my-plan.md`) and pr
 2. If plans are found, present them to the user and ask which one to implement
 3. If no plans are found, inform the user and suggest using `/workflow-plan-phases` to create one first
 
+## Critical Requirements
+
+**MANDATORY: Every phase MUST be implemented via a Task() sub-agent.**
+
+- NEVER implement any phase directly in the main agent conversation
+- Each phase gets its own dedicated sub-agent spawned via the Task tool
+- This ensures context isolation and prevents context saturation
+- Even single phases must use a sub-agent
+
 ## Workflow
 
 1. **Read the plan file** — Use the Read tool to load the plan document
@@ -39,5 +48,5 @@ Read the plan file passed as an argument (e.g., `@docs/plans/my-plan.md`) and pr
 3. Analyze dependencies (explicit and implicit)
 4. Determine optimal execution strategy (parallel/sequential/mixed)
 5. Present execution plan to user for confirmation
-6. Execute via Task() sub-agents with coordination directory
+6. **Execute via Task() sub-agents** — Spawn one Task() sub-agent per phase (NEVER implement directly)
 7. Aggregate results and report

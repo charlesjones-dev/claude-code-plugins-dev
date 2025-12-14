@@ -1,6 +1,6 @@
 {
   "name": "ai-workflow",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "AI-powered development workflow automation - Phase-based planning, implementation orchestration, and preflight code quality checks for efficient sub-agent execution",
   "author": {
     "name": "Charles Jones",

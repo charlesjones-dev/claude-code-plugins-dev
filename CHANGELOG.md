@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.3] - 2025-12-13
+
+### Fixed
+
+#### AI-Workflow Plugin (v1.0.3)
+
+- **Fixed `/workflow-implement-phases` not using sub-agents for phase implementations**
+  - Added explicit "Critical Requirements" section mandating Task() sub-agent usage for every phase
+  - Added "CRITICAL: Mandatory Sub-Agent Requirement" section to implement-phases skill
+  - Clarified orchestrator role: read plans, analyze dependencies, spawn sub-agents only
+  - Added correct/wrong pattern examples showing Task() usage vs direct implementation
+  - Updated parallel and sequential execution patterns with explicit Task() call examples
+  - Prevents main agent from implementing phases directly, ensuring context isolation
+
 ## [1.6.2] - 2025-12-12
 
 ### Fixed
@@ -407,7 +421,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.2...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.3...HEAD
+[1.6.3]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.2...v1.6.3
 [1.6.2]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.1...v1.6.2
 [1.6.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.5.4...v1.6.0

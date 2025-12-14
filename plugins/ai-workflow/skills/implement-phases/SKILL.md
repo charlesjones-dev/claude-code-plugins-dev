@@ -19,6 +19,49 @@ When implementing phases from a plan document, the orchestrator must:
 
 ---
 
+## CRITICAL: Mandatory Sub-Agent Requirement
+
+**YOU MUST USE THE TASK TOOL TO SPAWN A SUB-AGENT FOR EVERY PHASE IMPLEMENTATION.**
+
+This is a non-negotiable requirement. The orchestrator (main agent) is ONLY responsible for:
+- Reading and parsing the plan document
+- Analyzing dependencies
+- Determining execution strategy
+- Presenting the plan to the user
+- Spawning Task() sub-agents for each phase
+- Aggregating results after sub-agents complete
+
+**The orchestrator MUST NOT:**
+- Implement any phase directly in the main conversation
+- Write code, create files, or make changes for any phase
+- Skip sub-agent spawning for "simple" phases
+- Combine multiple phases into a single implementation
+
+**Why this matters:**
+- Context isolation: Each sub-agent has fresh context, preventing saturation
+- Parallelization: Independent phases can run in parallel via multiple Task() calls
+- Failure isolation: A failed phase doesn't corrupt the main agent's state
+- Results tracking: Sub-agents write structured results to coordination directory
+
+**Correct pattern:**
+```
+# For each phase (or group of parallel phases), spawn Task() sub-agents
+Task(
+  subagent_type="general-purpose",
+  prompt="[Phase implementation prompt with full spec and acceptance criteria]",
+  description="Implement phase-1: [name]"
+)
+```
+
+**WRONG pattern (never do this):**
+```
+# Never implement phases directly
+Edit(file_path="src/feature.ts", ...)  # WRONG - orchestrator should not edit files
+Write(file_path="src/new-file.ts", ...)  # WRONG - orchestrator should not create files
+```
+
+---
+
 ## Step 1: Parse the Plan Document
 
 Extract from the plan file:
@@ -243,6 +286,8 @@ Proceed? [Y/n/modify]
 
 ## Step 4: Execute Phases
 
+**REMINDER: You MUST use Task() sub-agents for ALL phase implementations. Never implement directly.**
+
 ### Coordination Setup
 
 ```bash
@@ -251,7 +296,7 @@ mkdir -p .claude/phase-coordination/{artifacts,results}
 
 ### Sub-Agent Prompt Template
 
-When spawning Task() for each phase:
+When spawning Task() for each phase (REQUIRED for every phase):
 
 ```markdown
 ## Phase Implementation Task
@@ -310,19 +355,37 @@ Write your artifacts to: `.claude/phase-coordination/artifacts/{phase_id}/`
 
 ### Parallel Execution Pattern
 
-```
-# Spawn all phases in current level simultaneously
-tasks = []
-for phase in current_level_phases:
-  task = Task(prompt=build_phase_prompt(phase))
-  tasks.append(task)
+**Use multiple Task() calls in a SINGLE message to execute phases in parallel:**
 
-# All tasks run in parallel
+```
+# Spawn all phases in current level simultaneously using multiple Task() calls in ONE message
+# This is the ONLY way to achieve true parallelization
+
+# In your response, include ALL of these Task() calls together:
+Task(
+  subagent_type="general-purpose",
+  prompt=build_phase_prompt(phase_1),
+  description="Implement phase-1: [name]"
+)
+Task(
+  subagent_type="general-purpose",
+  prompt=build_phase_prompt(phase_2),
+  description="Implement phase-2: [name]"
+)
+Task(
+  subagent_type="general-purpose",
+  prompt=build_phase_prompt(phase_3),
+  description="Implement phase-3: [name]"
+)
+
+# All tasks run in parallel when called in the same message
 # Wait for all to complete
 # Collect results from .claude/phase-coordination/results/
 ```
 
 ### Sequential Execution Pattern
+
+**Each phase STILL requires its own Task() sub-agent, just called one at a time:**
 
 ```
 for phase in topologically_sorted_phases:
@@ -332,10 +395,15 @@ for phase in topologically_sorted_phases:
     dep_results = read(f".claude/phase-coordination/results/{dep.id}.md")
     dependency_context += f"\n### Context from {dep.id}\n{dep_results}"
 
-  # Execute with dependency context
-  Task(prompt=build_phase_prompt(phase, dependency_context))
+  # Execute with dependency context - MUST use Task(), never implement directly
+  Task(
+    subagent_type="general-purpose",
+    prompt=build_phase_prompt(phase, dependency_context),
+    description="Implement {phase.id}: {phase.name}"
+  )
 
-  # Verify before proceeding
+  # Wait for sub-agent to complete
+  # Verify results before proceeding to next phase
   verify_phase_results(phase)
 ```
 
