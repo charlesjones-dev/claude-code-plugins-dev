@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A curated list of custom Claude Code plugins, agents, and skills for developers.",
-    "version": "1.6.3",
+    "version": "1.7.0",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -157,6 +157,27 @@
         "testing",
         "automation",
         "productivity"
+      ],
+      "author": {
+        "name": "Charles Jones",
+        "url": "https://charlesjones.dev"
+      },
+      "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev"
+    },
+    {
+      "name": "ai-statusline",
+      "source": "./plugins/ai-statusline",
+      "description": "AI-powered status line customization - Interactive setup and edit wizards for configuring Claude Code's status line with progress bars and customizable display options",
+      "version": "1.1.0",
+      "keywords": [
+        "ai",
+        "statusline",
+        "status",
+        "customization",
+        "ui",
+        "progress-bar",
+        "configuration",
+        "utilities"
       ],
       "author": {
         "name": "Charles Jones",

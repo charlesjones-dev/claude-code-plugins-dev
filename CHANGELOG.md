@@ -7,6 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0] - 2025-12-16
+
+### Added
+
+#### AI-Statusline Plugin (v1.1.0)
+
+- **New plugin for custom status line configuration**
+  - Interactive setup wizard for configuring Claude Code's status line
+  - Cross-platform support (bash for Mac/Linux, PowerShell for Windows)
+  - Visual progress bar for context usage with color-coded thresholds
+  - 9 configurable display options with sensible defaults
+
+- `/statusline-wizard` command for interactive status line setup
+  - Multi-step wizard using AskUserQuestion for configuration
+  - Automatic OS detection for appropriate script selection
+  - Backs up existing scripts and settings before overwriting
+  - Makes scripts executable on Mac/Linux with `chmod +x`
+
+- `/statusline-edit` command for editing existing configuration
+  - Detects existing status line script and reads current settings
+  - Pre-selects wizard options based on current configuration values
+  - Updates only the configuration variables, preserving script logic
+  - Directs users to `/statusline-wizard` if no script exists
+
+- `statusline-setup` skill with complete script templates
+  - Bash script template with all configurable variables
+  - PowerShell script template with all configurable variables
+  - Setup workflow documentation
+
+- Configurable elements:
+  - Model name (e.g., "Claude Opus 4.5")
+  - Token count (e.g., "50k/100k")
+  - Progress bar with percentage
+  - Current directory
+  - Git branch
+  - Session cost (hidden by default)
+  - Session duration
+  - Current time
+  - Claude Code version
+
 ## [1.6.3] - 2025-12-13
 
 ### Fixed
@@ -421,7 +461,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.3...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.3...v1.7.0
 [1.6.3]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.2...v1.6.3
 [1.6.2]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.1...v1.6.2
 [1.6.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.0...v1.6.1
