@@ -356,7 +356,7 @@ function Build-ProgressBar {
     $filled = [math]::Floor($Percent * $bar_width / 100)
     $empty = $bar_width - $filled
 
-    $bar = ("▓" * $filled) + ("░" * $empty)
+    $bar = ("#" * $filled) + ("-" * $empty)
     return "$Color$bar $Percent%$reset"
 }
 

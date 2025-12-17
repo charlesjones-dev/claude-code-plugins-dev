@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.1] - 2025-12-17
+
+### Fixed
+
+#### AI-Statusline Plugin (v1.1.1)
+
+- **Fixed PowerShell progress bar using incompatible Unicode characters**
+  - Replaced `▓` and `░` with ASCII-compatible `#` and `-` characters
+  - Ensures progress bar displays correctly on Windows environments
+
 ## [1.7.0] - 2025-12-16
 
 ### Added
@@ -461,7 +471,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.7.1...HEAD
+[1.7.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.7.0...v1.7.1
 [1.7.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.3...v1.7.0
 [1.6.3]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.2...v1.6.3
 [1.6.2]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.1...v1.6.2
