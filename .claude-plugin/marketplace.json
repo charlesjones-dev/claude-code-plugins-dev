@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A curated list of custom Claude Code plugins, agents, and skills for developers.",
-    "version": "1.7.1",
+    "version": "1.8.0",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -36,7 +36,7 @@
       "name": "ai-accessibility",
       "source": "./plugins/ai-accessibility",
       "description": "AI-powered accessibility analysis - Interactive accessibility audit skill and automated agent with comprehensive WCAG compliance detection and reporting",
-      "version": "1.2.1",
+      "version": "1.3.0",
       "keywords": [
         "ai",
         "accessibility",

@@ -22,7 +22,7 @@ Before starting the audit, determine the WCAG compliance requirements and audit 
 Use the AskUserQuestion tool to gather these requirements with the following questions:
 
 - Question 1: "Which WCAG version should this audit target?"
-  - Options: WCAG 2.1, WCAG 2.2
+  - Options: WCAG 2.1, WCAG 2.2, 508 / WCAG 2.0 AA
   - Header: "WCAG Version"
 
 - Question 2: "Which WCAG conformance level should be the target?"
