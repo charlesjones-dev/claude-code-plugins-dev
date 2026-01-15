@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A curated list of custom Claude Code plugins, agents, and skills for developers.",
-    "version": "1.8.0",
+    "version": "1.9.0",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -178,6 +178,28 @@
         "progress-bar",
         "configuration",
         "utilities"
+      ],
+      "author": {
+        "name": "Charles Jones",
+        "url": "https://charlesjones.dev"
+      },
+      "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev"
+    },
+    {
+      "name": "ai-learn",
+      "source": "./plugins/ai-learn",
+      "description": "AI-powered Socratic learning mode - Transform Claude into a patient coding mentor that guides you through problem-solving without giving direct answers",
+      "version": "1.0.0",
+      "keywords": [
+        "ai",
+        "learning",
+        "teaching",
+        "socratic",
+        "mentor",
+        "education",
+        "coding",
+        "tutorial",
+        "guided-learning"
       ],
       "author": {
         "name": "Charles Jones",

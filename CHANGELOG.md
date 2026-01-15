@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.9.0] - 2026-01-14
+
+### Added
+
+#### AI-Learn Plugin (v1.0.0)
+
+- **New plugin for Socratic learning mode**
+  - Transforms Claude from code generator to patient coding mentor
+  - Guides users through problem-solving without providing direct answers
+  - Based on productive struggle methodology for retained knowledge
+
+- `/learn` command for activating teaching mode
+  - 5-phase teaching flow: Assessment, Foundation, Guided Implementation, Error Discovery, Reinforcement
+  - Socratic questioning instead of direct answers
+  - Hints and guidance rather than solutions
+  - Escape hatch for users who explicitly request answers
+
+- `/learn-review` command for Socratic code review
+  - Reviews code through targeted questions
+  - Helps users discover bugs by tracing through edge cases
+  - Probes design decisions to deepen understanding
+  - Question banks for logic, performance, readability, and security concerns
+
 ## [1.8.0] - 2025-12-18
 
 ### Added
@@ -481,7 +504,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.8.0...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.9.0...HEAD
+[1.9.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.7.1...v1.8.0
 [1.7.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.7.0...v1.7.1
 [1.7.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.6.3...v1.7.0
