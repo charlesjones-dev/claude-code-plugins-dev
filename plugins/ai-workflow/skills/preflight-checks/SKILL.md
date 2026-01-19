@@ -14,7 +14,8 @@ Preflight checks are the quality gates that verify code before commits, PRs, or 
 1. **Type Checking** - Static type verification (TypeScript, MyPy, etc.)
 2. **Linting** - Code quality and style enforcement
 3. **Formatting** - Consistent code style
-4. **Testing** - Unit, integration, and e2e tests
+4. **Security Scanning** - Dependency audits and static analysis (SAST)
+5. **Testing** - Unit, integration, and e2e tests
 
 ## Quick Reference
 
@@ -91,6 +92,44 @@ pytest                                  # Tests
 | Format | `cargo fmt --check` | `cargo fmt` |
 | Tests | `cargo test` | N/A |
 
+### Security Scanning (Cross-Platform)
+
+| Tool | Purpose | Command |
+|------|---------|---------|
+| pnpm audit | Dependency CVE scan | `pnpm audit` or `pnpm audit:check` |
+| npm audit | Dependency CVE scan | `npm audit` |
+| yarn audit | Dependency CVE scan | `yarn audit` |
+| eslint-plugin-security | JS/TS security patterns | Runs with ESLint |
+| Semgrep | SAST scanning | `semgrep scan --config auto` |
+| Semgrep (Docker) | SAST scanning | See platform-specific commands below |
+| pip-audit | Python dependency scan | `pip-audit` |
+| cargo-audit | Rust dependency scan | `cargo audit` |
+
+**IMPORTANT: If Semgrep is detected in CI workflows or config files, you MUST run it as part of preflight checks. Do not skip it.**
+
+**Semgrep Detection Priority:**
+1. Package.json scripts (e.g., `pnpm run semgrep`)
+2. Config files: `.semgreprc.yml`, `.semgrep.yml`, `semgrep.yml`, `.semgrep/`
+3. CI workflows: `.github/workflows/*.yml` (extract `--config` flags)
+4. **README.md documentation** - ALWAYS check this before trying generic Docker commands
+5. Local CLI: `semgrep --version`
+6. Docker fallback (see platform-specific commands below)
+
+**Semgrep Docker Commands (AUTOMATIC PLATFORM DETECTION):**
+
+CRITICAL: Detect the platform from environment context and use the correct command automatically.
+
+- **Windows (`win32`):** ALWAYS use `MSYS_NO_PATHCONV=1` prefix:
+  ```bash
+  MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd):/src" semgrep/semgrep semgrep scan --config auto /src
+  ```
+- **macOS (`darwin`) / Linux:** Standard command:
+  ```bash
+  docker run --rm -v "$(pwd):/src" semgrep/semgrep semgrep scan --config auto /src
+  ```
+
+**Why `MSYS_NO_PATHCONV=1` is required on Windows:** Git Bash/MSYS2 auto-converts POSIX paths to Windows paths. Without this prefix, `/src` becomes `C:/Program Files/Git/src`, causing "Invalid scanning root" error. DO NOT try without the prefix first on Windows.
+
 ## Discovery Strategy
 
 ### Step 1: Identify Project Type(s)
@@ -154,11 +193,21 @@ check: lint test
 ### Step 3: Detect CI Configuration
 
 Check for CI files to align local checks with CI:
-- `.github/workflows/*.yml` - GitHub Actions
+- `.github/workflows/*.yml` - GitHub Actions (also check for semgrep jobs)
 - `.gitlab-ci.yml` - GitLab CI
 - `azure-pipelines.yml` - Azure DevOps
 - `Jenkinsfile` - Jenkins
 - `.circleci/config.yml` - CircleCI
+
+### Step 4: Detect Security Tools
+
+Check for security scanning configuration:
+- `package.json` devDependencies for `eslint-plugin-security`
+- `package.json` scripts containing `audit` or `semgrep`
+- Semgrep config files: `.semgreprc.yml`, `.semgrep.yml`, `semgrep.yml`
+- CI workflows for semgrep jobs (extract `--config` flags for local replication)
+- `README.md` for documented security commands (often in Security sections)
+- Lock files (`pnpm-lock.yaml`, `package-lock.json`, `yarn.lock`) for audit support
 
 ## Best Practices
 
@@ -168,7 +217,8 @@ Run checks in order of speed and feedback value:
 1. **Format check** (fastest, catches style issues)
 2. **Type checking** (fast, catches type errors)
 3. **Linting** (medium, catches quality issues)
-4. **Tests** (slowest, catches logic errors)
+4. **Security scanning** (medium, catches vulnerabilities)
+5. **Tests** (slowest, catches logic errors)
 
 This order provides fastest feedback on failures.
 

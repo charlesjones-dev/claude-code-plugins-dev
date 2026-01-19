@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.9.1] - 2026-01-18
+
+### Added
+
+#### AI-Workflow Plugin (v1.1.0)
+
+- **Added security scanning detection to `/workflow-preflight` command**
+  - Detects and runs `pnpm audit`, `npm audit`, `yarn audit` for dependency vulnerability scanning
+  - Detects `eslint-plugin-security` in devDependencies and notes when security linting is active
+  - Universal Semgrep detection via multiple sources:
+    - Package.json scripts (e.g., `pnpm run semgrep`)
+    - Config files: `.semgreprc.yml`, `.semgrep.yml`, `semgrep.yml`, `.semgrep/`
+    - CI workflows: `.github/workflows/*.yml` (extracts `--config` flags)
+    - README.md documentation (Security sections)
+    - Local CLI availability
+    - Docker fallback when semgrep CLI not installed
+  - Added Python (`pip-audit`, `safety`) and Rust (`cargo audit`) dependency scanning
+  - Updated preflight skill with security scanning quick reference table
+
 ## [1.9.0] - 2026-01-14
 
 ### Added
@@ -504,7 +523,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.9.0...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.9.1...HEAD
+[1.9.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.7.1...v1.8.0
 [1.7.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.7.0...v1.7.1

@@ -55,6 +55,14 @@ First, analyze the project to discover configured quality tools. Check for:
 - `rustfmt.toml` / `.rustfmt.toml` - Rustfmt configuration
 - `clippy.toml` / `.clippy.toml` - Clippy configuration
 
+### Security Scanning
+- `pnpm-lock.yaml` / `package-lock.json` / `yarn.lock` - Dependency audit support
+- `.semgreprc.yml` / `.semgrep.yml` / `semgrep.yml` / `.semgrep/` - Semgrep configuration
+- `.github/workflows/*.yml` - Check for semgrep CI jobs (extract config flags)
+- `eslint-plugin-security` in devDependencies - ESLint security rules
+- `package.json` scripts containing `audit` or `semgrep` - Custom security scripts
+- `README.md` / `CONTRIBUTING.md` - Check for documented security scanning commands
+
 ### Other
 - `Makefile` / `makefile` - Check for lint/test/check targets
 - `.pre-commit-config.yaml` - Pre-commit hooks
@@ -73,6 +81,7 @@ Type Checking: [tool name] via [config file]
 Linting: [tool name] via [config file]
 Testing: [tool name] via [config file]
 Formatting: [tool name] via [config file]
+Security Scanning: [tool name(s)] via [config file/method]
 Not configured: [any missing categories]
 
 Ready to run checks?
@@ -84,7 +93,12 @@ Run the discovered checks in this order:
 1. **Type checking** (fastest feedback on type errors)
 2. **Linting** (code quality issues)
 3. **Formatting check** (style consistency - check only, don't auto-fix yet)
-4. **Tests** (run last as they take longest)
+4. **Security scanning** - MANDATORY if any security tools detected:
+   - Dependency audit (npm audit, pnpm audit, etc.)
+   - **Semgrep SAST** - MUST run if detected in CI workflows or config files
+5. **Tests** (run last as they take longest)
+
+**CRITICAL: If Semgrep was detected in discovery (CI workflows, config files, or README), you MUST run it. Do NOT skip Semgrep and report "All checks passed" without running it.**
 
 For each check, report:
 - Pass - no issues found
@@ -121,6 +135,55 @@ For each check, report:
 - Tests: `cargo test`
 - Format check: `cargo fmt --check`
 
+### Security Scanning Commands
+
+**Dependency Audits (run based on detected package manager):**
+- pnpm: `pnpm audit` or `pnpm audit:check` (if script exists in package.json)
+- npm: `npm audit`
+- yarn: `yarn audit`
+- pip: `pip-audit` (if installed) or `safety check` (if installed)
+- cargo: `cargo audit` (if installed)
+
+**Semgrep (static analysis - MUST run if detected in CI or config):**
+
+IMPORTANT: If Semgrep is detected in CI workflows or config files, you MUST run it as part of preflight checks. Do not skip it.
+
+Detection order:
+1. Check for custom script in package.json (e.g., `pnpm run semgrep` or `npm run semgrep`)
+2. Check for semgrep config files: `.semgreprc.yml`, `.semgrep.yml`, `semgrep.yml`, or `.semgrep/` directory
+3. Check `.github/workflows/*.yml` for semgrep jobs - extract `--config` flags used in CI
+4. **Check `README.md` for documented semgrep commands** - ALWAYS check this before trying generic Docker commands, as projects often document the exact command needed for their setup
+5. Check if `semgrep` CLI is available locally: `semgrep --version`
+6. Check if Docker is available: `docker --version`
+7. If Docker available but no semgrep CLI, use Docker (see platform-specific commands below)
+
+**Semgrep execution:**
+- With config file: `semgrep scan --config .semgreprc.yml` (or detected config)
+- Without config (auto rules): `semgrep scan --config auto`
+- With language-specific rules: `semgrep scan --config auto --config p/javascript --config p/typescript`
+
+**Docker execution (AUTOMATIC PLATFORM DETECTION):**
+
+CRITICAL: You MUST detect the platform and use the correct command automatically. Check the platform from the environment context.
+
+- **If platform is `win32` (Windows):** ALWAYS use `MSYS_NO_PATHCONV=1` prefix for Docker commands:
+  ```bash
+  MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd):/src" semgrep/semgrep semgrep scan --config auto /src
+  ```
+
+- **If platform is `darwin` (macOS) or `linux`:** Use standard Docker command:
+  ```bash
+  docker run --rm -v "$(pwd):/src" semgrep/semgrep semgrep scan --config auto /src
+  ```
+
+**Why this matters on Windows:** Git Bash/MSYS2 performs automatic POSIX-to-Windows path conversion. Without `MSYS_NO_PATHCONV=1`, the Docker volume mount `/src` gets incorrectly converted to `C:/Program Files/Git/src`, causing Semgrep to fail with "Invalid scanning root" error.
+
+DO NOT try the command without the prefix first on Windows - use the correct platform-specific command immediately.
+
+**ESLint Security Plugin:**
+- If `eslint-plugin-security` is detected in devDependencies, security rules are already included in the linting step
+- No separate command needed, but note in discovery output that security linting is active
+
 ## Step 4: Results Summary
 
 Present results in a clear summary:
@@ -128,10 +191,12 @@ Present results in a clear summary:
 ```
 Preflight Results
 
-Type Checking  Passed
-Linting        3 errors, 2 warnings
-Formatting     5 files need formatting
-Tests          42 passed, 0 failed
+Type Checking     Passed
+Linting           3 errors, 2 warnings
+Formatting        5 files need formatting
+Security Audit    2 vulnerabilities found
+Security SAST     Passed (semgrep)
+Tests             42 passed, 0 failed
 
 Overall: Issues found
 ```

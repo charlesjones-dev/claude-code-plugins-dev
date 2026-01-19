@@ -12,7 +12,7 @@ Provides tools for managing complex development workflows including breaking fea
 
 - **Phase Planning**: Break large features into properly-sized phases (30-50k tokens each) optimized for sub-agent execution
 - **Implementation Orchestration**: Analyze dependencies and execute phases with optimal parallel/sequential strategies
-- **Preflight Checks**: Auto-detect and run type checking, linting, formatting, and tests across multiple ecosystems
+- **Preflight Checks**: Auto-detect and run type checking, linting, formatting, security scanning, and tests across multiple ecosystems
 
 ---
 
@@ -96,7 +96,9 @@ Run comprehensive code quality checks before commits, PRs, or deployments.
 **What it does:**
 
 - Auto-detects configured quality tools across ecosystems
-- Runs checks in optimal order: format -> typecheck -> lint -> tests
+- Runs checks in optimal order: format -> typecheck -> lint -> security -> tests
+- Detects security tools: pnpm/npm/yarn audit, eslint-plugin-security, Semgrep
+- Universal Semgrep detection via config files, CI workflows, README docs, or Docker fallback
 - Reports results with clear pass/fail/warning indicators
 - Offers interactive fix mode (or use `--fix` for automatic)
 - Respects existing project scripts (uses `npm run lint` over raw `eslint`)
@@ -112,13 +114,13 @@ Run comprehensive code quality checks before commits, PRs, or deployments.
 
 **Supported Ecosystems:**
 
-| Ecosystem | Type Check | Lint | Format | Test |
-|-----------|------------|------|--------|------|
-| **Node.js/TypeScript** | tsc | ESLint, Biome | Prettier | Jest, Vitest |
-| **Python** | MyPy | Ruff | Black, Ruff | Pytest |
-| **.NET** | dotnet build | Analyzers | dotnet format | dotnet test |
-| **Go** | go build | golangci-lint | gofmt | go test |
-| **Rust** | cargo check | Clippy | cargo fmt | cargo test |
+| Ecosystem | Type Check | Lint | Format | Security | Test |
+|-----------|------------|------|--------|----------|------|
+| **Node.js/TypeScript** | tsc | ESLint, Biome | Prettier | pnpm/npm/yarn audit, eslint-plugin-security, Semgrep | Jest, Vitest |
+| **Python** | MyPy | Ruff | Black, Ruff | pip-audit, safety, Semgrep | Pytest |
+| **.NET** | dotnet build | Analyzers | dotnet format | Semgrep | dotnet test |
+| **Go** | go build | golangci-lint | gofmt | Semgrep | go test |
+| **Rust** | cargo check | Clippy | cargo fmt | cargo audit, Semgrep | cargo test |
 
 **Before (manual checks):**
 
@@ -273,10 +275,10 @@ Discovery Phase
 Detect Project Type(s)
       |
       v
-Find Configured Tools
+Find Configured Tools (including security scanners)
       |
       v
-Run Checks (format -> type -> lint -> test)
+Run Checks (format -> type -> lint -> security -> test)
       |
       v
 Present Results
@@ -341,11 +343,12 @@ Plus improved code quality, fewer context overflows, and more efficient sub-agen
 ## Plugin Details
 
 - **Name:** AI-Workflow
-- **Version:** 1.0.0
+- **Version:** 1.1.0
 - **Type:** Development Workflow Automation
 - **Features:**
   - Commands: `/workflow-plan-phases`, `/workflow-implement-phases`, `/workflow-preflight`
   - Skills: `plan-phases`, `implement-phases`, `preflight-checks`
+  - Security scanning: pnpm/npm/yarn audit, eslint-plugin-security, Semgrep (CLI or Docker)
 - **License:** MIT
 - **Author:** Charles Jones
 
