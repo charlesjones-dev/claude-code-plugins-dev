@@ -155,7 +155,7 @@ When adding new features or fixing bugs in a plugin, follow this workflow:
    - Update version comparison links at the bottom
 
 4. **Update README.md**:
-   - Update the plugin's version in the Available Plugins table
+   - Update the marketplace version in the badge at the top (e.g., `version-2.0.1-blue`)
    - Add any new commands to the Commands column
    - Update usage examples if new commands were added
 

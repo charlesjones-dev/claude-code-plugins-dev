@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-02-17
+
+### Fixed
+
+#### AI-Statusline Plugin (v1.2.1)
+
+- **Fixed PowerShell script template bugs**
+  - Fixed stdin reading using reserved `$input` automatic variable; replaced with `[System.Console]::In.ReadToEnd()` so the script actually receives JSON data when invoked via `-File`
+  - Fixed progress bar using ASCII `+`/`-` instead of Unicode `▓`/`░` to match bash template and documentation
+  - Fixed segment separator using `" | "` instead of `" · "` to match bash template and README examples
+  - Fixed unquoted paths in `Split-Path` and `git -C` that would break on directories with spaces
+  - Fixed confusing cost format string `'${0:F2}'` that resembles a variable reference; clarified with string concatenation
+  - Fixed Unicode character encoding by setting `[Console]::OutputEncoding` to UTF-8 and using `[char]` codes instead of literal Unicode in source file
+
 ## [2.0.0] - 2026-02-16
 
 ### Added
@@ -698,7 +712,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.9.1...v2.0.0
 [1.9.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.8.0...v1.9.0

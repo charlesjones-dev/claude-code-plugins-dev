@@ -267,7 +267,7 @@ Install jq using your package manager (see Requirements section above).
 ## Plugin Details
 
 - **Name:** AI-Statusline
-- **Version:** 1.2.0
+- **Version:** 1.2.1
 - **Type:** UI Customization
 - **Features:**
   - Skills: `/statusline-wizard`, `/statusline-edit`

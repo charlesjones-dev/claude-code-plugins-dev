@@ -343,12 +343,14 @@ $SHOW_VERSION = $true         # Show Claude Code version
 
 # =============================================================================
 
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
 # Read JSON from stdin
-$inputJson = $input | Out-String
+$inputJson = [System.Console]::In.ReadToEnd()
 $data = $inputJson | ConvertFrom-Json
 
 $model_name = $data.model.display_name
-$current_dir = Split-Path -Leaf $data.workspace.current_dir
+$current_dir = Split-Path -Leaf "$($data.workspace.current_dir)"
 $version = $data.version
 $usage = $data.context_window.current_usage
 $cost = $data.cost.total_cost_usd
@@ -357,7 +359,7 @@ $current_time = (Get-Date -Format "h:mmtt").ToLower()
 
 # Format cost
 if ($null -ne $cost) {
-    $cost_fmt = '${0:F2}' -f $cost
+    $cost_fmt = '$' + ('{0:F2}' -f $cost)
 } else {
     $cost_fmt = '$0.00'
 }
@@ -382,7 +384,7 @@ if ($null -ne $duration_ms) {
 
 # Get git branch
 $git_branch = try {
-    git -C $data.workspace.current_dir branch --show-current 2>$null
+    git -C "$($data.workspace.current_dir)" branch --show-current 2>$null
 } catch { $null }
 if ([string]::IsNullOrEmpty($git_branch)) {
     $git_branch = '-'
@@ -410,7 +412,7 @@ function Build-ProgressBar {
     $filled = [math]::Floor($Percent * $bar_width / 100)
     $empty = $bar_width - $filled
 
-    $bar = ("#" * $filled) + ("-" * $empty)
+    $bar = ([string][char]0x2593) * $filled + ([string][char]0x2591) * $empty
     return "$Color$bar $Percent%$reset"
 }
 
@@ -501,7 +503,8 @@ if ($SHOW_VERSION) {
     $segments += "${gray}v$version$reset"
 }
 
-Write-Host -NoNewline ($segments -join " - ")
+$sep = " " + [char]0x00B7 + " "
+Write-Host -NoNewline ($segments -join $sep)
 ```
 
 ## Configuration Variables
