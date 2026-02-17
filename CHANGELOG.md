@@ -11,6 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+#### AI-Writing Plugin (v1.0.0)
+
+- **New plugin for writing quality tools**
+  - Detect and remove signs of AI-generated writing from text
+  - Based on Wikipedia's "Signs of AI writing" guide maintained by WikiProject AI Cleanup
+
+- `/writing-humanize` skill for removing AI writing patterns
+  - Identifies 24 documented AI writing patterns across 6 categories: content, language/grammar, style, communication, filler/hedging, and personality
+  - Rewrites problematic sections with natural alternatives while preserving meaning
+  - Detects inflated significance, promotional language, superficial -ing analyses, vague attributions, overused AI vocabulary, em dash overuse, rule of three, negative parallelisms, sycophantic tone, and more
+  - Includes full before/after examples for each pattern category
+
 #### AI-Workflow Plugin (v1.3.0)
 
 - **Added `/workflow-ship` skill for end-to-end shipping workflow**

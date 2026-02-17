@@ -26,6 +26,7 @@ This Claude Code plugin marketplace provides plugins that extend Claude Code's c
 | [ai-security](plugins/ai-security/) | AI-powered security auditing with reproducible reports | `/security-init`, `/security-audit`, `/security-scan-dependencies` | `security-auditor`, `security-dependency-scanner` |
 | [ai-statusline](plugins/ai-statusline/) | AI-powered status line customization with progress bars | `/statusline-wizard`, `/statusline-edit` | - |
 | [ai-workflow](plugins/ai-workflow/) | AI-powered development workflow automation | `/workflow-plan-phases`, `/workflow-implement-phases`, `/workflow-preflight`, `/workflow-ship` | - |
+| [ai-writing](plugins/ai-writing/) | AI-powered writing quality tools for natural-sounding text | `/writing-humanize` | - |
 
 > **📝 Note on Audit Plugins:** The `ai-accessibility`, `ai-security`, and `ai-performance` plugins are developer-focused analysis tools designed to identify issues during development. They perform static code analysis, with `ai-accessibility` and `ai-security` also offering URL scanning capabilities (`/accessibility-audit` with Playwright MCP and `/security-scan-dependencies` respectively). These plugins are meant to **complement** (not replace) runtime testing tools, professional services, and manual testing. Use these plugins to catch issues early in the development phase, then validate with specialized testing tools and services appropriate to your domain.
 
