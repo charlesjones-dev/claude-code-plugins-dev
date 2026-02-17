@@ -1,7 +1,7 @@
 {
   "name": "ai-git",
-  "version": "1.1.2",
-  "description": "AI-powered git automation - Intelligent git commands and agents that streamline version control workflows with .gitignore generation",
+  "version": "1.2.0",
+  "description": "AI-powered git automation - Intelligent git skills that streamline version control workflows with .gitignore generation, commit-push-PR workflow, and more",
   "author": {
     "name": "Charles Jones",
     "url": "https://charlesjones.dev"
@@ -16,6 +16,7 @@
     "automation",
     "productivity",
     "devops",
-    "version-control"
+    "version-control",
+    "pull-request"
   ]
 }

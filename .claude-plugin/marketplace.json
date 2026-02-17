@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A curated list of custom Claude Code plugins, agents, and skills for developers.",
-    "version": "1.9.1",
+    "version": "2.0.0",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -14,7 +14,7 @@
       "name": "ai-ado",
       "source": "./plugins/ai-ado",
       "description": "AI-powered Azure DevOps integration with skills - Intelligent work item management, configuration, and automation for Azure DevOps workflows with MCP integration",
-      "version": "1.2.3",
+      "version": "1.3.0",
       "keywords": [
         "ai",
         "azure-devops",
@@ -36,7 +36,7 @@
       "name": "ai-accessibility",
       "source": "./plugins/ai-accessibility",
       "description": "AI-powered accessibility analysis - Interactive accessibility audit skill and automated agent with comprehensive WCAG compliance detection and reporting",
-      "version": "1.3.0",
+      "version": "1.4.0",
       "keywords": [
         "ai",
         "accessibility",
@@ -56,8 +56,8 @@
     {
       "name": "ai-git",
       "source": "./plugins/ai-git",
-      "description": "AI-powered git automation - Intelligent git commands and agents that streamline version control workflows with .gitignore generation",
-      "version": "1.1.2",
+      "description": "AI-powered git automation - Intelligent git skills that streamline version control workflows with .gitignore generation, commit-push-PR workflow, and more",
+      "version": "1.2.0",
       "keywords": [
         "ai",
         "git",
@@ -66,7 +66,8 @@
         "automation",
         "productivity",
         "devops",
-        "version-control"
+        "version-control",
+        "pull-request"
       ],
       "author": {
         "name": "Charles Jones",
@@ -78,7 +79,7 @@
       "name": "ai-performance",
       "source": "./plugins/ai-performance",
       "description": "AI-powered performance optimization - Interactive performance audit skill and automated agent with comprehensive bottleneck detection and optimization",
-      "version": "1.1.3",
+      "version": "1.2.0",
       "keywords": [
         "ai",
         "performance",
@@ -95,31 +96,10 @@
       "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev"
     },
     {
-      "name": "ai-plugins",
-      "source": "./plugins/ai-plugins",
-      "description": "AI-powered plugin and skill development - Intelligent plugin and skill scaffolding and generation tools for Claude Code",
-      "version": "1.2.3",
-      "keywords": [
-        "ai",
-        "plugins",
-        "scaffolding",
-        "generation",
-        "development",
-        "automation",
-        "productivity",
-        "tools"
-      ],
-      "author": {
-        "name": "Charles Jones",
-        "url": "https://charlesjones.dev"
-      },
-      "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev"
-    },
-    {
       "name": "ai-security",
       "source": "./plugins/ai-security",
       "description": "AI-powered security auditing with interactive skill, automated agents, and web dependency scanning for comprehensive vulnerability detection and reporting",
-      "version": "1.3.3",
+      "version": "1.4.0",
       "keywords": [
         "ai",
         "security",
@@ -141,8 +121,8 @@
     {
       "name": "ai-workflow",
       "source": "./plugins/ai-workflow",
-      "description": "AI-powered development workflow automation - Phase-based planning, implementation orchestration, and preflight code quality checks with security scanning for efficient sub-agent execution",
-      "version": "1.1.0",
+      "description": "AI-powered development workflow automation - Phase-based planning, implementation orchestration, preflight code quality checks with security scanning, and ship-it workflow for efficient sub-agent execution",
+      "version": "1.3.0",
       "keywords": [
         "ai",
         "workflow",
@@ -158,6 +138,10 @@
         "security",
         "audit",
         "semgrep",
+        "ship",
+        "commit",
+        "push",
+        "pull-request",
         "automation",
         "productivity"
       ],
@@ -171,7 +155,7 @@
       "name": "ai-statusline",
       "source": "./plugins/ai-statusline",
       "description": "AI-powered status line customization - Interactive setup and edit wizards for configuring Claude Code's status line with progress bars and customizable display options",
-      "version": "1.1.1",
+      "version": "1.2.0",
       "keywords": [
         "ai",
         "statusline",
@@ -189,10 +173,32 @@
       "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev"
     },
     {
+      "name": "ai-writing",
+      "source": "./plugins/ai-writing",
+      "description": "AI-powered writing quality tools - Detect and remove AI writing patterns to make text sound natural and human-written",
+      "version": "1.0.0",
+      "keywords": [
+        "ai",
+        "writing",
+        "humanizer",
+        "editing",
+        "content",
+        "quality",
+        "natural-language",
+        "ai-detection",
+        "skills"
+      ],
+      "author": {
+        "name": "Charles Jones",
+        "url": "https://charlesjones.dev"
+      },
+      "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev"
+    },
+    {
       "name": "ai-learn",
       "source": "./plugins/ai-learn",
       "description": "AI-powered Socratic learning mode - Transform Claude into a patient coding mentor that guides you through problem-solving without giving direct answers",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "keywords": [
         "ai",
         "learning",

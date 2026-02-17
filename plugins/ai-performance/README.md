@@ -81,7 +81,7 @@ This plugin enhances performance analysis by providing:
 
 **Use this plugin for:** Formal performance audits, optimization planning, and repeatable performance assessments
 
-## 📋 Available Commands
+## 📋 Available Skills
 
 ### `/performance-audit`
 
@@ -120,9 +120,9 @@ Specialized agent that performs deep performance analysis and generates comprehe
 
 ---
 
-## 📚 Available Skills
+---
 
-### `performance-auditing`
+> **Note:** The `/performance-audit` skill provides both the interactive audit workflow and comprehensive performance optimization expertise (bottleneck detection, scalability guidance, and code optimization patterns) in a single unified skill.
 
 ---
 
@@ -154,11 +154,14 @@ Specialized agent that performs deep performance analysis and generates comprehe
 #### Comprehensive Performance Pattern Detection
 
 - **N+1 Query Problems**: Identifies loading related entities in loops
-- **Synchronous Operations**: Detects blocking database calls and I/O operations
-- **Memory Issues**: Finds large object allocations and garbage collection pressure
-- **Inefficient LINQ**: Detects multiple enumeration and suboptimal queries
+- **Synchronous/Blocking Operations**: Detects blocking database calls, I/O operations, and event loop blocking (Node.js)
+- **Memory Issues**: Finds leaks from closures, uncleared listeners, large object allocations, and missing resource disposal
+- **Concurrency Problems**: Detects race conditions, deadlocks, connection pool exhaustion, and thread/worker saturation
+- **Inefficient Queries**: Detects suboptimal ORM usage, multiple enumeration, and missing projections
 - **Missing Caching**: Locates frequently computed operations without caching
 - **Database Optimization**: Identifies missing indexes and expensive queries
+- **Frontend Performance**: Evaluates Core Web Vitals impact (LCP, INP, CLS), bundle size, and rendering performance
+- **GraphQL Issues**: Detects missing query depth limiting, DataLoader opportunities, and over-fetching
 
 #### Performance Best Practices Assessment
 
@@ -168,26 +171,26 @@ Automatically evaluates your codebase against performance best practices:
 - Connection pooling configuration
 - Query optimization strategies
 - Caching implementation
-- Memory management patterns
-- Resource utilization efficiency
-- Thread pool management
-- I/O operation optimization
-- Load balancing and scaling
-- Monitoring and observability
+- Memory management and resource disposal
+- Concurrency and thread safety
+- Core Web Vitals optimization (LCP, INP, CLS)
+- Bundle size and code splitting
+- Streaming/SSR performance
+- Observability (metrics, logs, distributed tracing)
 
 #### Architecture Performance Assessment
 
-- **Data Access Layer Analysis**: Reviews Entity Framework usage and query patterns
-- **Application Layer Analysis**: Checks async/await, memory management, and CPU utilization
-- **Infrastructure Analysis**: Examines load balancing, CDN usage, and database scaling
-- **Resource Management**: Analyzes memory allocation, garbage collection, and thread pool usage
+- **Data Access Layer Analysis**: Reviews ORM usage, query patterns, and connection management
+- **Application Layer Analysis**: Checks async patterns, memory management, concurrency safety, and CPU utilization
+- **Frontend Analysis**: Evaluates Core Web Vitals, bundle size, code splitting, SSR/hydration cost
+- **Infrastructure Analysis**: Examines caching layers, compression, CDN usage, and observability coverage
 
 #### Detailed Reporting
 
 Each finding includes:
 
 - **Location**: Exact file path and line number
-- **Performance Impact**: Numerical impact score (0-10)
+- **Performance Impact**: Numerical impact score (1.0-10.0) with defined severity thresholds
 - **Pattern Detected**: What performance issue was identified
 - **Code Context**: The problematic code snippet
 - **Impact**: Performance cost and scalability concerns
@@ -217,10 +220,12 @@ The `/performance-audit` command uses Claude Code's specialized **performance-au
 
 2. **Pattern Detection**
    - Identifies N+1 query problems
-   - Detects synchronous blocking operations
-   - Finds large object allocations
+   - Detects synchronous/blocking operations and event loop blocking
+   - Finds memory leaks and resource disposal issues
+   - Detects concurrency problems (race conditions, deadlocks, pool exhaustion)
    - Locates missing caching opportunities
-   - Checks for inefficient LINQ queries
+   - Checks for inefficient queries and data access patterns
+   - Evaluates frontend Core Web Vitals impact
 
 3. **Report Generation**
    - Categorizes findings by impact (Critical, High, Medium, Low)
@@ -279,32 +284,32 @@ This plugin embodies expert performance knowledge across multiple domains:
 
 - N+1 query detection and optimization
 - Database indexing strategies
-- Query optimization techniques
-- Memory management best practices
-- Async/await patterns
+- Query optimization techniques (ORM-agnostic)
+- Memory management across platforms (JS/Node.js, .NET, Java, Go)
+- Async/await and concurrency patterns
+
+### Frontend Performance
+
+- Core Web Vitals optimization (LCP, INP, CLS)
+- Bundle analysis and tree-shaking
+- Framework-aware guidance (React, Vue, Svelte, Angular)
+- Streaming SSR and hydration cost optimization
+- Asset optimization (WebP/AVIF, responsive images, lazy loading)
 
 ### Scalability Assessment
 
-- Thread pool management
+- Thread pool and event loop management
 - Connection pooling strategies
-- Load balancing patterns
+- Concurrency and thread safety analysis
 - Caching architectures
-- Resource utilization optimization
-
-### Code Optimization
-
-- LINQ query optimization
-- Memory allocation patterns
-- Garbage collection tuning
-- CPU-intensive operation optimization
-- I/O operation efficiency
+- GraphQL performance (DataLoader, query depth limiting)
 
 ### Architecture Review
 
 - Data access layer optimization
 - Application layer performance
-- Infrastructure scalability
-- Monitoring and observability
+- Infrastructure and observability
+- Distributed tracing and monitoring setup
 - Performance testing strategies
 
 ---
@@ -324,9 +329,10 @@ This timestamp-based naming ensures multiple audits on the same day don't overwr
 ## 📦 Plugin Details
 
 - **Name:** AI-Performance
+- **Version:** 1.2.0
 - **Type:** Comprehensive Performance Optimization Toolkit
 - **Features:**
-  - Commands: `/performance-audit`
+  - Skills: `/performance-audit`
   - Agents: `performance-auditor`
 - **License:** MIT
 - **Author:** Charles Jones

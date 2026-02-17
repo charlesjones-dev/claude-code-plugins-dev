@@ -8,7 +8,7 @@
 
 Provides AI-powered Azure DevOps integration through the official Microsoft Azure DevOps MCP server, with intelligent configuration management, work item creation guidelines, and automated workflows that ensure consistency across your team.
 
-## 📋 Available Commands
+## 📋 Available Skills
 
 ### `/ado-init`
 
@@ -501,7 +501,7 @@ All work item creation commands (`/ado-create-feature`, `/ado-create-story`, `/a
 - **User Stories**: Titles, persona statements, background information, and acceptance criteria in Given/When/Then format
 - **Tasks**: Descriptive titles focused on work to be done
 
-### Core Commands
+### Core Skills
 
 The plugin provides six slash commands for complete Azure DevOps work item lifecycle management:
 
@@ -738,8 +738,9 @@ Future commands and features planned for this plugin:
 ## 📦 Plugin Details
 
 - **Name:** AI-ADO Plugin
-- **Type:** AI Instruction Plugin (Slash Commands)
-- **Commands:** `/ado-init`, `/ado-create-feature`, `/ado-create-story`, `/ado-create-task`, `/ado-log-story-work`, `/ado-timesheet-report`
+- **Type:** AI Instruction Plugin (Skills)
+- **Version:** 1.3.0
+- **Skills:** `/ado-init`, `/ado-create-feature`, `/ado-create-story`, `/ado-create-task`, `/ado-log-story-work`, `/ado-timesheet-report`
 - **MCP Integration:** Microsoft Azure DevOps MCP Server (optional, OS-aware configuration)
 - **Requirements:** Node.js 20+
 - **License:** MIT

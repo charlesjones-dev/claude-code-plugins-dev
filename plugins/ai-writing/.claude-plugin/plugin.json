@@ -1,0 +1,22 @@
+{
+  "name": "ai-writing",
+  "version": "1.0.0",
+  "description": "AI-powered writing quality tools - Detect and remove AI writing patterns to make text sound natural and human-written",
+  "author": {
+    "name": "Charles Jones",
+    "url": "https://charlesjones.dev"
+  },
+  "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev",
+  "license": "MIT",
+  "keywords": [
+    "ai",
+    "writing",
+    "humanizer",
+    "editing",
+    "content",
+    "quality",
+    "natural-language",
+    "ai-detection",
+    "skills"
+  ]
+}

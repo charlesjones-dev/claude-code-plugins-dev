@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is a marketplace for custom Claude Code plugins, skills, and other extensions. The repository follows a structured plugin system where each plugin is self-contained with its own metadata and commands.
+This is a marketplace for custom Claude Code plugins, skills, and other extensions. The repository follows a structured plugin system where each plugin is self-contained with its own metadata and skills.
 
 ## Official Documentation
 
@@ -37,15 +37,16 @@ plugins/
   {plugin-name}/
     .claude-plugin/
       plugin.json          # Plugin metadata
-    commands/
-      {command-name}.md     # Command implementations
+    skills/
+      {skill-name}/
+        SKILL.md            # Skill implementation
 ```
 
 ### Plugin Types
 
 Plugins can include:
-- **Slash commands**: Markdown files in `commands/` directory that define executable commands
-- Each command is a markdown file with instructions for Claude Code to execute
+- **Skills**: Markdown files in `skills/{skill-name}/SKILL.md` directories that define executable skills invoked as slash commands
+- Each skill is a markdown file with instructions for Claude Code to execute
 
 ## Development Workflow
 
@@ -74,10 +75,10 @@ The ai-plugins plugin provides a `/plugins-scaffold` command that interactively 
 ```
 
 This will:
-1. Ask interactive questions about your plugin (name, description, category, commands)
+1. Ask interactive questions about your plugin (name, description, category, skills)
 2. Create the complete directory structure under `plugins/{plugin-name}/`
 3. Generate plugin.json with proper metadata
-4. Create command templates with instructions
+4. Create skill templates with instructions
 5. Optionally generate README and LICENSE files
 6. Automatically register the plugin in `.claude-plugin/marketplace.json`
 
@@ -89,17 +90,17 @@ This will:
    - author information
    - keywords for discoverability
    - repository and license
-3. Implement commands in the `commands/` directory as markdown files
+3. Implement skills in the `skills/{skill-name}/SKILL.md` directory structure
 4. Register the plugin in the root `.claude-plugin/marketplace.json`
 
-### Command Development
+### Skill Development
 
-Commands are markdown files that provide instructions to Claude Code. They should:
+Skills are markdown files located at `skills/{skill-name}/SKILL.md` that provide instructions to Claude Code. They should:
 - Have a clear title and description
 - Include step-by-step instructions under an "## Instructions" section
 - Specify any important constraints or requirements (e.g., what NOT to include in outputs)
 
-Example from git-commit-push command (plugins/ai-git/commands/git-commit-push.md):
+Example from git-commit-push skill (plugins/ai-git/skills/git-commit-push/SKILL.md):
 ```
 IMPORTANT: Do not include the following in commit messages:
 - 🤖 Generated with [Claude Code](https://claude.com/claude-code)
@@ -159,7 +160,7 @@ When adding new features or fixing bugs in a plugin, follow this workflow:
    - Update usage examples if new commands were added
 
 5. **Update Plugin README** (`plugins/{plugin-name}/README.md`):
-   - Document new features, commands, or agents
+   - Document new features, skills, or agents
    - Update version in Plugin Details section
    - Add usage examples for new functionality
 

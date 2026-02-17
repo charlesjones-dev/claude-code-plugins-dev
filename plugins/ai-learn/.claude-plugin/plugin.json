@@ -1,6 +1,6 @@
 {
   "name": "ai-learn",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "AI-powered Socratic learning mode - Transform Claude into a patient coding mentor that guides you through problem-solving without giving direct answers",
   "author": {
     "name": "Charles Jones",

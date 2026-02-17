@@ -88,7 +88,7 @@ This plugin provides:
 
 **Use `/accessibility-audit` for:** Comprehensive WCAG compliance audits, formal accessibility documentation, and accessibility improvement roadmaps
 
-## 📋 Available Commands
+## 📋 Available Skills
 
 ### `/accessibility-audit`
 
@@ -113,8 +113,7 @@ Before starting the audit, the command will ask you:
 - ✅ **Forms** - Label associations, error handling, required field indication
 - ✅ **Alternative Text** - Images, icons, multimedia text alternatives
 - ✅ **Interactive Components** - Buttons, links, modals, custom widgets
-- ✅ **Screen Reader Support** - Accessible names, announcements, compatibility
-- ✅ **Mobile Accessibility** - Touch target sizes, viewport scaling, orientation support
+- ✅ **Responsive & Mobile** - Touch target sizes, viewport scaling, orientation support
 
 **Additional for URL Analysis with Playwright MCP:**
 - ✅ **Visual Color Contrast Testing** - Real-time contrast measurements of rendered elements
@@ -164,32 +163,18 @@ Specialized agent that performs deep accessibility analysis on codebases and liv
 **Focus Areas:**
 - Semantic HTML and document structure
 - ARIA implementation validation
-- Keyboard accessibility assessment
-- Color contrast analysis
-- Form accessibility evaluation
+- Keyboard accessibility and focus management
+- Color contrast and visual accessibility
+- Form and input accessibility
 - Alternative text validation
-- Interactive component review
-- Screen reader compatibility
+- Interactive components and custom widgets
+- Responsive and mobile accessibility
 
 ---
 
-## 📚 Available Skills
+---
 
-### `accessibility-auditing`
-
-Elite accessibility expertise skill that provides comprehensive WCAG knowledge, audit methodologies (for both codebase and URL analysis), and inclusive design guidance.
-
-**Expertise Areas:**
-- WCAG 2.1 and 2.2 conformance criteria (Levels A, AA, AAA)
-- Semantic HTML and ARIA best practices
-- Keyboard navigation patterns
-- Color contrast requirements
-- Form accessibility patterns
-- Alternative text guidelines
-- Interactive component accessibility (modals, dropdowns, tooltips)
-- Screen reader compatibility
-- Mobile and responsive accessibility
-- Playwright MCP visual accessibility testing
+> **Note:** The `/accessibility-audit` skill provides both the interactive audit workflow and comprehensive WCAG expertise (accessibility patterns, conformance criteria, remediation guidance, and Playwright MCP visual testing knowledge) in a single unified skill.
 
 ---
 
@@ -254,7 +239,8 @@ Elite accessibility expertise skill that provides comprehensive WCAG knowledge, 
 
 **WCAG 2.1 vs 2.2:**
 - **WCAG 2.1**: 50 success criteria across 13 guidelines
-- **WCAG 2.2**: 59 success criteria (adds 9 new criteria for mobile, cognitive accessibility)
+- **WCAG 2.2**: 59 success criteria (adds 9 new criteria for mobile, cognitive accessibility, removes SC 4.1.1 Parsing)
+  - New criteria: Focus Not Obscured (AA/AAA), Focus Appearance (AAA), Dragging Movements (AA), Target Size Minimum (AA), Consistent Help (A), Redundant Entry (A), Accessible Authentication (AA/AAA)
 
 **Conformance Levels:**
 - **Level A** (25 criteria) - Minimum accessibility, critical barriers
@@ -283,6 +269,7 @@ Elite accessibility expertise skill that provides comprehensive WCAG knowledge, 
 - Visible focus indicators (3:1 contrast minimum)
 - Skip navigation links
 - Focus management in modals/dialogs
+- WCAG 2.2: Focus Not Obscured (SC 2.4.11), Focus Appearance (SC 2.4.13)
 
 #### Color Contrast
 - Normal text: 4.5:1 minimum (AA), 7:1 (AAA)
@@ -298,6 +285,7 @@ Elite accessibility expertise skill that provides comprehensive WCAG knowledge, 
 - Error identification and suggestions
 - Accessible error messages (aria-describedby, aria-invalid)
 - Autocomplete attributes
+- WCAG 2.2: Redundant Entry (SC 3.3.7), Accessible Authentication (SC 3.3.8/3.3.9)
 
 #### Alternative Text
 - Descriptive alt text for informative images
@@ -314,6 +302,7 @@ Elite accessibility expertise skill that provides comprehensive WCAG knowledge, 
 - Tooltip accessibility
 - Dropdown/select accessibility
 - Custom widget ARIA patterns
+- WCAG 2.2: Consistent Help (SC 3.2.6)
 
 #### Mobile & Responsive
 - Touch target size: 44×44px minimum (AA)
@@ -321,3 +310,4 @@ Elite accessibility expertise skill that provides comprehensive WCAG knowledge, 
 - Text can be zoomed to 200%
 - Orientation not locked
 - Content reflows at 400% zoom
+- WCAG 2.2: Dragging Movements (SC 2.5.7), Target Size Minimum (SC 2.5.8)

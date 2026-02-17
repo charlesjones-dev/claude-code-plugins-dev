@@ -7,6 +7,181 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-02-16
+
+### Added
+
+#### AI-Writing Plugin (v1.0.0)
+
+- **New plugin for writing quality tools**
+  - Detect and remove signs of AI-generated writing from text
+  - Based on Wikipedia's "Signs of AI writing" guide maintained by WikiProject AI Cleanup
+
+- `/writing-humanize` skill for removing AI writing patterns
+  - Identifies 24 documented AI writing patterns across 6 categories: content, language/grammar, style, communication, filler/hedging, and personality
+  - Rewrites problematic sections with natural alternatives while preserving meaning
+  - Detects inflated significance, promotional language, superficial -ing analyses, vague attributions, overused AI vocabulary, em dash overuse, rule of three, negative parallelisms, sycophantic tone, and more
+  - Includes full before/after examples for each pattern category
+
+#### AI-Workflow Plugin (v1.3.0)
+
+- **Added `/workflow-ship` skill for end-to-end shipping workflow**
+  - Runs preflight checks (typecheck, lint, tests) via `/workflow-preflight`
+  - Auto-fixes linting and formatting issues, bails early if fixes were applied so user can review
+  - Interactive branch selection with `AskUserQuestion` (prevents direct commits to main/master)
+  - Commits with proper Co-Authored-By trailer and HEREDOC formatting
+  - Pushes to remote with automatic upstream tracking setup
+  - Creates PR with dynamic target branch selection (detects staging/main availability)
+  - PR body includes summary bullets, test plan, and Claude Code attribution
+  - Safety guards: never force pushes, never skips preflight, never commits secrets
+
+### Changed
+
+#### All Plugins
+
+- **Migrated all commands to skills** - eliminated `commands/` directories across all 8 remaining plugins
+  - All 21 slash commands now use the skills system exclusively, removing duplicate entries
+  - Standalone commands converted to skill directories with `SKILL.md` files
+  - Command+skill pairs merged into unified skill files (command workflow first, skill expertise below)
+  - All skills include `disable-model-invocation: true` to prevent auto-invocation
+  - Slash command names remain unchanged; no user-facing changes to invocation
+
+#### AI-Accessibility Plugin (v1.4.0)
+
+- Merged `/accessibility-audit` command into `accessibility-audit` skill
+- **Overhauled accessibility audit skill for conciseness, WCAG 2.2 coverage, and pattern alignment with peer plugins**
+  - Reduced SKILL.md from 1542 to 787 lines (~49% reduction) while preserving all functional content
+  - Added WCAG 2.2 criteria to 4 expertise areas: Keyboard (SC 2.4.11, 2.4.13), Forms (SC 3.3.7, 3.3.8, 3.3.9), Interactive (SC 3.2.6), Responsive (SC 2.5.7, 2.5.8)
+  - Added "WCAG 2.2 New Criteria" subsection with all 9 new success criteria and note on SC 4.1.1 Parsing removal
+  - Removed standalone "Playwright MCP Visual Accessibility Testing" expertise area (area 9); Playwright workflow consolidated into Audit Methodology
+  - Removed standalone "Code Remediation Examples" section (239 lines); findings already include remediation blocks
+  - Removed "Component-Level Accessibility Assessment" from report template (duplicated findings section)
+  - Reduced report template from 734 to ~186 lines with 2 format-demonstrating sample findings and clear placeholders
+  - Consolidated Audit Methodology from 137 to ~48 lines with numbered checklists referencing expertise areas by name
+  - Replaced "elite Accessibility Scanner" intro with professional, concise description
+  - Tightened severity framework to criteria-only descriptions matching security-audit pattern
+  - Added 3 concise before/after examples (Form Labels, Focus Indicators, ARIA Widget Pattern) replacing 6 verbose examples
+  - Trimmed Best Practices (8 to 6), QA Checklist (10 to 8), Context-Aware (5 to 4), removed closing paragraph from Communication
+- **Fixed agent skill reference**: `accessibility-auditing` to `accessibility-audit` in `accessibility-auditor` agent
+
+#### AI-ADO Plugin (v1.3.0)
+
+- Converted 6 commands to skills: `/ado-init`, `/ado-create-feature`, `/ado-create-story`, `/ado-create-task`, `/ado-log-story-work`, `/ado-timesheet-report`
+
+#### AI-Git Plugin (v1.2.0)
+
+- Converted 2 commands to skills: `/git-init`, `/git-commit-push`
+- **Added `/git-commit-push-pr` skill for commit, push, and PR workflow**
+  - Interactive branch selection with `AskUserQuestion` (prevents direct commits to main/master)
+  - Commits with proper Co-Authored-By trailer and HEREDOC formatting
+  - Pushes to remote with automatic upstream tracking setup
+  - Creates PR with dynamic target branch selection (detects staging/main availability)
+  - PR body includes summary bullets, test plan, and Claude Code attribution
+  - Lightweight alternative to `/workflow-ship` without preflight checks
+  - Safety guards: never force pushes, never commits secrets
+- **Hardened `/git-commit-push` skill with safety improvements from `/git-commit-push-pr`**
+  - Branch safety: blocks commits directly to main/master, suggests creating a feature branch
+  - Smart file staging: prefers specific files by name over `git add .` or `git add -A`
+  - Secrets detection: skips `.env`, `credentials.*`, `*.key`, `*.pem`, and other secret-like files
+  - Upstream tracking: checks for remote tracking branch and uses `-u` flag when needed
+  - HEREDOC formatting: uses HEREDOC for commit messages to ensure proper formatting
+  - No-changes guard: detects empty state and stops early
+  - Explicit safety rules: never force push, never use `git status -uall`
+  - Structured step-by-step flow replacing flat numbered list
+- **Improved `/git-init` skill with expanded technology support and lock file handling**
+  - Added Swift/iOS detection (`Package.swift`, `*.xcodeproj`, `*.xcworkspace`) with Xcode, SPM, CocoaPods, Carthage, and Fastlane patterns
+  - Added Flutter/Dart detection (`pubspec.yaml`) with platform-specific patterns for Android and iOS build artifacts
+  - Added C/C++ detection (`CMakeLists.txt`, `Makefile`, `*.vcxproj`, `meson.build`) with compiled object and CMake patterns
+  - Added Deno detection (`deno.json`, `deno.jsonc`, `deno.lock`)
+  - Added Nuxt-specific build outputs (`.output/`, `.nitro/`, `.data/`) to Node.js patterns
+  - Fixed Rust `Cargo.lock` handling: now commented out with guidance (commit for apps, ignore for libraries)
+  - Fixed PHP `composer.lock` handling: now commented out with guidance (commit for apps, ignore for libraries)
+  - Fixed Python `*.ipynb`: changed from default-ignore to commented out (many projects commit notebooks)
+  - Fixed Go `go.work`: changed from default-ignore to commented out (some teams commit it)
+  - Added `.env.template` and `.env.sample` negation patterns alongside `.env.example`
+  - Updated lock file handling docs to cover Rust and PHP alongside Node.js
+
+#### AI-Learn Plugin (v1.1.0)
+
+- Converted 2 commands to skills: `/learn`, `/learn-review`
+
+#### AI-Performance Plugin (v1.2.0)
+
+- Merged `/performance-audit` command into `performance-audit` skill
+- **Overhauled performance audit skill for technology-agnostic, modern analysis**
+  - Replaced .NET-centric report template with stack-agnostic placeholders that adapt to any project
+  - Removed pre-filled example findings (P-001 through P-007) from template; agent now discovers real findings only
+  - Added Core Web Vitals (LCP, INP, CLS) as primary frontend metrics, replacing outdated FCP/TTI focus
+  - Added severity scoring criteria with 1.0-10.0 scale, defined thresholds, and weighted scoring factors
+  - Added framework-aware frontend guidance for React, Vue, Svelte, and Angular (previously React-only)
+  - Added new "Concurrency and Thread Safety" section covering race conditions, deadlocks, connection pool exhaustion, and event loop blocking
+  - Added new "Memory Performance" section with platform-specific patterns for JavaScript/Node.js and managed languages (.NET, Java, Go)
+  - Added new "Observability" section covering metrics, logs, and distributed tracing (OpenTelemetry, Jaeger)
+  - Added streaming/SSR performance guidance (React Server Components, Nuxt, SvelteKit, edge rendering)
+  - Added GraphQL performance patterns (query depth limiting, DataLoader, persisted queries)
+  - Added bundle analysis and tree-shaking to asset optimization guidance
+  - Added Node.js event loop blocking example to skill examples
+  - Enhanced asset loading example with modern formats (AVIF, WebP) and `<picture>` element
+  - Added concurrency anti-patterns section (shared mutable state, deadlocks, connection pool exhaustion)
+  - Expanded QA checklist with rollback planning, realistic data volume testing, and error path verification
+  - Added template requirements for stack detection and instructions to tailor findings to project technology
+
+#### AI-Security Plugin (v1.4.0)
+
+- Converted `/security-init` command to skill
+- Merged `/security-audit` command into `security-audit` skill
+- Merged `/security-scan-dependencies` command into `security-scan-dependencies` skill
+- **Overhauled security audit skill with modern attack coverage and placeholder-based templates**
+  - Replaced hardcoded fake example data in report template (e.g., `src/Website.Data/Services/UserService.cs:45`) with placeholder guidance pattern (`[exact/file/path.ext:line_number]`) to prevent models from copying template examples verbatim
+  - Added explicit template requirements: replace all bracketed placeholders, tailor code to detected stack, show "No [severity] issues identified" for empty severity levels
+  - Added severity scoring table with 1.0-10.0 scale, defined thresholds, criteria, examples, and weighted scoring factors (exploitability, impact scope, data sensitivity, attack complexity, blast radius)
+  - Added new "Supply Chain Security" section covering dependency confusion, typosquatting, lock file integrity, build pipeline secrets, Dockerfile security, and GitHub Actions injection
+  - Added new "Modern API Attack Vectors" section covering GraphQL introspection/batching/depth attacks, WebSocket auth/rate limiting, SSRF cloud metadata endpoints, and API key leakage in client bundles
+  - Added new "Modern Authentication Patterns" section covering passkeys/WebAuthn, OAuth 2.1/PKCE, JWT algorithm confusion, token lifecycle, and session fixation in SPAs
+  - Added "Technology-Specific Security Considerations" section with language-specific vulnerabilities for Node.js (prototype pollution, ReDoS), Python (pickle, SSTI), .NET (XXE, BinaryFormatter), and Go (request smuggling, goroutine races)
+  - Added 2 new examples: JWT algorithm confusion (JavaScript) and SSRF prevention (Python), bringing total to 5 multi-language examples
+  - Added `allowed-tools` frontmatter to all 3 skills
+- **Overhauled dependency scanning skill with expanded library detection and placeholder templates**
+  - Replaced hardcoded findings (jQuery CVE, Bootstrap CVE, WordPress version, CSP header, Referrer-Policy examples) with placeholder guidance patterns
+  - Fixed incorrect Context7 tool reference: `mcp__context7__get-library-docs` to `mcp__context7__query-docs`
+  - Updated scanner version from v1.0 to v1.4.0 in report template
+  - Expanded UI framework detection: added Solid.js, Lit, Alpine.js, HTMX, Qwik
+  - Renamed "Server Frameworks" to "Meta-Frameworks" and added Remix, SvelteKit, Astro
+  - Added meta-framework detection methods (Next.js `__NEXT_DATA__`, Nuxt `__NUXT__`, Remix `__remixContext`, SvelteKit `__sveltekit_`, Astro `astro-island`, Gatsby `___gatsby`)
+  - Added headless CMS detection: Strapi, Sanity, Contentful, Payload CMS
+  - Expanded build tool detection: added esbuild, SWC, Turbopack
+  - Expanded analytics detection: added Plausible, PostHog
+  - Added recent CVE examples: Lodash prototype pollution (CVE-2021-23337), Next.js SSRF (CVE-2024-34351), jsonwebtoken (CVE-2022-23529), Axios SSRF, Angular.js EOL
+- **Enhanced security-init skill with expanded technology support**
+  - Added Deno detection (`deno.json`, `deno.lock`) with `.deno/**` deny patterns
+  - Added Swift/iOS detection (`Package.swift`, `*.xcodeproj`) with `.build/**`, `DerivedData/**`, `Pods/**` deny patterns
+  - Added Kotlin/Android detection (`build.gradle.kts`, `AndroidManifest.xml`) with `build/**`, `.gradle/**`, `local.properties` deny patterns
+  - Added Terraform/IaC detection (`*.tf`, `*.tfvars`) with `*.tfstate`, `.terraform/**` deny patterns
+  - Added Kubernetes detection (`kustomization.yaml`, `Chart.yaml`) with `**/secrets.yaml` deny patterns
+  - Added base security patterns: CI/CD secrets (`.github/secrets/**`), package manager auth (`.npmrc`, `.yarnrc.yml`), deployment configs (`.vercel/**`, `.netlify/**`)
+  - Added post-install verification step to confirm settings were saved correctly
+- **Fixed agent skill references**
+  - `security-auditor` agent: `security-auditing` to `security-audit`, fixed `it's` to `its`, expanded focus areas with modern attack vectors
+  - `security-dependency-scanner` agent: `security-dependency-scanning` to `security-scan-dependencies`, expanded focus areas with meta-frameworks, headless CMS, and build tools
+
+#### AI-Statusline Plugin (v1.2.0)
+
+- Merged `/statusline-wizard` command into `statusline-wizard` skill
+- Converted `/statusline-edit` command to skill
+
+#### AI-Workflow Plugin (v1.3.0)
+
+- Merged `/workflow-plan-phases` command into `workflow-plan-phases` skill
+- Merged `/workflow-implement-phases` command into `workflow-implement-phases` skill
+- Merged `/workflow-preflight` command into `workflow-preflight` skill
+- Renamed `/ship` skill to `/workflow-ship` for naming consistency
+
+### Removed
+
+#### AI-Plugins Plugin
+
+- **Removed ai-plugins plugin entirely** - Claude Code handles plugin creation natively
+
 ## [1.9.1] - 2026-01-18
 
 ### Added
@@ -264,7 +439,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Screenshots saved to `/docs/accessibility/screenshots/` directory
 - Updated `/accessibility-audit` command to support URL scanning with Question 4 for Playwright MCP preference
 - Enhanced `accessibility-auditor` agent with dual analysis approach (codebase vs URL with Playwright)
-- Enhanced `accessibility-auditing` skill with Playwright MCP expertise and visual testing methodology
+- Enhanced `accessibility-audit` skill with Playwright MCP expertise and visual testing methodology
 
 #### All Plugins
 
@@ -523,7 +698,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.9.1...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.9.1...v2.0.0
 [1.9.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.7.1...v1.8.0
