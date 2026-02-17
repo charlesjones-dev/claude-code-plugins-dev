@@ -16,7 +16,7 @@ Claude Opus 4.5 · 42k/100k ▓▓▓▓░░░░░░ 42% · my-project · 
 
 ---
 
-## Available Commands
+## Available Skills
 
 ### `/statusline-wizard`
 
@@ -74,14 +74,6 @@ Edit your existing status line configuration.
 ```
 
 **Note:** If no status line script exists, you'll be prompted to run `/statusline-wizard` first.
-
----
-
-## Available Skills
-
-### `statusline-setup`
-
-Guide for configuring Claude Code's status line with customizable display options and progress bars. This skill provides the methodology and templates used by both commands.
 
 ---
 
@@ -275,11 +267,10 @@ Install jq using your package manager (see Requirements section above).
 ## Plugin Details
 
 - **Name:** AI-Statusline
-- **Version:** 1.1.0
+- **Version:** 1.2.0
 - **Type:** UI Customization
 - **Features:**
-  - Commands: `/statusline-wizard`, `/statusline-edit`
-  - Skills: `statusline-setup`
+  - Skills: `/statusline-wizard`, `/statusline-edit`
 - **License:** MIT
 - **Author:** Charles Jones
 

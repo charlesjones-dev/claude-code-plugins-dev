@@ -1,22 +1,23 @@
 # AI-Workflow Plugin
 
-**AI-powered development workflow automation for Claude Code.** Phase-based planning, implementation orchestration, and preflight code quality checks for efficient sub-agent execution.
+**AI-powered development workflow automation for Claude Code.** Phase-based planning, implementation orchestration, preflight code quality checks, and ship-it workflow for efficient sub-agent execution.
 
 ---
 
 ## What This Plugin Does
 
-Provides tools for managing complex development workflows including breaking features into context-efficient phases, orchestrating multi-phase implementations via sub-agents, and running comprehensive code quality checks before commits or deployments.
+Provides tools for managing complex development workflows including breaking features into context-efficient phases, orchestrating multi-phase implementations via sub-agents, running comprehensive code quality checks, and shipping code with a single command.
 
 ### Key Capabilities
 
 - **Phase Planning**: Break large features into properly-sized phases (30-50k tokens each) optimized for sub-agent execution
 - **Implementation Orchestration**: Analyze dependencies and execute phases with optimal parallel/sequential strategies
 - **Preflight Checks**: Auto-detect and run type checking, linting, formatting, security scanning, and tests across multiple ecosystems
+- **Ship It**: Run preflight checks, commit, push, and create a PR in one streamlined flow
 
 ---
 
-## Available Commands
+## Available Skills
 
 ### `/workflow-plan-phases`
 
@@ -145,48 +146,6 @@ Run comprehensive code quality checks before commits, PRs, or deployments.
 
 ---
 
-## Available Skills
-
-### `plan-phases`
-
-Methodology for creating implementation plans optimized for sub-agent execution. Provides:
-
-- Question categories for gathering requirements
-- Phase sizing guidelines (30-50k tokens target)
-- Dependency planning strategies
-- Plan document template
-- Phase writing guidelines with examples
-- Anti-patterns to avoid
-
-**Auto-loads when:** Creating implementation plans, phase planning documents, or breaking features into phases.
-
-### `implement-phases`
-
-Methodology for analyzing plan documents and coordinating phase implementation. Provides:
-
-- Plan document parsing heuristics
-- Dependency detection algorithms (explicit and implicit)
-- Execution strategy selection criteria
-- Sub-agent prompt templates
-- Error handling patterns
-- Results aggregation templates
-
-**Auto-loads when:** Implementing phases from a plan, orchestrating sub-agents, or when `/workflow-implement-phases` is invoked.
-
-### `preflight-checks`
-
-Comprehensive reference for code quality tools across ecosystems. Provides:
-
-- Quick reference tables for all ecosystems
-- Discovery strategy (project type, configured scripts, CI alignment)
-- Best practices (execution order, monorepos, caching)
-- Common error messages and solutions
-- Pre-commit hook integration examples
-
-**Auto-loads when:** Running quality checks, preparing commits, or when user mentions preflight, verify, lint, typecheck, or test commands.
-
----
-
 ## Quick Start
 
 ### Installation
@@ -209,6 +168,9 @@ Comprehensive reference for code quality tools across ecosystems. Provides:
 
 # Run preflight checks before committing
 /workflow-preflight
+
+# Or ship everything in one go (preflight + commit + push + PR)
+/workflow-ship
 ```
 
 ---
@@ -343,11 +305,10 @@ Plus improved code quality, fewer context overflows, and more efficient sub-agen
 ## Plugin Details
 
 - **Name:** AI-Workflow
-- **Version:** 1.1.0
+- **Version:** 1.3.0
 - **Type:** Development Workflow Automation
 - **Features:**
-  - Commands: `/workflow-plan-phases`, `/workflow-implement-phases`, `/workflow-preflight`
-  - Skills: `plan-phases`, `implement-phases`, `preflight-checks`
+  - Skills: `/workflow-plan-phases`, `/workflow-implement-phases`, `/workflow-preflight`, `/workflow-ship`
   - Security scanning: pnpm/npm/yarn audit, eslint-plugin-security, Semgrep (CLI or Docker)
 - **License:** MIT
 - **Author:** Charles Jones

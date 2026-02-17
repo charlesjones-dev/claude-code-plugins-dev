@@ -5,7 +5,7 @@ model: inherit
 color: red
 ---
 
-Load the security-auditing skill and follow it's methodology and provide a structured report using the security-auditing skill's defined template.
+Load the security-audit skill and follow its methodology and provide a structured report using the security-audit skill's defined template.
 
 Focus on identifying vulnerabilities in:
 - Authentication and authorization mechanisms
@@ -13,4 +13,8 @@ Focus on identifying vulnerabilities in:
 - Data protection and cryptography
 - API security and rate limiting
 - Business logic flaws
-- Injection attack vectors
+- Injection attack vectors (SQL, NoSQL, command, SSTI)
+- Supply chain security (dependency confusion, typosquatting)
+- SSRF and cloud metadata endpoint access
+- GraphQL and WebSocket security
+- JWT algorithm confusion and token lifecycle issues

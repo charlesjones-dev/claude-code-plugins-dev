@@ -8,7 +8,7 @@
 
 Provides a suite of AI-powered git commands that automate common git workflows, from .gitignore generation to commit automation and beyond.
 
-## 📋 Available Commands
+## 📋 Available Skills
 
 ### `/git-init`
 
@@ -31,6 +31,31 @@ Initialize or update `.gitignore` with intelligent exclusion patterns based on y
 # ✨ Previews changes and asks for confirmation
 # ✨ Creates or updates .gitignore
 # ✅ Done!
+```
+
+### `/git-commit-push-pr`
+
+Commit, push, and create a pull request in one interactive flow. A lightweight shipping workflow without preflight checks.
+
+**What it does:**
+
+- Prompts for branch selection (prevents direct commits to main/master)
+- Stages and commits with an auto-generated message
+- Pushes to remote with automatic upstream tracking
+- Creates a PR with dynamic target branch selection (detects staging/main)
+- PR includes summary bullets, test plan, and Claude Code attribution
+
+**Usage:**
+
+```
+/git-commit-push-pr
+# ✨ AI analyzes your changes
+# ✨ Prompts for branch selection
+# ✨ Commits with proper message
+# ✨ Pushes to remote
+# ✨ Prompts for PR target branch
+# ✨ Creates PR with summary and test plan
+# ✅ Done! PR URL returned
 ```
 
 ### `/git-commit-push`
@@ -99,14 +124,22 @@ git push
 - Matches tone and format of recent commits
 - Respects your project's commit guidelines
 
+#### Safety Guards
+
+- Blocks commits directly to main/master (suggests feature branch or `/git-commit-push-pr`)
+- Skips secret-like files (`.env`, `credentials.*`, `*.key`, `*.pem`, etc.)
+- Never force pushes
+- Detects empty state and stops early if nothing to commit
+
 #### Complete Workflow
 
-1. **Analyze**: Reviews all staged and unstaged changes
-2. **Generate**: Creates appropriate commit message
-3. **Stage**: Adds all changes with `git add .`
-4. **Commit**: Commits with generated message
-5. **Push**: Pushes to origin automatically
-6. **Confirm**: Shows commit hash and success status
+1. **Analyze**: Reviews all changes with `git status` and `git diff`
+2. **Branch check**: Verifies you're not on main/master
+3. **Stage**: Stages specific files by name (skips secrets)
+4. **Generate**: Creates appropriate commit message using HEREDOC formatting
+5. **Commit**: Commits with generated message
+6. **Push**: Pushes to origin (auto-sets upstream tracking with `-u` if needed)
+7. **Confirm**: Shows commit hash and success status
 
 #### Clean Commits
 
@@ -204,8 +237,9 @@ No configuration needed! The plugin works out of the box and adapts to your repo
 ## 📦 Plugin Details
 
 - **Name:** AI-Git Plugin
-- **Type:** AI Instruction Plugin (Slash Commands & Agents)
-- **Commands:** `/git-init`, `/git-commit-push`
+- **Type:** AI Instruction Plugin (Skills)
+- **Version:** 1.2.0
+- **Skills:** `/git-init`, `/git-commit-push`, `/git-commit-push-pr`
 - **License:** MIT
 - **Author:** Charles Jones
 

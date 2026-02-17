@@ -8,7 +8,7 @@
 
 Switches Claude from code-generation mode to teaching mode. Instead of giving you solutions, Claude asks probing questions, provides hints, and guides you toward discovering answers yourself. The result: you actually learn and retain the knowledge rather than passively consuming AI-generated code.
 
-## Available Commands
+## Available Skills
 
 ### `/learn`
 
@@ -189,9 +189,9 @@ Learning requires agency. Forced struggle past the point of productivity isn't h
 ## Plugin Details
 
 - **Name:** AI-Learn Plugin
-- **Type:** AI Instruction Plugin (Slash Commands)
-- **Commands:** `/learn`, `/learn-review`
-- **Version:** 1.0.0
+- **Type:** AI Instruction Plugin (Skills)
+- **Skills:** `/learn`, `/learn-review`
+- **Version:** 1.1.0
 - **License:** MIT
 - **Author:** Charles Jones
 

@@ -5,7 +5,7 @@ model: inherit
 color: red
 ---
 
-Load the accessibility-auditing skill and follow its methodology to produce a structured accessibility audit report.
+Load the accessibility-audit skill and follow its methodology to produce a structured accessibility audit report.
 
 The invoker will provide:
 - **WCAG version** (2.1 or 2.2) and **conformance level** (A, AA, or AAA)

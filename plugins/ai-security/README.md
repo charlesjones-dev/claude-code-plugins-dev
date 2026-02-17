@@ -81,7 +81,7 @@ This plugin enhances security scanning by providing:
 
 **Use `/security-audit` for:** Formal security audits, compliance documentation, and repeatable security assessments
 
-## 📋 Available Commands
+## 📋 Available Skills
 
 ### `/security-init`
 
@@ -89,7 +89,7 @@ Initialize Claude Code security settings by automatically configuring `.claude/s
 
 **What it does:**
 
-- 🔍 **Scans your project** to detect technologies (Node.js, Python, .NET, Go, Rust, PHP, Docker, etc.)
+- 🔍 **Scans your project** to detect technologies (Node.js, Python, .NET, Go, Rust, PHP, Docker, Deno, Swift/iOS, Kotlin/Android, Terraform, Kubernetes, etc.)
 - 🛡️ **Builds comprehensive deny patterns** to prevent Claude Code from reading sensitive files:
   - Environment files (`.env`, `.env.*`)
   - Credentials and secrets (`credentials.json`, `secrets.yml`)
@@ -97,7 +97,11 @@ Initialize Claude Code security settings by automatically configuring `.claude/s
   - Cloud provider configs (`.aws/credentials`, `.gcp/*`)
   - Build artifacts (`node_modules`, `bin/`, `obj/`, `target/`, `vendor/`)
   - Version control and IDE files (`.git/`, `.vscode/`, `.idea/`)
+  - CI/CD secrets (`.github/secrets/**`, `.gitlab-ci-local/**`)
+  - Package manager auth (`.npmrc`, `.yarnrc.yml`)
+  - Deployment configs (`.vercel/**`, `.netlify/**`)
 - 🔄 **Smart merging** with existing settings (preserves your custom configurations)
+- 🔍 **Post-install verification** confirms settings were saved correctly
 - 📊 **Shows preview** before making changes
 - ✅ **User confirmation** required before writing
 
@@ -136,10 +140,13 @@ Scan a deployed website for outdated dependencies, known CVEs, and security misc
 
 - 🌐 **Scans deployed websites** by URL (no source code needed)
 - 📚 **Detects frontend libraries** via CDN patterns, meta tags, and script analysis:
-  - jQuery, React, Vue, Angular, Bootstrap, Tailwind, and 20+ popular libraries
+  - jQuery, React, Vue, Angular, Svelte, Solid.js, Lit, Alpine.js, HTMX, Qwik, Bootstrap, Tailwind, and more
+- 🏗️ **Detects meta-frameworks** from client-side artifacts:
+  - Next.js, Nuxt, Remix, SvelteKit, Astro, Gatsby
 - 🏢 **Identifies CMS platforms** with version detection:
   - Open source: WordPress, Drupal, Joomla
   - Enterprise .NET: Umbraco, Sitecore, Optimizely, Kentico
+  - Headless CMS: Strapi, Sanity, Contentful, Payload CMS
 - 🔒 **Analyzes HTTP security headers**:
   - CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
 - 🔍 **Checks for known CVEs** in detected library versions with CVSS scoring
@@ -207,15 +214,9 @@ Specialized agent that scans deployed websites for outdated dependencies, CVEs, 
 
 ---
 
-## 📚 Available Skills
+---
 
-### `security-auditing`
-
-Comprehensive methodology for conducting source code security audits with vulnerability detection, OWASP Top 10 compliance checking, and detailed reporting.
-
-### `security-dependency-scanning`
-
-Complete guide for web dependency security scanning including library detection, CMS fingerprinting, security header analysis, CVE identification, and Context7 integration.
+> **Note:** The `/security-audit` and `/security-scan-dependencies` skills each provide both the interactive workflow and comprehensive security expertise (OWASP Top 10, vulnerability detection, dependency scanning, CVE identification, and remediation guidance) in their respective unified skills.
 
 ---
 
@@ -268,6 +269,11 @@ Automatically detects your project's technology stack by scanning for indicator 
 - **Ruby**: `Gemfile`, `Gemfile.lock`
 - **Java**: `pom.xml`, `build.gradle`, `build.gradle.kts`
 - **Docker**: `Dockerfile`, `docker-compose.yml`
+- **Deno**: `deno.json`, `deno.jsonc`, `deno.lock`
+- **Swift/iOS**: `Package.swift`, `*.xcodeproj`, `*.xcworkspace`
+- **Kotlin/Android**: `build.gradle.kts`, `settings.gradle.kts`, `AndroidManifest.xml`
+- **Terraform/IaC**: `*.tf`, `*.tfvars`, `terraform.tfstate`
+- **Kubernetes**: `kustomization.yaml`, `Chart.yaml`, `values.yaml`
 
 #### Comprehensive File Denial Patterns
 
@@ -289,6 +295,11 @@ Builds an intelligent deny list with 40-60+ patterns covering:
 - **PHP**: `vendor/`
 - **Ruby**: `vendor/bundle/`, `.bundle/`
 - **Java**: `target/`, `*.class`, `.gradle/`
+- **Deno**: `.deno/`
+- **Swift/iOS**: `.build/`, `DerivedData/`, `Pods/`, `*.xcuserdata/`
+- **Kotlin/Android**: `build/`, `.gradle/`, `local.properties`
+- **Terraform/IaC**: `*.tfstate`, `.terraform/`, `*.tfvars`
+- **Kubernetes/Helm**: `**/secrets.yaml`, `**/secrets.yml`
 
 **Version Control & IDE:**
 - `.git/**`, `.vscode/**`, `.idea/**`
@@ -321,6 +332,10 @@ Before making any changes, see:
 - **Authorization Issues**: Finds missing or improper access controls
 - **Hardcoded Secrets**: Locates API keys, passwords, and sensitive data in code
 - **Insecure Direct Object References**: Identifies missing ownership validation
+- **Supply Chain Security**: Dependency confusion, typosquatting, lock file integrity, build pipeline secrets
+- **Modern API Attacks**: GraphQL introspection/batching, WebSocket auth, SSRF cloud metadata endpoints
+- **JWT Algorithm Confusion**: RS256/HS256 key confusion, "none" algorithm acceptance
+- **Technology-Specific**: Node.js prototype pollution, Python pickle/SSTI, .NET XXE/BinaryFormatter, Go race conditions
 
 #### OWASP Top 10 2021 Compliance
 
@@ -372,7 +387,9 @@ Reports include before/after code examples showing:
 - **CDN Pattern Matching**: Identifies libraries from jsDelivr, unpkg, cdnjs, Google Hosted Libraries URLs
 - **Version Extraction**: Parses version numbers from filenames, CDN paths, and meta tags
 - **Global Variable Detection**: Documents detection of version-exposing globals (jQuery.fn.jquery, React.version)
-- **Build Artifact Analysis**: Detects Webpack, Vite, Parcel from bundle patterns
+- **Build Artifact Analysis**: Detects Webpack, Vite, Parcel, esbuild, SWC, Turbopack from bundle patterns
+- **Meta-Framework Detection**: Next.js (`__NEXT_DATA__`), Nuxt (`__NUXT__`), Remix (`__remixContext`), SvelteKit (`__sveltekit_`), Astro (`astro-island`), Gatsby (`___gatsby`)
+- **Headless CMS Detection**: Strapi, Sanity (`cdn.sanity.io`), Contentful (`cdn.contentful.com`), Payload CMS
 
 #### CMS and Platform Detection
 
@@ -433,6 +450,9 @@ The `/security-audit` command uses Claude Code's specialized **security-auditor 
    - Finds authentication bypass opportunities
    - Locates hardcoded secrets
    - Checks for missing authorization
+   - Analyzes supply chain security risks
+   - Detects modern API attack vectors (GraphQL, WebSocket, SSRF)
+   - Applies technology-specific vulnerability patterns
 
 3. **Report Generation**
    - Categorizes findings by severity (Critical, High, Medium, Low)
@@ -521,8 +541,11 @@ This plugin embodies expert security knowledge across multiple domains:
 - OWASP Top 10 vulnerability patterns (2021 & 2025)
 - Common authentication/authorization flaws
 - SQL injection and XSS attack vectors
-- API security vulnerabilities
-- Cryptographic weaknesses
+- API security vulnerabilities (REST, GraphQL, WebSocket)
+- Cryptographic weaknesses and JWT algorithm confusion
+- Supply chain security (dependency confusion, typosquatting)
+- SSRF and cloud metadata endpoint access
+- Technology-specific patterns (Node.js prototype pollution, Python pickle/SSTI, .NET XXE, Go race conditions)
 
 ### Secure Development
 
@@ -563,12 +586,11 @@ This timestamp-based naming ensures multiple audits on the same day don't overwr
 ## 📦 Plugin Details
 
 - **Name:** AI-Security
-- **Version:** 1.3.0
+- **Version:** 1.4.0
 - **Type:** Comprehensive Security Toolkit
 - **Features:**
-  - Commands: `/security-init`, `/security-audit`, `/security-scan-dependencies`
+  - Skills: `/security-init`, `/security-audit`, `/security-scan-dependencies`
   - Agents: `security-auditor`, `security-dependency-scanner`
-  - Skills: `security-auditing`, `security-dependency-scanning`
 - **License:** MIT
 - **Author:** Charles Jones
 
