@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-03-19
+
+### Added
+
+#### AI-Statusline Plugin (v1.2.2)
+
+- **Added rate limit usage display** - Shows 5-hour and 7-day rate limit percentages with color-coded thresholds (green <50%, yellow 50-79%, red 80%+)
+  - New `SHOW_RATE_LIMITS` configuration option (enabled by default)
+  - Reads `rate_limits.five_hour.used_percentage` and `rate_limits.seven_day.used_percentage` from the statusline JSON input
+  - Requires Claude Code 2.1.80+ (gracefully hidden on older versions where the field is absent)
+  - Updated both Bash and PowerShell script templates
+  - Added to `/statusline-wizard` and `/statusline-edit` question flows
+
 ## [2.0.1] - 2026-02-17
 
 ### Fixed

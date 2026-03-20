@@ -1,6 +1,6 @@
 {
   "name": "ai-statusline",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "AI-powered status line customization - Interactive setup and edit wizards for configuring Claude Code's status line with progress bars and customizable display options",
   "author": {
     "name": "Charles Jones",

@@ -11,7 +11,7 @@ Provides interactive commands to configure Claude Code's status line with visual
 ### Example Status Line
 
 ```
-Claude Opus 4.5 · 42k/100k ▓▓▓▓░░░░░░ 42% · my-project · main · 5m 23s · 2:45pm · v1.0.24
+Claude Opus 4.6 · 42k/100k ▓▓▓▓░░░░░░ 42% · 5h:12% 7d:4% · my-project · main · 5m 23s · 2:45pm · v2.1.80
 ```
 
 ---
@@ -44,7 +44,7 @@ The wizard asks about three categories of display options:
 1. **Context Display** (what to show about your Claude session)
    - Token count (e.g., "50k/100k")
    - Progress bar (visual percentage indicator)
-   - Model name (e.g., "Claude Opus 4.5")
+   - Model name (e.g., "Claude Opus 4.6")
 
 2. **Project Display** (what to show about your project)
    - Current directory name
@@ -55,6 +55,7 @@ The wizard asks about three categories of display options:
    - Current time
    - Claude Code version
    - Session cost (disabled by default)
+   - Rate limit usage - 5h and 7d windows (requires Claude Code 2.1.80+)
 
 ### `/statusline-edit`
 
@@ -106,7 +107,7 @@ Edit your existing status line configuration.
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| Model name | On | Display model name (e.g., "Claude Opus 4.5") |
+| Model name | On | Display model name (e.g., "Claude Opus 4.6") |
 | Token count | On | Display token usage (e.g., "50k/100k") |
 | Progress bar | On | Display visual progress bar with percentage |
 | Current directory | On | Display current working directory name |
@@ -115,6 +116,7 @@ Edit your existing status line configuration.
 | Current time | On | Display current time |
 | Claude Code version | On | Display Claude Code version number |
 | Session cost | Off | Display session cost in USD |
+| Rate limit usage | On | Display 5-hour and 7-day rate limit percentages (requires Claude Code 2.1.80+) |
 
 ---
 
@@ -131,6 +133,18 @@ The progress bar uses Unicode block characters to show context usage:
 ```
 
 Color changes automatically based on usage level to help you monitor context consumption.
+
+### Rate Limit Display
+
+Shows your 5-hour and 7-day rate limit usage with color coding:
+
+```
+5h:12% 7d:4%    (Green - under 50%)
+5h:65% 7d:42%   (Yellow - 50-79%)
+5h:92% 7d:85%   (Red - 80%+)
+```
+
+Requires Claude Code 2.1.80 or later. The `rate_limits` field is not available in earlier versions.
 
 ### Cross-Platform Support
 
@@ -223,6 +237,7 @@ SHOW_COST=false           # Show session cost
 SHOW_DURATION=true        # Show session duration
 SHOW_TIME=true            # Show current time
 SHOW_VERSION=true         # Show Claude Code version
+SHOW_RATE_LIMITS=true     # Show rate limit usage (5h/7d, requires CC 2.1.80+)
 ```
 
 **PowerShell (`~/.claude/statusline.ps1`):**
@@ -236,6 +251,7 @@ $SHOW_COST = $false
 $SHOW_DURATION = $true
 $SHOW_TIME = $true
 $SHOW_VERSION = $true
+$SHOW_RATE_LIMITS = $true
 ```
 
 ---
@@ -267,7 +283,7 @@ Install jq using your package manager (see Requirements section above).
 ## Plugin Details
 
 - **Name:** AI-Statusline
-- **Version:** 1.2.1
+- **Version:** 1.2.2
 - **Type:** UI Customization
 - **Features:**
   - Skills: `/statusline-wizard`, `/statusline-edit`

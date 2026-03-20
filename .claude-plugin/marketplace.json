@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A curated list of custom Claude Code plugins, agents, and skills for developers.",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -154,8 +154,8 @@
     {
       "name": "ai-statusline",
       "source": "./plugins/ai-statusline",
-      "description": "AI-powered status line customization - Interactive setup and edit wizards for configuring Claude Code's status line with progress bars and customizable display options",
-      "version": "1.2.1",
+      "description": "AI-powered status line customization - Interactive setup and edit wizards for configuring Claude Code's status line with progress bars, rate limit display, and customizable display options",
+      "version": "1.2.2",
       "keywords": [
         "ai",
         "statusline",
