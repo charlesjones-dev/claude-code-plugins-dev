@@ -42,6 +42,7 @@ SHOW_COST=false
 SHOW_DURATION=true
 SHOW_TIME=true
 SHOW_VERSION=true
+SHOW_RATE_LIMITS=true
 ```
 
 **For PowerShell scripts**, look for lines like:
@@ -55,6 +56,7 @@ $SHOW_COST = $false
 $SHOW_DURATION = $true
 $SHOW_TIME = $true
 $SHOW_VERSION = $true
+$SHOW_RATE_LIMITS = $true
 ```
 
 Store the current values to use as defaults in the wizard.
@@ -80,6 +82,7 @@ Options (pre-select based on current config):
 - Current time - select if SHOW_TIME=true
 - Claude Code version - select if SHOW_VERSION=true
 - Session cost - select if SHOW_COST=true
+- Rate limit usage (5h/7d) - select if SHOW_RATE_LIMITS=true
 
 ### Phase 4: Update Script
 
@@ -87,14 +90,14 @@ Update ONLY the SHOW_* variables at the top of the existing script file based on
 
 **For Bash**: Use Edit tool to replace the configuration block:
 ```bash
-SHOW_MODEL=true           # Show model name (e.g., "Claude Opus 4.5")
+SHOW_MODEL=true           # Show model name (e.g., "Claude Opus 4.6")
 SHOW_TOKEN_COUNT=true     # Show token usage count (e.g., "50k/100k")
 ...
 ```
 
 **For PowerShell**: Use Edit tool to replace the configuration block:
 ```powershell
-$SHOW_MODEL = $true           # Show model name (e.g., "Claude Opus 4.5")
+$SHOW_MODEL = $true           # Show model name (e.g., "Claude Opus 4.6")
 $SHOW_TOKEN_COUNT = $true     # Show token usage count (e.g., "50k/100k")
 ...
 ```
@@ -120,4 +123,5 @@ Current configuration:
 - Duration: [enabled/disabled]
 - Time: [enabled/disabled]
 - Version: [enabled/disabled]
+- Rate limits: [enabled/disabled]
 ```

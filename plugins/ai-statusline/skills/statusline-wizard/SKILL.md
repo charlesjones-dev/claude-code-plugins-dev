@@ -39,6 +39,7 @@ Use AskUserQuestion with these grouped questions:
 - Current time - default selected
 - Claude Code version - default selected
 - Session cost - NOT selected by default
+- Rate limit usage (5h/7d) - default selected
 
 ### Success Message
 
@@ -101,6 +102,7 @@ Use the AskUserQuestion tool to gather user preferences. Group questions logical
 - Show session duration (default: yes)
 - Show current time (default: yes)
 - Show Claude Code version (default: yes)
+- Show rate limit usage - 5h and 7d windows (default: yes)
 
 ### Phase 3: Create Script File
 
@@ -154,7 +156,7 @@ Run `chmod +x ~/.claude/statusline.sh` to make the script executable.
 # Configuration - Set these to customize your status line
 # =============================================================================
 
-SHOW_MODEL=true           # Show model name (e.g., "Claude Opus 4.5")
+SHOW_MODEL=true           # Show model name (e.g., "Claude Opus 4.6")
 SHOW_TOKEN_COUNT=true     # Show token usage count (e.g., "50k/100k")
 SHOW_PROGRESS_BAR=true    # Show visual progress bar
 SHOW_DIRECTORY=true       # Show current directory name
@@ -163,6 +165,7 @@ SHOW_COST=false           # Show session cost (useful for API/Pro users)
 SHOW_DURATION=true        # Show session duration
 SHOW_TIME=true            # Show current time
 SHOW_VERSION=true         # Show Claude Code version
+SHOW_RATE_LIMITS=true     # Show rate limit usage (5h/7d windows, requires Claude Code 2.1.80+)
 
 # =============================================================================
 
@@ -283,6 +286,25 @@ else
   fi
 fi
 
+# Rate limits (requires Claude Code 2.1.80+)
+if [ "$SHOW_RATE_LIMITS" = true ]; then
+  rl_5h=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
+  rl_7d=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
+
+  if [ -n "$rl_5h" ] && [ -n "$rl_7d" ]; then
+    if [ "$rl_5h" -lt 50 ]; then rl_5h_color='32'
+    elif [ "$rl_5h" -lt 80 ]; then rl_5h_color='33'
+    else rl_5h_color='31'; fi
+
+    if [ "$rl_7d" -lt 50 ]; then rl_7d_color='32'
+    elif [ "$rl_7d" -lt 80 ]; then rl_7d_color='33'
+    else rl_7d_color='31'; fi
+
+    [ -n "$output" ] && output="$output · "
+    output="$output\033[${rl_5h_color}m5h:${rl_5h}%\033[0m \033[${rl_7d_color}m7d:${rl_7d}%\033[0m"
+  fi
+fi
+
 # Directory
 if [ "$SHOW_DIRECTORY" = true ]; then
   [ -n "$output" ] && output="$output · "
@@ -331,7 +353,7 @@ printf '%b' "$output"
 # Configuration - Set these to customize your status line
 # =============================================================================
 
-$SHOW_MODEL = $true           # Show model name (e.g., "Claude Opus 4.5")
+$SHOW_MODEL = $true           # Show model name (e.g., "Claude Opus 4.6")
 $SHOW_TOKEN_COUNT = $true     # Show token usage count (e.g., "50k/100k")
 $SHOW_PROGRESS_BAR = $true    # Show visual progress bar
 $SHOW_DIRECTORY = $true       # Show current directory name
@@ -340,6 +362,7 @@ $SHOW_COST = $false           # Show session cost (useful for API/Pro users)
 $SHOW_DURATION = $true        # Show session duration
 $SHOW_TIME = $true            # Show current time
 $SHOW_VERSION = $true         # Show Claude Code version
+$SHOW_RATE_LIMITS = $true     # Show rate limit usage (5h/7d windows, requires Claude Code 2.1.80+)
 
 # =============================================================================
 
@@ -473,6 +496,34 @@ if ($null -ne $usage) {
     }
 }
 
+# Rate limits (requires Claude Code 2.1.80+)
+if ($SHOW_RATE_LIMITS) {
+    $rl = $data.rate_limits
+    if ($null -ne $rl) {
+        $rl_parts = @()
+
+        if ($null -ne $rl.five_hour) {
+            $rl_5h = [int]$rl.five_hour.used_percentage
+            if ($rl_5h -lt 50) { $rl_5h_color = $green }
+            elseif ($rl_5h -lt 80) { $rl_5h_color = $yellow }
+            else { $rl_5h_color = $red }
+            $rl_parts += "${rl_5h_color}5h:${rl_5h}%$reset"
+        }
+
+        if ($null -ne $rl.seven_day) {
+            $rl_7d = [int]$rl.seven_day.used_percentage
+            if ($rl_7d -lt 50) { $rl_7d_color = $green }
+            elseif ($rl_7d -lt 80) { $rl_7d_color = $yellow }
+            else { $rl_7d_color = $red }
+            $rl_parts += "${rl_7d_color}7d:${rl_7d}%$reset"
+        }
+
+        if ($rl_parts.Count -gt 0) {
+            $segments += ($rl_parts -join " ")
+        }
+    }
+}
+
 # Directory
 if ($SHOW_DIRECTORY) {
     $segments += "$blue$current_dir$reset"
@@ -511,7 +562,7 @@ Write-Host -NoNewline ($segments -join $sep)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| SHOW_MODEL | true | Display model name (e.g., "Claude Opus 4.5") |
+| SHOW_MODEL | true | Display model name (e.g., "Claude Opus 4.6") |
 | SHOW_TOKEN_COUNT | true | Display token usage (e.g., "50k/100k") |
 | SHOW_PROGRESS_BAR | true | Display visual progress bar with percentage |
 | SHOW_DIRECTORY | true | Display current working directory name |
@@ -520,6 +571,7 @@ Write-Host -NoNewline ($segments -join $sep)
 | SHOW_DURATION | true | Display session duration |
 | SHOW_TIME | true | Display current time |
 | SHOW_VERSION | true | Display Claude Code version |
+| SHOW_RATE_LIMITS | true | Display rate limit usage (5h/7d windows, requires Claude Code 2.1.80+) |
 
 ## Important Notes
 
