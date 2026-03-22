@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A curated list of custom Claude Code plugins, agents, and skills for developers.",
-    "version": "2.0.2",
+    "version": "2.1.0",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -121,8 +121,8 @@
     {
       "name": "ai-workflow",
       "source": "./plugins/ai-workflow",
-      "description": "AI-powered development workflow automation - Phase-based planning, implementation orchestration, preflight code quality checks with security scanning, and ship-it workflow for efficient sub-agent execution",
-      "version": "1.3.0",
+      "description": "AI-powered development workflow automation - Phase-based planning, implementation orchestration, preflight code quality checks with security scanning, ship-it workflow, and development principles generator for CLAUDE.md",
+      "version": "1.4.0",
       "keywords": [
         "ai",
         "workflow",
@@ -143,7 +143,10 @@
         "push",
         "pull-request",
         "automation",
-        "productivity"
+        "productivity",
+        "principles",
+        "standards",
+        "claude-md"
       ],
       "author": {
         "name": "Charles Jones",
@@ -209,6 +212,53 @@
         "coding",
         "tutorial",
         "guided-learning"
+      ],
+      "author": {
+        "name": "Charles Jones",
+        "url": "https://charlesjones.dev"
+      },
+      "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev"
+    },
+    {
+      "name": "ai-modernize",
+      "source": "./plugins/ai-modernize",
+      "description": "AI-powered codebase modernization assessment - Interactive audit and quick scan skills to identify technical debt, anti-patterns, and quality issues from older AI-generated code",
+      "version": "1.0.0",
+      "keywords": [
+        "ai",
+        "modernization",
+        "code-quality",
+        "technical-debt",
+        "refactoring",
+        "solid",
+        "dry",
+        "anti-patterns",
+        "ai-generated-code",
+        "skills"
+      ],
+      "author": {
+        "name": "Charles Jones",
+        "url": "https://charlesjones.dev"
+      },
+      "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev"
+    },
+    {
+      "name": "ai-compliance",
+      "source": "./plugins/ai-compliance",
+      "description": "AI-powered software compliance auditing - Interactive license audit and NOTICE/ATTRIBUTION file generation for open-source dependency compliance",
+      "version": "1.0.0",
+      "keywords": [
+        "ai",
+        "compliance",
+        "licensing",
+        "open-source",
+        "audit",
+        "attribution",
+        "notice",
+        "legal",
+        "copyleft",
+        "dependencies",
+        "skills"
       ],
       "author": {
         "name": "Charles Jones",

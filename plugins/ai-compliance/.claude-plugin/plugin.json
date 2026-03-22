@@ -1,0 +1,23 @@
+{
+  "name": "ai-compliance",
+  "version": "1.0.0",
+  "description": "AI-powered software compliance auditing - Interactive license audit and NOTICE/ATTRIBUTION file generation for open-source dependency compliance",
+  "author": {
+    "name": "Charles Jones",
+    "url": "https://charlesjones.dev"
+  },
+  "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev",
+  "license": "MIT",
+  "keywords": [
+    "compliance",
+    "licensing",
+    "open-source",
+    "audit",
+    "attribution",
+    "notice",
+    "legal",
+    "copyleft",
+    "dependencies",
+    "skills"
+  ]
+}
