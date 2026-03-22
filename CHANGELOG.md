@@ -7,6 +7,69 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-03-22
+
+### Added
+
+#### AI-Modernize Plugin (v1.0.0) - NEW PLUGIN
+
+- **New plugin for codebase modernization assessment** - Identifies technical debt, anti-patterns, and quality issues from older AI-generated or legacy code
+
+- `/modernize-audit` interactive skill for comprehensive modernization assessment
+  - Guided configuration: AI tool history, codebase era, tech stack detection, category selection, scope, severity threshold
+  - 12 assessment categories: SOLID/DRY/KISS violations, type safety, error handling, security, performance, testing, architecture, frontend debt, dependency health, AI hallucination artifacts, modern pattern gaps, configuration/DevOps
+  - Modernization Score (0-100) with category breakdown
+  - AI-assisted remediation time estimates (not manual development time)
+  - Phased modernization roadmap with prioritized checklist
+  - "Why Older AI Models Did This" educational context for each finding
+  - Delegates to `ai-modernize:modernize-auditor` subagent for deep analysis
+
+- `/modernize-scan` quick scan skill for fast, targeted assessments
+  - Accepts file or directory path argument (e.g., `/modernize-scan ./src`)
+  - Runs all categories with default settings, no interactive questions
+  - Auto-detects technology stack
+  - Produces abbreviated report with same scoring and estimate format
+
+- Reports saved to `/docs/modernize/` with timestamped filenames
+
+#### AI-Workflow Plugin (v1.4.0)
+
+- `/workflow-principles` new skill for generating context-aware Development Principles in CLAUDE.md
+  - Automated project discovery: detects monorepo structure, tech stack, frameworks, validation libraries, state management, testing tools
+  - Interactive configuration: principle categories (SOLID, DRY, KISS, YAGNI, modularity, components, type safety, error handling, testing)
+  - Monorepo-aware: detects shared packages, maps dependency direction, generates shared package rules with real package names
+  - Frontend-aware: generates component architecture rules tailored to detected framework (React, Vue, Angular, Svelte)
+  - Smart merge: appends, replaces, or merges with existing CLAUDE.md content
+  - Supports both project CLAUDE.md and user-level ~/.claude/CLAUDE.md
+  - Custom rules support for project-specific conventions
+  - Uses real package names, paths, and library names from the detected project (never generic placeholders)
+
+#### AI-Compliance Plugin (v1.0.0) - NEW PLUGIN
+
+- **New plugin for software license compliance auditing** - Detects open-source licenses, flags legal risks, and generates attribution files
+
+- `/compliance-license-audit` interactive skill for comprehensive license compliance audit
+  - Auto-detects project license with confirmation
+  - Scans all dependency manifests across 8 package ecosystems (npm, pip, NuGet, Go, Rust, Ruby, PHP, Java)
+  - Classifies licenses: Permissive, Weak Copyleft, Strong Copyleft, Unknown/None
+  - License compatibility analysis against the project's own license
+  - Flags copyleft contamination risks with configurable risk tolerance
+  - Optional transitive dependency analysis via lock files
+  - Source code scanning for license headers and vendored/copied code
+  - License Compliance Score (0-100)
+  - Identifies unfulfilled license obligations (missing NOTICE files, attribution)
+  - Provides alternative components for incompatible dependencies
+
+- `/compliance-notice-generate` interactive skill for generating attribution files
+  - Four output formats: NOTICE, THIRD-PARTY-NOTICES.md, ATTRIBUTION.md, licenses.json
+  - Configurable scope: production only, all dependencies, or custom groups
+  - Optional full license text inclusion
+  - Extracts actual copyright notices from LICENSE files
+  - Handles dual-licensed packages and license exceptions
+  - Detects existing attribution files with replace/create-alongside options
+
+- Reports saved to `/docs/compliance/` with timestamped filenames
+
 ## [2.0.2] - 2026-03-19
 
 ### Added
