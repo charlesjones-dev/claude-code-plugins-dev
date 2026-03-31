@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.2] - 2026-03-31
+
+### Fixed
+
+#### AI-ADO Plugin (v1.3.1)
+
+- **Fixed skill name parsing** - Changed `ado-work-items` skill name from `Azure DevOps Work Items` (with spaces) to `ado-work-items` so Claude Code can parse it correctly (fixes #8)
+
 ## [2.2.1] - 2026-03-31
 
 ### Fixed
@@ -813,7 +821,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.2.1...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.2.2...HEAD
+[2.2.2]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.2.1...v2.2.2
 [2.2.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.0.1...v2.1.0

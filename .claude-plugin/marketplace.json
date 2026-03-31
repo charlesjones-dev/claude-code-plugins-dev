@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A curated list of custom Claude Code plugins, agents, and skills for developers.",
-    "version": "2.2.1",
+    "version": "2.2.2",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -14,7 +14,7 @@
       "name": "ai-ado",
       "source": "./plugins/ai-ado",
       "description": "AI-powered Azure DevOps integration with skills - Intelligent work item management, configuration, and automation for Azure DevOps workflows with MCP integration",
-      "version": "1.3.0",
+      "version": "1.3.1",
       "keywords": [
         "ai",
         "azure-devops",

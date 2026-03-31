@@ -739,7 +739,7 @@ Future commands and features planned for this plugin:
 
 - **Name:** AI-ADO Plugin
 - **Type:** AI Instruction Plugin (Skills)
-- **Version:** 1.3.0
+- **Version:** 1.3.1
 - **Skills:** `/ado-init`, `/ado-create-feature`, `/ado-create-story`, `/ado-create-task`, `/ado-log-story-work`, `/ado-timesheet-report`
 - **MCP Integration:** Microsoft Azure DevOps MCP Server (optional, OS-aware configuration)
 - **Requirements:** Node.js 20+
