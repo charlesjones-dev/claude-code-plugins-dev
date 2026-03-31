@@ -288,16 +288,19 @@ fi
 
 # Rate limits (requires Claude Code 2.1.80+)
 if [ "$SHOW_RATE_LIMITS" = true ]; then
-  rl_5h=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
-  rl_7d=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
+  rl_5h=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty | (. * 100 | round) / 100')
+  rl_7d=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty | (. * 100 | round) / 100')
 
   if [ -n "$rl_5h" ] && [ -n "$rl_7d" ]; then
-    if [ "$rl_5h" -lt 50 ]; then rl_5h_color='32'
-    elif [ "$rl_5h" -lt 80 ]; then rl_5h_color='33'
+    rl_5h_int=${rl_5h%%.*}
+    rl_7d_int=${rl_7d%%.*}
+
+    if [ "$rl_5h_int" -lt 50 ]; then rl_5h_color='32'
+    elif [ "$rl_5h_int" -lt 80 ]; then rl_5h_color='33'
     else rl_5h_color='31'; fi
 
-    if [ "$rl_7d" -lt 50 ]; then rl_7d_color='32'
-    elif [ "$rl_7d" -lt 80 ]; then rl_7d_color='33'
+    if [ "$rl_7d_int" -lt 50 ]; then rl_7d_color='32'
+    elif [ "$rl_7d_int" -lt 80 ]; then rl_7d_color='33'
     else rl_7d_color='31'; fi
 
     [ -n "$output" ] && output="$output · "
@@ -503,7 +506,7 @@ if ($SHOW_RATE_LIMITS) {
         $rl_parts = @()
 
         if ($null -ne $rl.five_hour) {
-            $rl_5h = [int]$rl.five_hour.used_percentage
+            $rl_5h = [math]::Round($rl.five_hour.used_percentage, 2)
             if ($rl_5h -lt 50) { $rl_5h_color = $green }
             elseif ($rl_5h -lt 80) { $rl_5h_color = $yellow }
             else { $rl_5h_color = $red }
@@ -511,7 +514,7 @@ if ($SHOW_RATE_LIMITS) {
         }
 
         if ($null -ne $rl.seven_day) {
-            $rl_7d = [int]$rl.seven_day.used_percentage
+            $rl_7d = [math]::Round($rl.seven_day.used_percentage, 2)
             if ($rl_7d -lt 50) { $rl_7d_color = $green }
             elseif ($rl_7d -lt 80) { $rl_7d_color = $yellow }
             else { $rl_7d_color = $red }

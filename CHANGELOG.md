@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.1] - 2026-03-31
+
+### Fixed
+
+#### AI-Statusline Plugin (v1.2.3)
+
+- **Fixed rate limit percentage display** - Rate limit percentages now round to 2 decimal places instead of showing long floating-point numbers (e.g., `5h:12.35%` instead of `5h:12.345678%`)
+  - Bash: uses jq `(. * 100 | round) / 100` for rounding, extracts integer part for color threshold comparisons
+  - PowerShell: uses `[math]::Round($val, 2)` instead of `[int]` cast which truncated to whole numbers
+
 ## [2.2.0] - 2026-03-31
 
 ### Added
@@ -803,7 +813,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.2.1...HEAD
+[2.2.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.2.0...v2.2.1
+[2.2.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.1.0...v2.2.0
+[2.1.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.9.1...v2.0.0
 [1.9.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v1.9.0...v1.9.1
