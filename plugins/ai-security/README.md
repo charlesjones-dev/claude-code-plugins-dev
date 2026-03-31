@@ -191,6 +191,48 @@ Scan a deployed website for outdated dependencies, known CVEs, and security misc
 # ✅ Report saved to /docs/security with timestamp
 ```
 
+### `/security-supply-chain`
+
+Harden your project against npm supply chain attacks by configuring pnpm's `minimum-release-age` quarantine and frozen lockfile enforcement.
+
+**What it does:**
+
+- 🔍 **Detects your package manager** (pnpm, npm, Yarn, Bun) and validates compatibility
+- 🛡️ **Configures `minimum-release-age`** in `.npmrc` to quarantine newly published packages
+- 🔒 **Offers frozen lockfile enforcement** via `.npmrc` for reproducible CI/CD builds
+- ⬆️ **Checks pnpm version** and offers to upgrade if below the 10.16.0 minimum
+- 🎯 **Interactive timeframe selection** with previews (24 hours, 3 days, 7 days, or custom)
+- 📊 **Scans CI/CD configs** to detect existing frozen lockfile usage
+- 💡 **Recommends pnpm migration** for npm/Yarn/Bun users who lack this protection
+
+**How it works:**
+
+```
+/security-supply-chain
+# Detects pnpm as package manager
+# Checks pnpm version (needs 10.16.0+)
+# Checks existing .npmrc configuration
+# Ask: Choose quarantine timeframe (24h, 3d, 7d, custom)
+# Ask: Add frozen-lockfile=true?
+# Shows preview of all changes
+# Writes .npmrc configuration
+# Verifies changes were applied correctly
+```
+
+**Defense layers created:**
+
+```
+Layer 1 - Quarantine (local development):
+  Prevents installing packages published less than X days ago.
+  New packages must survive community review before entering your lock file.
+
+Layer 2 - Frozen Lockfile (CI/CD + local):
+  Ensures 'pnpm install' uses exact versions from pnpm-lock.yaml.
+  Builds fail if the lock file is out of sync.
+```
+
+**Learn more:** [Stop Supply Chain Attacks: Why Your Build Pipeline Should Use Locked Dependencies](https://charlesjones.dev/blog/npm-supply-chain-attacks-ci-cd-locked-dependencies)
+
 **Comparison: `/security-audit` vs `/security-scan-dependencies`**
 
 | Feature | `/security-audit` | `/security-scan-dependencies` |
@@ -586,10 +628,10 @@ This timestamp-based naming ensures multiple audits on the same day don't overwr
 ## 📦 Plugin Details
 
 - **Name:** AI-Security
-- **Version:** 1.4.0
+- **Version:** 1.5.0
 - **Type:** Comprehensive Security Toolkit
 - **Features:**
-  - Skills: `/security-init`, `/security-audit`, `/security-scan-dependencies`
+  - Skills: `/security-init`, `/security-audit`, `/security-scan-dependencies`, `/security-supply-chain`
   - Agents: `security-auditor`, `security-dependency-scanner`
 - **License:** MIT
 - **Author:** Charles Jones

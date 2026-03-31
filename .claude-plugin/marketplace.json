@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A curated list of custom Claude Code plugins, agents, and skills for developers.",
-    "version": "2.1.0",
+    "version": "2.2.0",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -98,8 +98,8 @@
     {
       "name": "ai-security",
       "source": "./plugins/ai-security",
-      "description": "AI-powered security auditing with interactive skill, automated agents, and web dependency scanning for comprehensive vulnerability detection and reporting",
-      "version": "1.4.0",
+      "description": "AI-powered security auditing with interactive skills, automated agents, web dependency scanning, and supply chain hardening for comprehensive vulnerability detection and reporting",
+      "version": "1.5.0",
       "keywords": [
         "ai",
         "security",
@@ -110,6 +110,9 @@
         "owasp",
         "scanning",
         "defensive",
+        "supply-chain",
+        "dependencies",
+        "pnpm",
         "skills"
       ],
       "author": {

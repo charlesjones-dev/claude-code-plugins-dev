@@ -1,6 +1,6 @@
 # Claude Code Plugins for Developers
 
-[![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
+[![Version](https://img.shields.io/badge/version-2.2.0-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![GitHub Issues](https://img.shields.io/github/issues/charlesjones-dev/claude-code-plugins-dev.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/charlesjones-dev/claude-code-plugins-dev.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/stargazers)
@@ -23,7 +23,7 @@ This Claude Code plugin marketplace provides plugins that extend Claude Code's c
 | [ai-git](plugins/ai-git/) | AI-powered git automation and workflow streamlining | `/git-init`, `/git-commit-push`, `/git-commit-push-pr` | - |
 | [ai-learn](plugins/ai-learn/) | AI-powered Socratic learning mode for guided problem-solving | `/learn`, `/learn-review` | - |
 | [ai-performance](plugins/ai-performance/) | AI-powered performance optimization and bottleneck detection | `/performance-audit` | `performance-auditor` |
-| [ai-security](plugins/ai-security/) | AI-powered security auditing with reproducible reports | `/security-init`, `/security-audit`, `/security-scan-dependencies` | `security-auditor`, `security-dependency-scanner` |
+| [ai-security](plugins/ai-security/) | AI-powered security auditing with reproducible reports | `/security-init`, `/security-audit`, `/security-scan-dependencies`, `/security-supply-chain` | `security-auditor`, `security-dependency-scanner` |
 | [ai-statusline](plugins/ai-statusline/) | AI-powered status line customization with progress bars | `/statusline-wizard`, `/statusline-edit` | - |
 | [ai-workflow](plugins/ai-workflow/) | AI-powered development workflow automation | `/workflow-plan-phases`, `/workflow-implement-phases`, `/workflow-preflight`, `/workflow-ship`, `/workflow-principles` | - |
 | [ai-compliance](plugins/ai-compliance/) | AI-powered license compliance auditing and attribution generation | `/compliance-license-audit`, `/compliance-notice-generate` | - |

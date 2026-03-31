@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-03-31
+
+### Added
+
+#### AI-Security Plugin (v1.5.0)
+
+- `/security-supply-chain` new skill for hardening projects against npm supply chain attacks
+  - Detects package manager (pnpm, npm, Yarn, Bun) and validates compatibility
+  - Configures pnpm's `minimum-release-age` in `.npmrc` to quarantine newly published packages
+  - Interactive timeframe selection with previews (24 hours, 3 days, 7 days, or custom)
+  - Scans CI/CD configs for frozen lockfile usage and offers to add `frozen-lockfile=true`
+  - Checks pnpm version and offers upgrade if below 10.16.0 minimum
+  - Recommends pnpm migration for npm/Yarn/Bun users who lack quarantine protection
+  - Creates two defense layers: time-based quarantine (local dev) + frozen lockfile (CI/CD)
+
 ## [2.1.0] - 2026-03-22
 
 ### Added

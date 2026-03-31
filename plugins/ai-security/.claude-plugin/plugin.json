@@ -1,7 +1,7 @@
 {
   "name": "ai-security",
-  "version": "1.4.0",
-  "description": "AI-powered security auditing with interactive skill, automated agents, and web dependency scanning for comprehensive vulnerability detection and reporting",
+  "version": "1.5.0",
+  "description": "AI-powered security auditing with interactive skills, automated agents, web dependency scanning, and supply chain hardening for comprehensive vulnerability detection and reporting",
   "author": {
     "name": "Charles Jones",
     "url": "https://charlesjones.dev"
@@ -13,6 +13,9 @@
     "compliance",
     "auditing",
     "auditor",
+    "supply-chain",
+    "dependencies",
+    "pnpm",
     "skills"
   ]
 }
