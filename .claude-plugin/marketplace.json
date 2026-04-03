@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A curated list of custom Claude Code plugins, agents, and skills for developers.",
-    "version": "2.3.0",
+    "version": "2.3.1",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -273,7 +273,7 @@
       "name": "ai-knowledge",
       "source": "./plugins/ai-knowledge",
       "description": "AI-powered knowledge base management - Capture conversation learnings, maintain topic-specific KB files, and dynamically reference institutional knowledge in CLAUDE.md",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "keywords": [
         "ai",
         "knowledge-base",

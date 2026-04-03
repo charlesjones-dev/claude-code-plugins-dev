@@ -99,6 +99,7 @@ KB files are referenced in CLAUDE.md's Knowledge Base table. Claude Code reads t
 - `/kb-learn` - Capture learnings from a conversation
 - `/kb-add` - Quickly add a single learning or rule
 - `/kb-import` - Register an existing KB file in CLAUDE.md
+- `/kb-ingest` - Ingest specific markdown files into the KB
 - `/kb-absorb` - Migrate existing docs and CLAUDE.md content into the KB
 - `/kb-list` - View all registered KB files and their status
 - `/kb-search` - Search across KB files by keyword or tag
@@ -120,7 +121,7 @@ If no Knowledge Base section exists, append the following section to CLAUDE.md (
 ```markdown
 ## Knowledge Base
 
-Topic-specific knowledge is stored in `docs/kb/` and loaded contextually. Consult the relevant KB file(s) when working in the matching area of the codebase. Files with `pinned: true` in frontmatter should always be loaded.
+Topic-specific knowledge is stored in `docs/kb/` and loaded contextually. Use the "When to Load" column below to decide which KB file(s) to read: load pinned entries ("Always (pinned)") at the start of every conversation, and load other entries when working in their matching area of the codebase.
 
 When a KB file's frontmatter contains `related: [[other-file]]` cross-references, also read the related file(s) for full context.
 
@@ -147,6 +148,7 @@ Display a summary:
   - `/kb-learn` - Capture learnings from a conversation
   - `/kb-add` - Quickly add a single learning or rule
   - `/kb-import` - Register an existing KB file in CLAUDE.md
+  - `/kb-ingest` - Ingest specific markdown files into the KB
   - `/kb-absorb` - Migrate existing docs and CLAUDE.md content into the KB
   - `/kb-list` - View all registered KB files and their status
   - `/kb-search <keyword>` - Search across KB files

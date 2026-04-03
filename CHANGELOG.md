@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.1] - 2026-04-03
+
+### Added
+
+#### AI-Knowledge Plugin (v1.1.0)
+
+- `/kb-ingest` - Ingest specific markdown files from anywhere in the project into the KB, as a targeted alternative to `/kb-absorb`
+  - Accepts one or more file paths (e.g., `/kb-ingest docs/api-guide.md`)
+  - Distills content into concise, actionable KB format with proper frontmatter
+  - Detects overlap with existing KB files and proposes appending instead of creating duplicates
+  - Registers new KB entries in the CLAUDE.md Knowledge Base table
+  - Preserves source files (never modifies or deletes originals)
+
+### Fixed
+
+#### AI-Knowledge Plugin (v1.1.0)
+
+- **Fixed pinned file loading instruction in kb-init** - The CLAUDE.md template previously told Claude to check frontmatter of every KB file to find pinned entries, defeating the purpose of the dynamic loading table. Now correctly directs Claude to use the "When to Load" column ("Always (pinned)") as the source of truth
+
 ## [2.3.0] - 2026-04-02
 
 ### Added
