@@ -1,6 +1,6 @@
 {
   "name": "ai-knowledge",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "AI-powered knowledge base management - Capture conversation learnings, maintain topic-specific KB files, and dynamically reference institutional knowledge in CLAUDE.md",
   "author": {
     "name": "Charles Jones",

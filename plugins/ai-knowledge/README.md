@@ -19,6 +19,8 @@ Knowledge is stored in two layers:
 | `/kb-add` | Quickly add a learning or rule with interactive location picker |
 | `/kb-import` | Register existing KB files in CLAUDE.md (adds missing frontmatter) |
 | `/kb-ingest` | Ingest specific markdown files from anywhere in the project into the KB |
+| `/kb-harvest` | Harvest knowledge from external sources: sibling repos, directories, files, or web URLs |
+| `/kb-discover` | Analyze source code to extract implicit knowledge into KB articles |
 | `/kb-absorb` | Migrate existing CLAUDE.md sections and docs/ content into the KB |
 | `/kb-remove` | Remove a KB file and its CLAUDE.md reference |
 | `/kb-list` | List all registered KB files with status, tags, dates, and cross-references |
@@ -75,6 +77,6 @@ Cross-references (`related`) create a knowledge graph -- when Claude loads one K
 
 ## Plugin Details
 
-- **Version**: 1.1.0
+- **Version**: 1.2.0
 - **Author**: [Charles Jones](https://charlesjones.dev)
 - **License**: MIT

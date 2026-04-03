@@ -1,6 +1,6 @@
 # Claude Code Plugins for Developers
 
-[![Version](https://img.shields.io/badge/version-2.3.1-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
+[![Version](https://img.shields.io/badge/version-2.3.2-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![GitHub Issues](https://img.shields.io/github/issues/charlesjones-dev/claude-code-plugins-dev.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/charlesjones-dev/claude-code-plugins-dev.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/stargazers)
@@ -27,7 +27,7 @@ This Claude Code plugin marketplace provides plugins that extend Claude Code's c
 | [ai-statusline](plugins/ai-statusline/) | AI-powered status line customization with progress bars | `/statusline-wizard`, `/statusline-edit` | - |
 | [ai-workflow](plugins/ai-workflow/) | AI-powered development workflow automation | `/workflow-plan-phases`, `/workflow-implement-phases`, `/workflow-preflight`, `/workflow-ship`, `/workflow-principles` | - |
 | [ai-compliance](plugins/ai-compliance/) | AI-powered license compliance auditing and attribution generation | `/compliance-license-audit`, `/compliance-notice-generate` | - |
-| [ai-knowledge](plugins/ai-knowledge/) | AI-powered knowledge base management for conversation learnings | `/kb-init`, `/kb-learn`, `/kb-add`, `/kb-import`, `/kb-ingest`, `/kb-absorb`, `/kb-remove`, `/kb-list`, `/kb-search`, `/kb-prune`, `/kb-auto` | - |
+| [ai-knowledge](plugins/ai-knowledge/) | AI-powered knowledge base management for conversation learnings | `/kb-init`, `/kb-learn`, `/kb-add`, `/kb-import`, `/kb-ingest`, `/kb-harvest`, `/kb-discover`, `/kb-absorb`, `/kb-remove`, `/kb-list`, `/kb-search`, `/kb-prune`, `/kb-auto` | - |
 | [ai-modernize](plugins/ai-modernize/) | AI-powered codebase modernization assessment for technical debt | `/modernize-audit`, `/modernize-scan` | `modernize-auditor` |
 | [ai-writing](plugins/ai-writing/) | AI-powered writing quality tools for natural-sounding text | `/writing-humanize` | - |
 

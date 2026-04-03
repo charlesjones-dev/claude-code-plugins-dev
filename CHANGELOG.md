@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.2] - 2026-04-03
+
+### Added
+
+#### AI-Knowledge Plugin (v1.2.0)
+
+- `/kb-harvest` - Harvest knowledge from external sources into the KB system
+  - Supports local directories, individual files, glob patterns, and web URLs as sources
+  - Scans sibling git repos (e.g., `C:/Source/*/docs/**/*.md`) for cross-repo knowledge ingestion
+  - Fetches and distills web pages (wikis, Confluence, internal docs) via URL
+  - Auto-tags with `module:{name}` based on source directory structure for filtering by module
+  - Tracks provenance via `source` frontmatter field (original path or URL) for future re-harvesting
+  - Discovery report with pre-checked/unchecked sources and batch selection
+  - Per-article content preview and approval before writing to disk
+  - Distills content into concise, actionable KB format (not copy-paste)
+  - Detects topic overlap with existing KB files and proposes appending
+  - Registers entries in CLAUDE.md Knowledge Base table
+  - Preserves all source files and URLs (never modifies originals)
+
+- `/kb-discover` - Analyze source code to extract implicit knowledge into KB articles
+  - Mines source code for architecture patterns, naming conventions, API contracts, error handling, config structures, data models, and testing patterns
+  - Supports targeted analysis (specific directories), focus areas (topics), or full codebase scan with intelligent sampling
+  - Auto-detects tech stack and prioritizes analysis targets accordingly
+  - Groups findings into coherent KB articles (not raw category dumps)
+  - Per-article draft preview and approval — user sees the full distilled content before any file is written
+  - Tracks provenance via `discovered-from` frontmatter field for re-discovery when code evolves
+  - Evidence-based only — requires observed repetition, never fabricates patterns from single occurrences
+  - Right-sizes articles to 50-150 lines of distilled rules for context-friendly loading
+
 ## [2.3.1] - 2026-04-03
 
 ### Added
