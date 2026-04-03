@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A curated list of custom Claude Code plugins, agents, and skills for developers.",
-    "version": "2.2.2",
+    "version": "2.3.0",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -262,6 +262,29 @@
         "copyleft",
         "dependencies",
         "skills"
+      ],
+      "author": {
+        "name": "Charles Jones",
+        "url": "https://charlesjones.dev"
+      },
+      "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev"
+    },
+    {
+      "name": "ai-knowledge",
+      "source": "./plugins/ai-knowledge",
+      "description": "AI-powered knowledge base management - Capture conversation learnings, maintain topic-specific KB files, and dynamically reference institutional knowledge in CLAUDE.md",
+      "version": "1.0.0",
+      "keywords": [
+        "ai",
+        "knowledge-base",
+        "learnings",
+        "institutional-knowledge",
+        "claude-md",
+        "documentation",
+        "best-practices",
+        "lessons-learned",
+        "kb",
+        "productivity"
       ],
       "author": {
         "name": "Charles Jones",

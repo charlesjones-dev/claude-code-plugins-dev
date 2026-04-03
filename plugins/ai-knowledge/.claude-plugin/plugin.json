@@ -1,0 +1,22 @@
+{
+  "name": "ai-knowledge",
+  "version": "1.0.0",
+  "description": "AI-powered knowledge base management - Capture conversation learnings, maintain topic-specific KB files, and dynamically reference institutional knowledge in CLAUDE.md",
+  "author": {
+    "name": "Charles Jones",
+    "url": "https://charlesjones.dev"
+  },
+  "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev",
+  "license": "MIT",
+  "keywords": [
+    "knowledge-base",
+    "learnings",
+    "institutional-knowledge",
+    "claude-md",
+    "documentation",
+    "best-practices",
+    "lessons-learned",
+    "kb",
+    "productivity"
+  ]
+}

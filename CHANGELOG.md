@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-04-02
+
+### Added
+
+#### AI-Knowledge Plugin (v1.0.0) - NEW PLUGIN
+
+- **New plugin for knowledge base management** - Capture conversation learnings, maintain topic-specific KB files, and dynamically reference institutional knowledge in CLAUDE.md
+- `/kb-init` - Initialize the Knowledge Base section in CLAUDE.md and create `docs/kb/` directory (idempotent)
+- `/kb-learn` - Analyze conversation to extract learnings, best practices, and institutional knowledge into KB files
+- `/kb-add` - Quickly add a learning or rule to the KB with interactive location picker
+- `/kb-import` - Register existing KB files in CLAUDE.md (accepts file path or scans for unregistered files, adds missing frontmatter)
+- `/kb-list` - List all registered KB files with status, tags, dates, pinned status, and cross-references
+- `/kb-search` - Search across KB files by keyword, topic, or tag (`tag:security`)
+- `/kb-prune` - Interactive cleanup: stale refs, duplicates, merges, frontmatter health, cross-reference integrity
+- `/kb-auto` - Toggle automatic knowledge capture at end of conversations (per-project)
+- `/kb-absorb` - Migrate existing CLAUDE.md sections and docs/ content into the KB system with interactive approval
+- `/kb-remove` - Remove a KB file and its CLAUDE.md reference (accepts optional path or interactive selection)
+- All KB files use YAML frontmatter with `tags`, `related`, `created`, `last-updated`, `pinned`, and `scope` fields
+- Cross-references between KB files via `related: [[other-file]]` frontmatter for linked knowledge loading
+- Pinned KB files (`pinned: true`) are always loaded regardless of work context
+
 ## [2.2.2] - 2026-03-31
 
 ### Fixed
