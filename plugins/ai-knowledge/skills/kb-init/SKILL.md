@@ -114,17 +114,21 @@ KB files are referenced in CLAUDE.md's Knowledge Base table. Claude Code reads t
 
 ### Commands
 
-- `/kb-learn` - Capture learnings from a conversation
-- `/kb-add` - Quickly add a single learning or rule
+- `/kb-learn` - Analyze the current conversation and extract learnings to KB files
+- `/kb-add` - Quickly add a learning or rule with interactive location picker
+- `/kb-import` - Register existing KB files in CLAUDE.md (adds missing frontmatter)
+- `/kb-ingest` - Ingest specific markdown files from anywhere in the project into the KB
+- `/kb-harvest` - Harvest knowledge from external sources: sibling repos, directories, files, or web URLs
+- `/kb-discover` - Analyze source code to extract implicit knowledge into KB articles
+- `/kb-absorb` - Migrate existing CLAUDE.md sections and docs/ content into the KB
+- `/kb-remove` - Remove a KB file and its CLAUDE.md reference
+- `/kb-list` - List all registered KB files with status, tags, dates, and cross-references
+- `/kb-search` - Search across KB files by keyword, topic, or tag (`tag:security`)
+- `/kb-prune` - Interactive cleanup: stale refs, duplicates, merges, frontmatter health
 - `/kb-query` - Query the KB and synthesize answers (optionally filed back as articles)
-- `/kb-import` - Register an existing KB file in CLAUDE.md
-- `/kb-ingest` - Ingest specific markdown files into the KB
-- `/kb-absorb` - Migrate existing docs and CLAUDE.md content into the KB
-- `/kb-list` - View all registered KB files and their status
-- `/kb-search` - Search across KB files by keyword or tag
-- `/kb-prune` - Clean up and consolidate the knowledge base
-- `/kb-auto` - Toggle automatic learning capture
-- `/kb-obsidian` - One-time migration for Obsidian compatibility
+- `/kb-auto` - Toggle automatic knowledge capture at end of conversations
+- `/kb-organize` - Reorganize flat KB files into category folders
+- `/kb-obsidian` - One-time upgrade for Obsidian compatibility, index, log, and folders
 ```
 
 If `docs/kb/` already exists, skip this step.
