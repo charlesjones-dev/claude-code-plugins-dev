@@ -32,9 +32,21 @@ This directory contains topic-specific knowledge base files that are dynamically
 
 ## Structure
 
-Files can be flat or nested:
-- `docs/kb/api-conventions.md` - Flat topic file
-- `docs/kb/frontend/react-patterns.md` - Nested under a category
+KB articles are organized in category folders. Special files (prefixed with `_`) live at the root:
+
+```
+docs/kb/
+  _global-learnings.md   # Cross-cutting rules (pinned, always loaded)
+  _index.md              # Auto-generated page catalog with summaries
+  _log.md                # Chronological operation log
+  README.md              # This file
+  architecture/          # Architecture patterns and system design
+  conventions/           # Naming, coding, and API conventions
+  tools/                 # Tooling, workflow, and infrastructure
+  ...                    # Other categories as needed
+```
+
+Category folders are created as needed based on article content. Articles can also be flat at the root for small KBs:
 
 ## Frontmatter Schema
 
@@ -69,7 +81,7 @@ Each KB file should follow this structure:
 ```markdown
 ---
 tags: [topic-tag]
-related: []
+related: [[other-kb-file]]
 created: YYYY-MM-DD
 last-updated: YYYY-MM-DD
 pinned: false
@@ -88,7 +100,13 @@ Brief description of what this KB covers and when it applies.
 ## Context
 
 Any additional context that helps Claude Code apply these rules correctly.
+
+## Related
+
+- [[other-kb-file]]
 ```
+
+**Important**: The `## Related` section at the bottom mirrors the `related` frontmatter field using `[[wiki-links]]` in the body text. This enables Obsidian graph view and link navigation (Obsidian does not parse frontmatter values as navigable links). Both the frontmatter and body section must be kept in sync. Omit the `## Related` section if there are no related files.
 
 ## Usage
 
@@ -98,6 +116,7 @@ KB files are referenced in CLAUDE.md's Knowledge Base table. Claude Code reads t
 
 - `/kb-learn` - Capture learnings from a conversation
 - `/kb-add` - Quickly add a single learning or rule
+- `/kb-query` - Query the KB and synthesize answers (optionally filed back as articles)
 - `/kb-import` - Register an existing KB file in CLAUDE.md
 - `/kb-ingest` - Ingest specific markdown files into the KB
 - `/kb-absorb` - Migrate existing docs and CLAUDE.md content into the KB
@@ -105,9 +124,85 @@ KB files are referenced in CLAUDE.md's Knowledge Base table. Claude Code reads t
 - `/kb-search` - Search across KB files by keyword or tag
 - `/kb-prune` - Clean up and consolidate the knowledge base
 - `/kb-auto` - Toggle automatic learning capture
+- `/kb-obsidian` - One-time migration for Obsidian compatibility
 ```
 
 If `docs/kb/` already exists, skip this step.
+
+### Step 2b: Create Global Learnings File
+
+If `docs/kb/_global-learnings.md` does not exist, create it:
+
+**File: `docs/kb/_global-learnings.md`**
+```markdown
+---
+tags: [global, cross-cutting]
+related: []
+created: {today's date}
+last-updated: {today's date}
+pinned: true
+---
+
+# Global Learnings
+
+Cross-cutting rules and insights that apply across the entire project.
+
+## Key Rules
+
+_No global learnings captured yet. Run `/kb-learn` at the end of a conversation to save cross-cutting insights._
+```
+
+If `docs/kb/_global-learnings.md` already exists, skip this step.
+
+### Step 2c: Create Index File
+
+If `docs/kb/_index.md` does not exist, create it:
+
+**File: `docs/kb/_index.md`**
+```markdown
+---
+tags: [index, meta]
+created: {today's date}
+last-updated: {today's date}
+pinned: true
+---
+
+# Knowledge Base Index
+
+Auto-generated catalog of all KB articles. Updated by `/kb-*` commands. Read this file first to find relevant pages before drilling into individual articles.
+
+## All Pages
+
+| Page | Summary | Tags | Last Updated |
+|------|---------|------|-------------|
+| [[_global-learnings]] | Cross-cutting rules that apply everywhere | global, cross-cutting | {today's date} |
+```
+
+If `docs/kb/_index.md` already exists, skip this step.
+
+### Step 2d: Create Log File
+
+If `docs/kb/_log.md` does not exist, create it:
+
+**File: `docs/kb/_log.md`**
+```markdown
+---
+tags: [log, meta]
+created: {today's date}
+last-updated: {today's date}
+---
+
+# Knowledge Base Log
+
+Chronological record of KB operations. Append-only — newest entries at the bottom.
+
+## [{ today's date }] init | Knowledge Base initialized
+- Created `docs/kb/` directory structure
+- Created `_global-learnings.md`, `_index.md`, `_log.md`
+- Added Knowledge Base section to CLAUDE.md
+```
+
+If `docs/kb/_log.md` already exists, skip this step.
 
 ### Step 3: Initialize CLAUDE.md Knowledge Base Section
 
@@ -127,11 +222,8 @@ When a KB file's frontmatter contains `related: [[other-file]]` cross-references
 
 | Topic | File | When to Load |
 |-------|------|--------------|
-| _No entries yet_ | - | _Run `/kb-learn` to capture learnings or `/kb-add` to register KB files_ |
-
-### Global Learnings
-
-_No global learnings captured yet. Run `/kb-learn` at the end of a conversation to save cross-cutting insights._
+| Global Learnings | docs/kb/_global-learnings.md | Always (pinned) |
+| KB Index | docs/kb/_index.md | Always (pinned) |
 ```
 
 **Placement rules:**
@@ -147,6 +239,7 @@ Display a summary:
 - How to use the KB system:
   - `/kb-learn` - Capture learnings from a conversation
   - `/kb-add` - Quickly add a single learning or rule
+  - `/kb-query <question>` - Query the KB and get synthesized answers
   - `/kb-import` - Register an existing KB file in CLAUDE.md
   - `/kb-ingest` - Ingest specific markdown files into the KB
   - `/kb-absorb` - Migrate existing docs and CLAUDE.md content into the KB
@@ -154,3 +247,4 @@ Display a summary:
   - `/kb-search <keyword>` - Search across KB files
   - `/kb-prune` - Clean up and consolidate the knowledge base
   - `/kb-auto` - Toggle automatic learning capture
+  - `/kb-obsidian` - One-time migration for Obsidian vault compatibility

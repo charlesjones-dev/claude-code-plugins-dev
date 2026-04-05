@@ -23,6 +23,18 @@ scope: "src/api/**"                    # Optional: glob pattern for auto-matchin
 ---
 ```
 
+## Obsidian-Compatible Related Links
+
+When a KB file has `related` entries in its frontmatter, you MUST also include a `## Related` section at the **end** of the file body with the same references as `[[wiki-links]]`. This enables Obsidian graph view and link navigation (frontmatter values are not parsed as navigable links by Obsidian). Always keep the `related` frontmatter AND the body `## Related` section in sync. If there are no related files, omit the `## Related` section entirely.
+
+Example body section (placed at the very end of the file):
+```markdown
+## Related
+
+- [[api-conventions]]
+- [[auth-patterns]]
+```
+
 ## Instructions
 
 **CRITICAL**: This command MUST NOT accept any arguments. Ignore any text provided after the command.
@@ -97,7 +109,7 @@ After approval:
 
 For each topic-specific learning:
 
-1. **New KB file**: Create it under `docs/kb/` with frontmatter and content:
+1. **New KB file**: Create it under `docs/kb/` with frontmatter, content, and related links:
    ```markdown
    ---
    tags: [{inferred tags}]
@@ -116,11 +128,18 @@ For each topic-specific learning:
 
    - {Learning 1 - concise, actionable}
    - {Learning 2}
+
+   ## Related
+
+   - [[{related-kb-file}]]
    ```
+
+   Only include the `## Related` section if there are related files. It must be the last section in the file.
 
 2. **Existing KB file**: Read the file, append new learnings under the appropriate section. Do not duplicate existing entries. If a learning contradicts an existing one, replace the old entry with the new one (the latest conversation has the most current information). **Always update `last-updated` in the frontmatter to today's date.** Add any new tags or related references to the frontmatter.
 
 **KB file writing rules:**
+- **Prefer subfolder organization**: When creating new KB files, place them in a category folder (e.g., `docs/kb/architecture/`, `docs/kb/conventions/`, `docs/kb/testing/`). Use existing folder structure as a guide. If the KB is still small (< 5 files) or flat, placing files at the root is fine.
 - Keep entries concise - enough context for future Claude Code sessions to understand and apply, not verbose explanations.
 - Use imperative voice: "Use X", "Never do Y", "Prefer X over Y".
 - Include just enough "why" so the rule isn't blindly followed without understanding.
@@ -131,17 +150,20 @@ For each topic-specific learning:
 After creating/updating KB files:
 1. For any new KB file that relates to existing KB files, add `[[new-file]]` to the existing files' `related` frontmatter.
 2. For any existing KB file referenced by new content, add the reverse reference.
-3. Update `last-updated` on any file whose frontmatter was modified.
+3. Update the `## Related` body section on any file whose `related` frontmatter was modified (keep them in sync).
+4. Update `last-updated` on any file whose frontmatter was modified.
 
-#### 4c: Update CLAUDE.md Global Learnings
+#### 4c: Update Global Learnings
 
-For global learnings:
+Global learnings are stored in `docs/kb/_global-learnings.md` (a pinned KB file), NOT inline in CLAUDE.md.
 
-1. Find the `### Global Learnings` subsection under `## Knowledge Base`.
-2. Remove the placeholder text if present ("_No global learnings captured yet..._").
-3. Append new learnings as bullet points.
+1. **Read `docs/kb/_global-learnings.md`**. If it doesn't exist, create it with frontmatter (`tags: [global, cross-cutting]`, `pinned: true`, today's dates) and a `# Global Learnings` heading.
+2. Remove placeholder text if present ("_No global learnings captured yet..._").
+3. Append new learnings as bullet points under `## Key Rules`.
 4. Deduplicate: if a learning is substantially similar to an existing one, update the existing entry rather than adding a duplicate.
 5. If a new learning contradicts an existing one, replace the old one.
+6. Update `last-updated` in frontmatter to today's date.
+7. Ensure `_global-learnings.md` is registered in the CLAUDE.md Knowledge Base table as: `| Global Learnings | docs/kb/_global-learnings.md | Always (pinned) |`
 
 #### 4d: Update CLAUDE.md Reference Table
 
@@ -153,7 +175,20 @@ For global learnings:
 6. **Keep the table sorted** alphabetically by Topic.
 7. Ensure the "When to Load" column contains clear, actionable context (e.g., "When working in `packages/api/`", "When modifying database schemas", "When working on authentication").
 
-### Phase 5: Confirmation
+### Phase 5: Update Index and Log
+
+After all KB changes:
+
+1. **Update `docs/kb/_index.md`**: If this file exists, update it to reflect new/updated articles — add entries with one-line summaries for new files, update summaries if content changed significantly, and remove entries for deleted files. Keep categories organized by topic. Update `last-updated` in its frontmatter.
+2. **Append to `docs/kb/_log.md`**: If this file exists, append an entry:
+   ```
+   ## [YYYY-MM-DD] learn | Conversation learnings captured
+   - Created: {list of new files}
+   - Updated: {list of updated files}
+   - Global learnings: {count added}
+   ```
+
+### Phase 6: Confirmation
 
 After writing all changes, display a summary:
 - Number of KB files created/updated

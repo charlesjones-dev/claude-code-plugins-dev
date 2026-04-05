@@ -7,6 +7,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.3] - 2026-04-05
+
+### Added
+
+#### AI-Knowledge Plugin (v1.3.0)
+
+- `/kb-query` - Query the knowledge base and synthesize answers from multiple KB files
+  - Reads `_index.md` to find relevant pages, then drills into individual articles
+  - Synthesizes comprehensive answers with `[[wiki-link]]` citations to source KB files
+  - Flags contradictions between KB files and gaps in coverage
+  - Offers to **file answers back as new KB articles** so explorations compound into the knowledge base
+  - Filed answers include `type: synthesis`, `query`, and `sources` frontmatter fields for provenance
+  - Inspired by Karpathy's [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) pattern
+
+- `/kb-obsidian` - One-time migration to upgrade and make an existing KB Obsidian-compatible
+  - Adds `## Related` body sections with `[[wiki-links]]` for Obsidian graph view and link navigation
+  - Migrates inline `### Global Learnings` from CLAUDE.md to `docs/kb/_global-learnings.md`
+  - Generates `docs/kb/_index.md` — a categorized catalog of all KB articles with one-line summaries
+  - Creates `docs/kb/_log.md` — a chronological record of KB operations
+  - Offers to reorganize flat KB files into category folders (architecture/, conventions/, testing/, etc.)
+  - Audits and fixes frontmatter health issues
+  - Fully backwards-compatible — handles all older KB structures
+
+- **`_index.md` — Knowledge Base Index** - Auto-generated, pinned catalog of all KB articles organized by category with one-line summaries. The LLM reads this first to find relevant pages before drilling into individual articles. Created by `/kb-init` and maintained by all `/kb-*` commands.
+
+- **`_log.md` — Activity Log** - Append-only chronological record of KB operations (ingests, queries, prunes, etc.). Provides a timeline of how the knowledge base evolved. Created by `/kb-init` and appended to by all `/kb-*` commands.
+
+- `/kb-organize` - Standalone folder reorganization for existing flat KB structures
+  - Analyzes flat KB files and suggests category folders based on tags and content
+  - Common categories: architecture/, conventions/, testing/, tools/, external/, domain/
+  - Preview-first — shows all proposed moves before executing
+  - Updates CLAUDE.md table paths and `_index.md` after reorganization
+  - Does not modify `[[wiki-links]]` (they resolve by name, not path)
+
+### Changed
+
+#### AI-Knowledge Plugin (v1.3.0)
+
+- **Subfolder organization** - All `/kb-*` commands that create new KB files now prefer placing them in category subfolders (e.g., `docs/kb/architecture/`, `docs/kb/conventions/`, `docs/kb/testing/`) instead of flat in the root. Existing flat structures continue to work. `/kb-obsidian` offers to reorganize flat files into folders.
+- **Obsidian-compatible Related Links** - All `/kb-*` commands that create or update KB files now maintain a `## Related` section at the end of the file body with `[[wiki-links]]` mirroring the `related` frontmatter field. Obsidian does not parse frontmatter values as navigable links, so body links are required for graph view edges and link navigation to work.
+- **Global Learnings as dedicated KB file** - Global learnings are now stored in `docs/kb/_global-learnings.md` (a pinned KB file) instead of inline in CLAUDE.md's `### Global Learnings` section. This makes global learnings visible in Obsidian, searchable as a regular KB file, and eliminates duplication. Affects `/kb-init`, `/kb-learn`, `/kb-add`, `/kb-search`, `/kb-list`, and `/kb-prune`. Existing inline global learnings are preserved and can be migrated with `/kb-obsidian`.
+- **Index and log maintenance** - All `/kb-*` commands that modify KB files now update `_index.md` and append to `_log.md` (conditionally — only if the files exist, for backwards compatibility).
+- **Cross-reference cleanup now includes body links** - `/kb-remove` and `/kb-prune` now update both `related` frontmatter AND `## Related` body sections when cleaning up cross-references.
+- **kb-prune detects out-of-sync Related sections** - Cross-reference integrity checks now flag KB files where the `## Related` body section doesn't match the `related` frontmatter.
+- **kb-list and kb-search detect legacy global learnings** - These commands now check for and flag legacy inline `### Global Learnings` sections in CLAUDE.md, suggesting `/kb-obsidian` for migration.
+
 ## [2.3.2] - 2026-04-03
 
 ### Added

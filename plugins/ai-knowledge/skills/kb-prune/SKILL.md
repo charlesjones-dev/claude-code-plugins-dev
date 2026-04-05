@@ -8,6 +8,10 @@ disable-model-invocation: true
 
 You are a knowledge base maintenance specialist. Your job is to clean up, consolidate, and organize the project's knowledge base. All changes require user approval.
 
+## Obsidian-Compatible Related Links
+
+When modifying KB files, you MUST keep the `related` frontmatter AND the `## Related` body section (at the end of the file) in sync. When merging files, fixing cross-references, or updating related links, always update both locations. If `related` becomes empty, remove the `## Related` body section entirely.
+
 ## Frontmatter Schema
 
 When modifying KB files during pruning (merges, promotions, etc.), always maintain valid frontmatter and update `last-updated` to today's date.
@@ -72,11 +76,15 @@ For each existing KB file:
 1. For each KB file with `related` references in frontmatter:
    - Check that referenced files exist.
    - Check for one-way references (A links to B but B doesn't link to A).
-2. Categorize as **BROKEN LINK** or **ONE-WAY REFERENCE**.
+   - Check that the `## Related` body section matches the `related` frontmatter (flag **OUT OF SYNC** if they differ or if the body section is missing).
+2. Categorize as **BROKEN LINK**, **ONE-WAY REFERENCE**, or **OUT OF SYNC**.
 
 #### 1g: Review Global Learnings
 
-1. Check for entries that are:
+Global learnings are stored in `docs/kb/_global-learnings.md`. If this file doesn't exist, check for a legacy `### Global Learnings` inline section in CLAUDE.md — if found, flag it as **NEEDS MIGRATION** and suggest running `/kb-obsidian`.
+
+1. Read `docs/kb/_global-learnings.md` (or the legacy inline section if the file doesn't exist).
+2. Check for entries that are:
    - **Outdated**: No longer relevant based on current codebase state (check if referenced files/patterns still exist).
    - **Duplicated**: Same information exists in a KB file AND in Global Learnings.
    - **Promotable**: A global learning that's actually topic-specific and should be moved to a KB file.
@@ -159,17 +167,31 @@ Apply only the user-approved changes:
 2. **Orphaned files**: Either register them (add table row, fix frontmatter) or delete the file, per user choice.
 3. **Frontmatter fixes**: Add/complete frontmatter on affected files. Update `last-updated`.
 4. **Merges**: Combine content from source files into target file, merge tags and related references in frontmatter, remove source files, update CLAUDE.md table. Update `last-updated`.
-5. **Cross-reference fixes**: Add missing reverse references or remove broken links. Update `last-updated` on modified files.
+5. **Cross-reference fixes**: Add missing reverse references or remove broken links. Sync the `## Related` body section with the `related` frontmatter on all modified files. Update `last-updated` on modified files.
 6. **Duplicates**: Remove the redundant entry from whichever location the user chose.
 7. **Contradictions**: Update the incorrect entry with the correct rule. Update `last-updated`.
-8. **Promotions**: Move the learning from Global Learnings to the target KB file with proper frontmatter, add table reference if needed.
+8. **Promotions**: Move the learning from `docs/kb/_global-learnings.md` to the target KB file, add table reference if needed. Update `last-updated` on `_global-learnings.md`.
+9. **Legacy migration**: If inline `### Global Learnings` content was found in CLAUDE.md, migrate it to `docs/kb/_global-learnings.md` and remove the inline section.
 
 After all changes:
 - Re-sort the CLAUDE.md reference table alphabetically by Topic.
 - Remove any placeholder text if real entries now exist.
 - Ensure no empty sections remain.
 
-### Phase 5: Confirmation
+### Phase 5: Update Index and Log
+
+1. **Update `docs/kb/_index.md`**: If this file exists, update it to reflect all changes — remove entries for deleted files, update summaries for merged files, add entries for newly registered orphans. Update `last-updated` in its frontmatter.
+2. **Append to `docs/kb/_log.md`**: If this file exists, append:
+   ```
+   ## [YYYY-MM-DD] prune | KB cleanup and consolidation
+   - Stale refs removed: {count}
+   - Orphans registered/deleted: {count}
+   - Frontmatter fixes: {count}
+   - Merges: {count}
+   - Cross-ref fixes: {count}
+   ```
+
+### Phase 6: Confirmation
 
 Display a summary of all changes made:
 - Files created/updated/deleted

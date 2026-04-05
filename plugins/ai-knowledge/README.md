@@ -6,9 +6,14 @@ AI-powered knowledge base management for Claude Code. Capture conversation learn
 
 Over time, you accumulate project-specific knowledge during Claude Code conversations: things that didn't work, best practices, client requirements, and codebase gotchas. This plugin captures that knowledge so future sessions benefit from it automatically.
 
-Knowledge is stored in two layers:
-- **KB files** (`docs/kb/*.md`): Topic-specific knowledge loaded contextually when working in relevant areas
-- **Global Learnings** (in CLAUDE.md): Cross-cutting rules that apply everywhere
+The knowledge base is a persistent, compounding wiki maintained by the LLM. It has three layers:
+- **KB articles** (`docs/kb/{category}/*.md`): Topic-specific knowledge organized in category folders, loaded contextually
+- **Global Learnings** (`docs/kb/_global-learnings.md`): Cross-cutting rules that apply everywhere (pinned, always loaded)
+- **Index & Log** (`docs/kb/_index.md`, `docs/kb/_log.md`): Auto-generated catalog and chronological activity record
+
+The knowledge base is fully **Obsidian-compatible** — open `docs/kb/` as an Obsidian vault to browse your knowledge graph, navigate between related topics, and visualize connections.
+
+Inspired by Karpathy's [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) pattern — the LLM does all the summarizing, cross-referencing, filing, and bookkeeping that makes a knowledge base useful over time.
 
 ## Commands
 
@@ -26,7 +31,10 @@ Knowledge is stored in two layers:
 | `/kb-list` | List all registered KB files with status, tags, dates, and cross-references |
 | `/kb-search` | Search across KB files by keyword, topic, or tag (`tag:security`) |
 | `/kb-prune` | Interactive cleanup: stale refs, duplicates, merges, frontmatter health |
+| `/kb-query` | Query the KB and synthesize answers (optionally filed back as articles) |
 | `/kb-auto` | Toggle automatic knowledge capture at end of conversations |
+| `/kb-organize` | Reorganize flat KB files into category folders |
+| `/kb-obsidian` | One-time upgrade for Obsidian compatibility, index, log, and folders |
 
 ## Getting Started
 
@@ -41,6 +49,8 @@ Knowledge is stored in two layers:
 5. Use `/kb-add` to quickly save a one-off rule or note without full conversation analysis.
 
 6. Periodically run `/kb-prune` to keep the knowledge base organized.
+
+7. Run `/kb-obsidian` to make an existing KB Obsidian-compatible, then open `docs/kb/` as an Obsidian vault.
 
 ## How It Works
 
@@ -75,8 +85,21 @@ scope: "packages/api/**"             # Optional glob pattern for auto-matching
 
 Cross-references (`related`) create a knowledge graph -- when Claude loads one KB file and sees related references, it knows to also consult the linked files for full context.
 
+### Obsidian Compatibility
+
+KB files also include a `## Related` section at the bottom of the file body with `[[wiki-links]]` mirroring the frontmatter:
+
+```markdown
+## Related
+
+- [[api-conventions]]
+- [[auth-patterns]]
+```
+
+This is required because Obsidian does not parse frontmatter values as navigable links. The body `[[wiki-links]]` enable Obsidian's graph view edges and click-to-navigate between related topics. All `/kb-*` commands maintain this section automatically.
+
 ## Plugin Details
 
-- **Version**: 1.2.0
+- **Version**: 1.3.0
 - **Author**: [Charles Jones](https://charlesjones.dev)
 - **License**: MIT

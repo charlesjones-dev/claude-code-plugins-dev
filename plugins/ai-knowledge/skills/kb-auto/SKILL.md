@@ -22,7 +22,7 @@ You are a knowledge base configuration assistant. Your job is to toggle the auto
 
 #### If auto-capture is currently DISABLED (marker not found):
 
-Add the following block immediately after the Knowledge Base table and before `### Global Learnings`:
+Add the following block immediately after the Knowledge Base table:
 
 ```markdown
 <!-- kb-auto: enabled -->

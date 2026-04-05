@@ -17,7 +17,7 @@ You are a knowledge base inventory assistant. Your job is to display the current
 1. Read the project's `CLAUDE.md` file.
 2. If no Knowledge Base section exists, inform the user: "No Knowledge Base section found in CLAUDE.md. Run `/kb-init` to set one up." and stop.
 3. Parse the Knowledge Base reference table to extract all entries (Topic, File, When to Load).
-4. Read the Global Learnings subsection.
+4. Read `docs/kb/_global-learnings.md` if it exists for global learnings count. Also check for a legacy `### Global Learnings` inline section in CLAUDE.md (older setups may still have this — if found, suggest running `/kb-obsidian` to migrate).
 
 ### Step 2: Verify File Status and Read Frontmatter
 

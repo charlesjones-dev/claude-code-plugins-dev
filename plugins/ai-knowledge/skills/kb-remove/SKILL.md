@@ -49,11 +49,22 @@ Based on user choice:
 
 1. **Remove the CLAUDE.md table row** for this entry.
 2. **Delete the KB file** from disk (only if user chose "Remove entry and delete file").
-3. **Clean up cross-references**: For any other KB file that has this file in its `related` frontmatter, remove the reference and update `last-updated` to today's date.
+3. **Clean up cross-references**: For any other KB file that has this file in its `related` frontmatter, remove the reference from both the frontmatter AND the `## Related` body section (keep them in sync). Update `last-updated` to today's date. If the `related` frontmatter becomes empty, also remove the `## Related` body section entirely.
 4. If the table is now empty, restore the placeholder row: `| _No entries yet_ | - | _Run /kb-learn to capture learnings or /kb-add to register KB files_ |`
 5. Re-sort the table alphabetically by Topic.
 
-### Step 4: Confirm
+### Step 4: Update Index and Log
+
+1. **Update `docs/kb/_index.md`**: If this file exists, remove the entry for the deleted file. Update `last-updated` in its frontmatter.
+2. **Append to `docs/kb/_log.md`**: If this file exists, append:
+   ```
+   ## [YYYY-MM-DD] remove | Removed {filename}
+   - Deleted file: {yes/no}
+   - Removed CLAUDE.md table entry
+   - Cleaned cross-references in: {list of files}
+   ```
+
+### Step 5: Confirm
 
 Display:
 - What was removed (table entry and/or file)

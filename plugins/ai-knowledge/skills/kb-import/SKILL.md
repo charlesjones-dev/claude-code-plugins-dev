@@ -23,6 +23,10 @@ scope: "src/api/**"                    # Optional: glob pattern for auto-matchin
 ---
 ```
 
+## Obsidian-Compatible Related Links
+
+When a KB file has `related` entries in its frontmatter, it MUST also have a `## Related` section at the **end** of the file body with the same references as `[[wiki-links]]`. When fixing frontmatter, also check for and add this body section if `related` is non-empty. Always keep both in sync.
+
 ## Instructions
 
 ### Step 1: Determine Mode
@@ -89,7 +93,17 @@ If "Let me adjust", ask a free-text follow-up for corrections.
 5. **Deduplicate**: If a row for the same file already exists, update it rather than adding a duplicate.
 6. **Sort the table** alphabetically by Topic.
 
-### Step 6: Confirm
+### Step 6: Update Index and Log
+
+1. **Update `docs/kb/_index.md`**: If this file exists, add entries for newly registered files with one-line summaries. Update `last-updated` in its frontmatter.
+2. **Append to `docs/kb/_log.md`**: If this file exists, append:
+   ```
+   ## [YYYY-MM-DD] import | Registered {count} KB files
+   - Registered: {list of files}
+   - Frontmatter fixes: {count}
+   ```
+
+### Step 7: Confirm
 
 Display what was registered:
 - File(s) added to the Knowledge Base table

@@ -43,8 +43,9 @@ Determine the search mode:
 
 ### Step 4: Search Global Learnings
 
-1. Read CLAUDE.md and find the Global Learnings subsection.
+1. Read `docs/kb/_global-learnings.md` if it exists (this is the dedicated global learnings KB file).
 2. Check if any global learning entries match the search query.
+3. Also check CLAUDE.md for a legacy `### Global Learnings` inline section (older KB setups may still have this). If found, search it too.
 
 ### Step 5: Display Results
 

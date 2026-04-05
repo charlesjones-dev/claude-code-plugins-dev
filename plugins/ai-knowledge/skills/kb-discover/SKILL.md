@@ -31,6 +31,10 @@ discovered-from: "src/api/, src/models/"   # Required for discovered content: di
 
 The `discovered-from` field tracks which parts of the codebase were analyzed to produce the KB entry. This enables re-discovery if the codebase evolves significantly.
 
+## Obsidian-Compatible Related Links
+
+When a KB file has `related` entries in its frontmatter, you MUST also include a `## Related` section at the **end** of the file body with the same references as `[[wiki-links]]`. This enables Obsidian graph view and link navigation. Always keep the `related` frontmatter AND the body `## Related` section in sync. If there are no related files, omit the section entirely.
+
 ## Instructions
 
 ### Step 1: Determine Scope
@@ -164,10 +168,12 @@ For each analysis target, read the code and extract knowledge across these categ
 Group the extracted knowledge into proposed KB articles. Each article should cover a coherent topic — not a 1:1 mapping of the categories above, but natural groupings based on what was actually found.
 
 **Good KB article scoping**:
-- "API Conventions" — route patterns, request/response shapes, auth middleware, error format
-- "Data Model Patterns" — ORM usage, common fields, relationships, validation
-- "Testing Strategy" — test organization, fixtures, mocking approach
-- "Project Architecture" — layers, module boundaries, dependency flow
+- "API Conventions" → `docs/kb/conventions/api-conventions.md`
+- "Data Model Patterns" → `docs/kb/architecture/data-model-patterns.md`
+- "Testing Strategy" → `docs/kb/testing/testing-strategy.md`
+- "Project Architecture" → `docs/kb/architecture/project-architecture.md`
+
+**Prefer subfolder organization** when suggesting file paths. Use existing folder structure as a guide. Common categories: `architecture/`, `conventions/`, `testing/`, `tools/`, `external/`.
 
 **Bad KB article scoping** (too granular or too broad):
 - "How the User model works" — too specific to one entity
@@ -293,8 +299,20 @@ When appending, also present the diff (new content being added) to the user via 
 After all articles are created:
 1. Add `related` cross-references between newly created KB files where topics overlap.
 2. Add cross-references to existing KB files where relevant.
+3. Add or update the `## Related` body section on any file whose `related` frontmatter was modified (keep them in sync).
 
-### Step 8: Summary
+### Step 8: Update Index and Log
+
+1. **Update `docs/kb/_index.md`**: If this file exists, add entries for all newly created/updated KB articles with one-line summaries. Update `last-updated` in its frontmatter.
+2. **Append to `docs/kb/_log.md`**: If this file exists, append:
+   ```
+   ## [YYYY-MM-DD] discover | Codebase knowledge discovery
+   - Analyzed: {list of directories/files}
+   - Created: {list of new KB files}
+   - Updated: {list of updated KB files}
+   ```
+
+### Step 9: Summary
 
 ```
 KB Discover — Complete

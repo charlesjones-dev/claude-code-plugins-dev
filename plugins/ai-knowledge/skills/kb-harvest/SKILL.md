@@ -26,6 +26,10 @@ source: "C:/Source/billing-module/docs/api-conventions.md"  # Required for harve
 
 The `source` field is what distinguishes harvested KB entries from organically captured ones. It enables future re-harvesting if source docs are updated.
 
+## Obsidian-Compatible Related Links
+
+When a KB file has `related` entries in its frontmatter, you MUST also include a `## Related` section at the **end** of the file body with the same references as `[[wiki-links]]`. This enables Obsidian graph view and link navigation. Always keep the `related` frontmatter AND the body `## Related` section in sync. If there are no related files, omit the section entirely.
+
 ## Instructions
 
 ### Step 1: Determine Input Sources
@@ -125,8 +129,7 @@ For each selected source:
    - **Reference material**: Tutorials, onboarding docs, API references that are informational but don't contain actionable rules. Flag but allow ingestion if the user wants.
    - **Not suitable**: Binary content, auto-generated docs, pure changelogs, or empty/trivial content. Inform the user and skip.
 3. **Propose a KB destination**:
-   - Suggest a file path under `docs/kb/` based on the content topic.
-   - Use the module name in the path if the content is module-specific: e.g., `docs/kb/billing-api-conventions.md` or `docs/kb/auth-token-handling.md`.
+   - Suggest a file path under `docs/kb/` using subfolder organization based on the content topic and module name (e.g., `docs/kb/external/billing-api-conventions.md`, `docs/kb/conventions/auth-token-handling.md`). Use existing folder structure as a guide.
    - Check existing KB files for topic overlap — propose appending if a good match exists.
 4. **Suggest tags**: Include `module:{module-name}` automatically for local sources. Add topic-specific tags inferred from content.
 5. **Suggest "When to Load"**: Infer the context from the content (e.g., "Working with billing module API", "Deploying auth-service").
@@ -222,8 +225,20 @@ For each approved source:
 After all ingestions are complete:
 1. Scan newly created KB files for related topics with each other and with existing KB files.
 2. Add `related` cross-references in frontmatter where there's clear topical overlap.
+3. Add or update the `## Related` body section on any file whose `related` frontmatter was modified (keep them in sync).
 
-### Step 8: Summary
+### Step 8: Update Index and Log
+
+1. **Update `docs/kb/_index.md`**: If this file exists, add entries for all newly created/updated KB files with one-line summaries. Update `last-updated` in its frontmatter.
+2. **Append to `docs/kb/_log.md`**: If this file exists, append:
+   ```
+   ## [YYYY-MM-DD] harvest | Harvested {count} sources
+   - Sources: {list of source paths/URLs}
+   - Created: {list of new KB files}
+   - Updated: {list of updated KB files}
+   ```
+
+### Step 9: Summary
 
 Display a final summary:
 

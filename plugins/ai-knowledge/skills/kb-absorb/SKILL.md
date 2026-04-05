@@ -8,6 +8,10 @@ disable-model-invocation: true
 
 You are a knowledge base migration specialist. Your job is to analyze a project's existing documentation — CLAUDE.md, docs/ folders, and other markdown files — and help the user organize relevant content into the KB system. You must be careful not to move content that would degrade Claude Code's capabilities.
 
+## Obsidian-Compatible Related Links
+
+When a KB file has `related` entries in its frontmatter, you MUST also include a `## Related` section at the **end** of the file body with the same references as `[[wiki-links]]`. This enables Obsidian graph view and link navigation. Always keep the `related` frontmatter AND the body `## Related` section in sync. If there are no related files, omit the section entirely.
+
 ## Instructions
 
 **CRITICAL**: This command MUST NOT accept any arguments. Ignore any text provided after the command.
@@ -58,7 +62,7 @@ Documentation Analysis
 These sections are topic-specific and could be loaded contextually:
 
 1. "{Section heading}" (lines {start}-{end})
-   → Suggested KB file: docs/kb/{suggested-path}.md
+   → Suggested KB file: docs/kb/{category}/{suggested-path}.md (prefer subfolder organization)
    → When to load: {context}
    Reason: {why this is topic-specific, not core}
 
@@ -132,9 +136,20 @@ For each approved migration:
 
 #### 4c: Cross-References
 
-After all migrations, scan the newly created KB files for related topics and add `related` cross-references in frontmatter where appropriate.
+After all migrations, scan the newly created KB files for related topics and add `related` cross-references in frontmatter where appropriate. Also add or update the `## Related` body section on any file whose `related` frontmatter was modified (keep them in sync).
 
-### Phase 5: Confirmation
+### Phase 5: Update Index and Log
+
+1. **Update `docs/kb/_index.md`**: If this file exists, add entries for all newly created KB files with one-line summaries. Update `last-updated` in its frontmatter.
+2. **Append to `docs/kb/_log.md`**: If this file exists, append:
+   ```
+   ## [YYYY-MM-DD] absorb | Migrated existing documentation
+   - From CLAUDE.md: {list of sections moved}
+   - From docs/: {list of files absorbed}
+   - Created: {list of new KB files}
+   ```
+
+### Phase 6: Confirmation
 
 Display a summary:
 - Sections moved from CLAUDE.md to KB files

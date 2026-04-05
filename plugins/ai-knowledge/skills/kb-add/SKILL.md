@@ -23,6 +23,10 @@ scope: "src/api/**"                    # Optional: glob pattern for auto-matchin
 ---
 ```
 
+## Obsidian-Compatible Related Links
+
+When a KB file has `related` entries in its frontmatter, you MUST also include a `## Related` section at the **end** of the file body with the same references as `[[wiki-links]]`. This enables Obsidian graph view and link navigation. Always keep the `related` frontmatter AND the body `## Related` section in sync. If there are no related files, omit the `## Related` section entirely.
+
 ## Instructions
 
 ### Step 1: Get the Learning
@@ -51,8 +55,8 @@ Based on the learning content, existing KB structure, and frontmatter tags, dete
 - Header: "KB Location"
 - Options should include (as applicable):
   - Matching existing KB file(s) if the learning fits an existing topic — prioritize tag matches (e.g., "Append to `docs/kb/api-conventions.md` (tags: api, rest)")
-  - A suggested new KB file if no existing file fits (e.g., "Create new file: `docs/kb/deployment.md`")
-  - "Global Learnings (CLAUDE.md)" if the learning is cross-cutting
+  - A suggested new KB file if no existing file fits — prefer subfolder organization (e.g., "Create new file: `docs/kb/tools/deployment.md`"). Use existing folder structure as a guide.
+  - "Global Learnings (`docs/kb/_global-learnings.md`)" if the learning is cross-cutting
   - "Custom location" for the user to specify their own path
 
 If the user selects "Custom location", ask a follow-up:
@@ -88,7 +92,7 @@ If saving to a new KB file, gather metadata:
 7. Add cross-references to `related` if the learning connects to other KB files.
 
 #### If creating a new KB file:
-1. Create the file with frontmatter and standard structure:
+1. Create the file with frontmatter, content, and related links:
    ```markdown
    ---
    tags: [{confirmed tags}]
@@ -106,19 +110,36 @@ If saving to a new KB file, gather metadata:
    ## Key Rules
 
    - {The learning, concise and actionable}
+
+   ## Related
+
+   - [[{related-kb-file}]]
    ```
+   Only include the `## Related` section if there are related files. It must be the last section.
 2. Update the CLAUDE.md Knowledge Base table:
    - Remove placeholder row if present.
    - Add new row with Topic, File path, and When to Load (use "Always (pinned)" if pinned).
    - Keep table sorted alphabetically by Topic.
-3. Add reverse cross-references: if the new file relates to existing KB files, add `[[new-file]]` to those files' `related` frontmatter and update their `last-updated`.
+3. Add reverse cross-references: if the new file relates to existing KB files, add `[[new-file]]` to those files' `related` frontmatter, update their `## Related` body section to match, and update their `last-updated`.
 
 #### If adding to Global Learnings:
-1. Append as a bullet point under `### Global Learnings` in CLAUDE.md.
-2. Remove placeholder text if present.
-3. Deduplicate against existing entries.
+1. Read `docs/kb/_global-learnings.md`. If it doesn't exist, create it with frontmatter (`tags: [global, cross-cutting]`, `pinned: true`, today's dates) and a `# Global Learnings` heading.
+2. Append as a bullet point under `## Key Rules`.
+3. Remove placeholder text if present ("_No global learnings captured yet..._").
+4. Deduplicate against existing entries.
+5. Update `last-updated` in frontmatter to today's date.
+6. Ensure `_global-learnings.md` is registered in the CLAUDE.md Knowledge Base table as: `| Global Learnings | docs/kb/_global-learnings.md | Always (pinned) |`
 
-### Step 6: Confirm
+### Step 6: Update Index and Log
+
+1. **Update `docs/kb/_index.md`**: If this file exists, add or update the entry for the modified file with a one-line summary. Update `last-updated` in its frontmatter.
+2. **Append to `docs/kb/_log.md`**: If this file exists, append:
+   ```
+   ## [YYYY-MM-DD] add | Quick add to {destination}
+   - Added: "{brief learning text}"
+   ```
+
+### Step 7: Confirm
 
 Display:
 - What was saved and where

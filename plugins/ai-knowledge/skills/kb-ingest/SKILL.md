@@ -23,6 +23,10 @@ scope: "src/api/**"                    # Optional: glob pattern for auto-matchin
 ---
 ```
 
+## Obsidian-Compatible Related Links
+
+When a KB file has `related` entries in its frontmatter, you MUST also include a `## Related` section at the **end** of the file body with the same references as `[[wiki-links]]`. This enables Obsidian graph view and link navigation. Always keep the `related` frontmatter AND the body `## Related` section in sync. If there are no related files, omit the section entirely.
+
 ## Instructions
 
 ### Step 1: Determine Input Files
@@ -52,7 +56,7 @@ For each input file:
    - **Reference material**: Human-facing documentation (tutorials, onboarding, API references) that doesn't contain actionable rules. Flag this for the user but still allow ingestion if they want it.
    - **Not suitable**: Binary files, auto-generated content, changelogs, or files with no extractable knowledge. Inform the user and skip.
 
-3. **Propose a KB destination**: Suggest a file path under `docs/kb/` based on the content topic (e.g., `docs/kb/api-conventions.md`, `docs/kb/auth/token-handling.md`).
+3. **Propose a KB destination**: Suggest a file path under `docs/kb/` using subfolder organization based on the content topic (e.g., `docs/kb/conventions/api-conventions.md`, `docs/kb/architecture/auth-flow.md`). Use existing folder structure as a guide.
 
 4. **Check for overlap**: Read the CLAUDE.md Knowledge Base table and check if an existing KB file covers the same topic. If so, propose appending to the existing file instead of creating a new one.
 
@@ -103,7 +107,18 @@ For each approved file:
 3. **Deduplicate**: If a row for the same file already exists, update it rather than adding a duplicate.
 4. **Sort the table** alphabetically by Topic.
 
-### Step 6: Confirm
+### Step 6: Update Index and Log
+
+1. **Update `docs/kb/_index.md`**: If this file exists, add or update entries for ingested files with one-line summaries. Update `last-updated` in its frontmatter.
+2. **Append to `docs/kb/_log.md`**: If this file exists, append:
+   ```
+   ## [YYYY-MM-DD] ingest | Ingested {count} files
+   - Sources: {list of source files}
+   - Created: {list of new KB files}
+   - Updated: {list of updated KB files}
+   ```
+
+### Step 7: Confirm
 
 Display a summary for each ingested file:
 - Source file and destination KB file
