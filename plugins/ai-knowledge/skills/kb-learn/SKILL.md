@@ -19,7 +19,7 @@ related: [[other-kb-file]]             # Optional: cross-references to related K
 created: YYYY-MM-DD                    # Required: date created
 last-updated: YYYY-MM-DD              # Required: date last modified (update on every write)
 pinned: false                          # Optional: true = always loaded. Default false
-scope: "src/api/**"                    # Optional: glob pattern for auto-matching
+scope: "src/api/**"                    # Optional: glob pattern(s) for auto-matching. String or array.
 ---
 ```
 
@@ -117,7 +117,7 @@ For each topic-specific learning:
    created: {today's date}
    last-updated: {today's date}
    pinned: false
-   scope: "{glob pattern if applicable}"
+   scope: ["{glob patterns if applicable}"]   # String or array of glob patterns
    ---
 
    # {Topic Name}
@@ -173,7 +173,7 @@ Global learnings are stored in `docs/kb/_global-learnings.md` (a pinned KB file)
 4. For pinned KB files, set "When to Load" to "Always (pinned)".
 5. **Deduplicate**: If multiple rows point to the same file, merge them.
 6. **Keep the table sorted** alphabetically by Topic.
-7. Ensure the "When to Load" column contains clear, actionable context (e.g., "When working in `packages/api/`", "When modifying database schemas", "When working on authentication").
+7. **Format the "When to Load" column** using the structured format: scope glob patterns (backtick-wrapped, comma-separated) followed by an em dash (`—`) and topic keywords from tags. Example: `` `src/api/**`, `*.controller.ts` — api, rest, middleware ``. If the KB file has no scope patterns, use keywords only: `— api, rest, middleware`. Pinned files always use `Always (pinned)`.
 
 ### Phase 5: Update Index and Log
 

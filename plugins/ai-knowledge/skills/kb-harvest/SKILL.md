@@ -19,7 +19,7 @@ related: [[other-kb-file]]                 # Optional: cross-references to relat
 created: YYYY-MM-DD                        # Required: date created
 last-updated: YYYY-MM-DD                   # Required: date last modified (update on every write)
 pinned: false                              # Optional: true = always loaded. Default false
-scope: "src/api/**"                        # Optional: glob pattern for auto-matching work context
+scope: "src/api/**"                        # Optional: glob pattern(s) for auto-matching. String or array.
 source: "C:/Source/billing-module/docs/api-conventions.md"  # Required for harvested content: original source path or URL
 ---
 ```
@@ -132,7 +132,11 @@ For each selected source:
    - Suggest a file path under `docs/kb/` using subfolder organization based on the content topic and module name (e.g., `docs/kb/external/billing-api-conventions.md`, `docs/kb/conventions/auth-token-handling.md`). Use existing folder structure as a guide.
    - Check existing KB files for topic overlap — propose appending if a good match exists.
 4. **Suggest tags**: Include `module:{module-name}` automatically for local sources. Add topic-specific tags inferred from content.
-5. **Suggest "When to Load"**: Infer the context from the content (e.g., "Working with billing module API", "Deploying auth-service").
+5. **Build "When to Load"**: Construct the structured loading context:
+   - Extract or infer scope glob patterns from the content (e.g., `src/billing/**`).
+   - Use the suggested tags as keywords.
+   - Format as: `` `scope-glob1` — keyword1, keyword2 ``
+   - Example: `` `src/billing/**` — module:billing, api, conventions ``
 
 ### Step 6: Present Ingestion Plan
 
@@ -145,7 +149,7 @@ KB Harvest — Ingestion Plan
 1. C:/Source/billing/docs/api-conventions.md
    → NEW: docs/kb/billing-api-conventions.md
    → Tags: [module:billing, api, conventions, rest]
-   → When to Load: "Working with billing module API"
+   → When to Load: `src/billing/**` — module:billing, api, conventions
    → Content type: Actionable knowledge
 
 2. C:/Source/billing/docs/deployment.md
@@ -156,7 +160,7 @@ KB Harvest — Ingestion Plan
 3. https://wiki.example.com/billing/api
    → NEW: docs/kb/billing-api-integration.md
    → Tags: [module:billing, api, integration, external]
-   → When to Load: "Integrating with billing API"
+   → When to Load: — module:billing, api, integration
    → Content type: Reference material (user approved)
 ```
 
@@ -217,6 +221,7 @@ For each approved source:
 1. **Remove placeholder row** if present ("_No entries yet_").
 2. **Add or update the row** with the confirmed Topic, File path, and When to Load.
    - For pinned KB files, set "When to Load" to "Always (pinned)".
+   - For non-pinned files, format the "When to Load" column using the structured format: `` `scope-glob1`, `scope-glob2` — tag1, tag2 ``. Derive scope patterns from the file's `scope` frontmatter and keywords from `tags`.
 3. **Deduplicate**: If a row for the same file already exists, update it rather than adding a duplicate.
 4. **Sort the table** alphabetically by Topic.
 

@@ -1,7 +1,7 @@
 {
   "name": "ai-knowledge",
-  "version": "1.3.0",
-  "description": "AI-powered knowledge base management - Capture conversation learnings, maintain topic-specific KB files, Obsidian-compatible knowledge graph, and dynamically reference institutional knowledge in CLAUDE.md",
+  "version": "1.4.0",
+  "description": "AI-powered knowledge base management - Capture conversation learnings, maintain topic-specific KB files, Obsidian-compatible knowledge graph, structured dynamic context loading, and institutional knowledge in CLAUDE.md",
   "author": {
     "name": "Charles Jones",
     "url": "https://charlesjones.dev"

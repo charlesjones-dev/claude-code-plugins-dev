@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.4] - 2026-04-06
+
+### Added
+
+#### AI-Knowledge Plugin (v1.4.0)
+
+- `/kb-upgrade` - Comprehensive KB upgrade command (replaces `/kb-obsidian`)
+  - Absorbs all `/kb-obsidian` functionality (Related body links, global learnings migration, index/log creation, folder reorganization)
+  - Standardizes "When to Load" column from vague free-text to structured `scope-globs — keywords` format for efficient dynamic context loading
+  - Updates CLAUDE.md preamble with explicit 4-point matching instructions (pinned, scope patterns, keywords, _index.md fallback)
+  - Adds loading notification directive — Claude now tells users when loading KB files (e.g., `📖 Loading KB: api-conventions.md`)
+  - Adds Scope column to `_index.md` All Pages table for routing context
+  - Suggests scope patterns for KB files with empty/missing scope
+  - Re-runnable and idempotent — safe to run after plugin updates or any time to verify KB health
+
+- `/kb-load` - Manually load KB articles into the current conversation
+  - Accepts filename, topic name, or tag filter (e.g., `/kb-load api-conventions`, `/kb-load tag:testing`)
+  - Interactive picker when no argument provided
+  - Offers to follow `related` cross-references one level deep
+  - Displays `📖 Loading KB:` notifications consistent with automatic loading
+  - Use when Claude hasn't automatically loaded a KB file you need mid-conversation
+
+### Changed
+
+#### AI-Knowledge Plugin (v1.4.0)
+
+- **Structured "When to Load" format** — All KB commands now generate structured loading criteria: backtick-wrapped scope globs + topic keywords (e.g., `` `src/api/**`, `*.controller.ts` — api, rest, middleware ``). This replaces vague free-text like "When working in packages/api/" and enables efficient dynamic context matching.
+- **`scope` field supports arrays** — The frontmatter `scope` field now accepts both a single string (`scope: "src/api/**"`) and an array of strings (`scope: ["src/api/**", "*.controller.ts"]`) for matching multiple file patterns.
+- **CLAUDE.md preamble improved** — The Knowledge Base section preamble now includes explicit instructions for how Claude should match scope patterns, keywords, and pinned entries, plus a loading notification directive.
+- **`_index.md` includes Scope column** — The All Pages table now has a Scope column showing each article's file path matching patterns.
+- **`kb-organize` refreshes "When to Load"** — Reorganizing files now also regenerates the "When to Load" column values from frontmatter.
+
+### Removed
+
+- `/kb-obsidian` — All functionality absorbed into `/kb-upgrade`
+
 ## [2.3.3] - 2026-04-05
 
 ### Added

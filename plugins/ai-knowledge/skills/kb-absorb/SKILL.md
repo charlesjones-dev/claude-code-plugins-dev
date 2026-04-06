@@ -119,12 +119,12 @@ For each approved migration:
    created: {today's date}
    last-updated: {today's date}
    pinned: false
-   scope: "{glob pattern if applicable}"
+   scope: ["{glob patterns if applicable}"]   # String or array
    ---
    ```
 2. Write the content, reformatted for KB style (concise, imperative, actionable rules).
 3. **Do NOT simply copy-paste** — distill the content into KB format. Long prose should become concise rules. Remove filler and context that only matters for human reading.
-4. Add a reference row to the CLAUDE.md Knowledge Base table.
+4. Add a reference row to the CLAUDE.md Knowledge Base table. Format the "When to Load" column using the structured format: `` `scope-glob1`, `scope-glob2` — tag1, tag2 ``. Derive scope from the content's directory affinity and keywords from tags. For pinned files, use `Always (pinned)`.
 5. Remove the section from CLAUDE.md.
 6. If the removed section contained anything cross-cutting, add a brief reference in its place: `> See docs/kb/{file}.md for {topic} details.`
 
@@ -132,7 +132,7 @@ For each approved migration:
 
 1. If the file is already well-structured, move it to `docs/kb/` and add frontmatter.
 2. If the file needs reformatting, create a new KB file with distilled content. Do NOT delete the original — inform the user they can remove it manually if desired.
-3. Add a reference row to the CLAUDE.md Knowledge Base table.
+3. Add a reference row to the CLAUDE.md Knowledge Base table. Format the "When to Load" column using the structured format: `` `scope-glob1`, `scope-glob2` — tag1, tag2 ``. Derive scope from the content's directory affinity and keywords from tags. For pinned files, use `Always (pinned)`.
 
 #### 4c: Cross-References
 

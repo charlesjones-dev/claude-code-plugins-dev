@@ -19,7 +19,7 @@ related: [[other-kb-file]]             # Optional: cross-references to related K
 created: YYYY-MM-DD                    # Required: date created
 last-updated: YYYY-MM-DD              # Required: date last modified (update on every write)
 pinned: false                          # Optional: true = always loaded. Default false
-scope: "src/api/**"                    # Optional: glob pattern for auto-matching
+scope: "src/api/**"                    # Optional: glob pattern(s) for auto-matching. String or array.
 ---
 ```
 
@@ -72,13 +72,17 @@ If saving to a new KB file, gather metadata:
 - Header: "KB Tags"
 - Options: "Use suggested" | "Let me adjust" (free-text follow-up)
 
-**When to Load**: Ask about the loading context:
-- Question: "When should Claude Code load this knowledge?"
+**When to Load**: Determine the scope patterns and keywords for the loading context:
+1. **Infer scope patterns** from the learning content. If the learning relates to specific directories or file types, suggest glob patterns (e.g., `src/api/**`, `*.controller.ts`).
+2. **Use the file's tags as keywords**.
+3. Present the suggested "When to Load" value in the structured format: `` `glob1`, `glob2` — keyword1, keyword2 ``.
+
+- Question: "Suggested loading context: {formatted When to Load value}. Adjust or confirm?"
 - Header: "Loading Context"
 - Options:
-  - Suggested context based on the learning content (e.g., "When working in `src/api/`")
+  - "Use suggested" (show the formatted value)
   - "Always load (pinned)" (for critical knowledge)
-  - "Custom context" (free-text)
+  - "Let me adjust" (free-text)
 
 ### Step 5: Write the Learning
 
@@ -100,7 +104,7 @@ If saving to a new KB file, gather metadata:
    created: {today's date}
    last-updated: {today's date}
    pinned: {true if user selected "Always load", else false}
-   scope: "{glob pattern if applicable}"
+   scope: ["{glob patterns if applicable}"]   # String or array
    ---
 
    # {Topic Name}
@@ -119,6 +123,7 @@ If saving to a new KB file, gather metadata:
 2. Update the CLAUDE.md Knowledge Base table:
    - Remove placeholder row if present.
    - Add new row with Topic, File path, and When to Load (use "Always (pinned)" if pinned).
+   - Format the "When to Load" column using the structured format: `` `scope-glob1`, `scope-glob2` — tag1, tag2 ``. Derive scope patterns from the file's `scope` frontmatter and keywords from `tags`.
    - Keep table sorted alphabetically by Topic.
 3. Add reverse cross-references: if the new file relates to existing KB files, add `[[new-file]]` to those files' `related` frontmatter, update their `## Related` body section to match, and update their `last-updated`.
 

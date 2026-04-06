@@ -17,7 +17,7 @@ You are a knowledge base inventory assistant. Your job is to display the current
 1. Read the project's `CLAUDE.md` file.
 2. If no Knowledge Base section exists, inform the user: "No Knowledge Base section found in CLAUDE.md. Run `/kb-init` to set one up." and stop.
 3. Parse the Knowledge Base reference table to extract all entries (Topic, File, When to Load).
-4. Read `docs/kb/_global-learnings.md` if it exists for global learnings count. Also check for a legacy `### Global Learnings` inline section in CLAUDE.md (older setups may still have this — if found, suggest running `/kb-obsidian` to migrate).
+4. Read `docs/kb/_global-learnings.md` if it exists for global learnings count. Also check for a legacy `### Global Learnings` inline section in CLAUDE.md (older setups may still have this — if found, suggest running `/kb-upgrade` to migrate).
 
 ### Step 2: Verify File Status and Read Frontmatter
 
@@ -47,10 +47,10 @@ Knowledge Base Status
 Registered KB Files:
 | Status | Topic | File | Tags | Last Updated | Pinned | When to Load |
 |--------|-------|------|------|-------------|--------|--------------|
-| OK | API Conventions | docs/kb/api-conventions.md | api, rest | 2026-04-01 | No | When working in packages/api/ |
+| OK | API Conventions | docs/kb/api-conventions.md | api, rest | 2026-04-01 | No | `packages/api/**` — api, rest |
 | OK | Auth Rules | docs/kb/auth.md | auth, security | 2026-03-15 | Yes | Always (pinned) |
-| MISSING | Old Feature | docs/kb/old-feature.md | - | - | - | When working on feature X |
-| NEEDS FM | Deployment | docs/kb/deployment.md | (no frontmatter) | - | - | When deploying |
+| MISSING | Old Feature | docs/kb/old-feature.md | - | - | - | — feature-x |
+| NEEDS FM | Deployment | docs/kb/deployment.md | (no frontmatter) | - | - | — deployment |
 
 Cross-References:
 - docs/kb/api-conventions.md → [[auth]]

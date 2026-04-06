@@ -93,8 +93,14 @@ For each approved move:
 1. **Create the target subfolder** if it doesn't exist.
 2. **Move the file** from `docs/kb/{file}.md` to `docs/kb/{category}/{file}.md`.
 3. **Update CLAUDE.md table**: Change the File column path from `docs/kb/{file}.md` to `docs/kb/{category}/{file}.md`.
-4. **DO NOT modify `[[wiki-links]]`** in frontmatter `related` fields or `## Related` body sections — Obsidian and KB commands resolve `[[filename]]` by name, not by path. Only the CLAUDE.md table paths need updating.
-5. **Update `last-updated`** in frontmatter of moved files to today's date.
+4. **Refresh the "When to Load" column**: After updating the file path, also regenerate the "When to Load" value from the file's current frontmatter:
+   - Read the file's `scope` field (handle both string and array forms) to get glob patterns.
+   - Read the file's `tags` field to get keywords.
+   - If `pinned: true`, set to `Always (pinned)`.
+   - Otherwise, format as: `` `scope-glob1`, `scope-glob2` — tag1, tag2 ``.
+   - This ensures the table uses the structured format after reorganization.
+5. **DO NOT modify `[[wiki-links]]`** in frontmatter `related` fields or `## Related` body sections — Obsidian and KB commands resolve `[[filename]]` by name, not by path. Only the CLAUDE.md table paths and "When to Load" column need updating.
+6. **Update `last-updated`** in frontmatter of moved files to today's date.
 
 ### Step 6: Update Index and Log
 

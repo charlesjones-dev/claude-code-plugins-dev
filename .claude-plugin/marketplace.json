@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A curated list of custom Claude Code plugins, agents, and skills for developers.",
-    "version": "2.3.3",
+    "version": "2.3.4",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -272,8 +272,8 @@
     {
       "name": "ai-knowledge",
       "source": "./plugins/ai-knowledge",
-      "description": "AI-powered knowledge base management - Capture conversation learnings, maintain topic-specific KB files, Obsidian-compatible knowledge graph, harvest cross-repo and web documentation, discover implicit knowledge from source code, and dynamically reference institutional knowledge in CLAUDE.md",
-      "version": "1.3.0",
+      "description": "AI-powered knowledge base management - Capture conversation learnings, maintain topic-specific KB files, Obsidian-compatible knowledge graph, structured dynamic context loading, harvest cross-repo and web documentation, discover implicit knowledge from source code, and institutional knowledge in CLAUDE.md",
+      "version": "1.4.0",
       "keywords": [
         "ai",
         "knowledge-base",

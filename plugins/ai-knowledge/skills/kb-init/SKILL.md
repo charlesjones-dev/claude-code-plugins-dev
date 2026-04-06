@@ -59,7 +59,7 @@ related: [[api-conventions]]         # Cross-references to other KB files (by fi
 created: 2026-04-02                  # Date the file was created
 last-updated: 2026-04-02            # Date the file was last modified
 pinned: false                        # If true, always loaded regardless of context
-scope: "packages/api/**"             # Optional glob pattern for auto-matching work context
+scope: "packages/api/**"             # Optional glob pattern(s) for auto-matching. String or array of strings.
 ---
 ```
 
@@ -72,7 +72,7 @@ scope: "packages/api/**"             # Optional glob pattern for auto-matching w
 | `created` | Yes | ISO date (YYYY-MM-DD) when the file was first created. |
 | `last-updated` | Yes | ISO date (YYYY-MM-DD) when the file was last modified. Updated automatically by KB commands. |
 | `pinned` | No | Boolean. When `true`, this file is always loaded at the start of every conversation. Default: `false`. Use sparingly. |
-| `scope` | No | Glob pattern matching file paths where this knowledge applies. Complements the CLAUDE.md table's "When to Load" column with machine-readable matching. |
+| `scope` | No | Glob pattern(s) matching file paths where this knowledge applies. Can be a single string (`"src/api/**"`) or an array of strings (`["src/api/**", "*.controller.ts"]`). These patterns are surfaced in the CLAUDE.md table's "When to Load" column for efficient context matching. |
 
 ## File Format
 
@@ -85,7 +85,7 @@ related: [[other-kb-file]]
 created: YYYY-MM-DD
 last-updated: YYYY-MM-DD
 pinned: false
-scope: ""
+scope: []                            # String or array of glob patterns for auto-matching
 ---
 
 # Topic Name
@@ -123,12 +123,13 @@ KB files are referenced in CLAUDE.md's Knowledge Base table. Claude Code reads t
 - `/kb-absorb` - Migrate existing CLAUDE.md sections and docs/ content into the KB
 - `/kb-remove` - Remove a KB file and its CLAUDE.md reference
 - `/kb-list` - List all registered KB files with status, tags, dates, and cross-references
+- `/kb-load` - Manually load a KB file into the current conversation by name, topic, or tag
 - `/kb-search` - Search across KB files by keyword, topic, or tag (`tag:security`)
 - `/kb-prune` - Interactive cleanup: stale refs, duplicates, merges, frontmatter health
 - `/kb-query` - Query the KB and synthesize answers (optionally filed back as articles)
 - `/kb-auto` - Toggle automatic knowledge capture at end of conversations
 - `/kb-organize` - Reorganize flat KB files into category folders
-- `/kb-obsidian` - One-time upgrade for Obsidian compatibility, index, log, and folders
+- `/kb-upgrade` - Upgrade KB to latest practices (Obsidian compat, structured loading, preamble)
 ```
 
 If `docs/kb/` already exists, skip this step.
@@ -177,9 +178,9 @@ Auto-generated catalog of all KB articles. Updated by `/kb-*` commands. Read thi
 
 ## All Pages
 
-| Page | Summary | Tags | Last Updated |
-|------|---------|------|-------------|
-| [[_global-learnings]] | Cross-cutting rules that apply everywhere | global, cross-cutting | {today's date} |
+| Page | Summary | Tags | Scope | Last Updated |
+|------|---------|------|-------|-------------|
+| [[_global-learnings]] | Cross-cutting rules that apply everywhere | global, cross-cutting | _(pinned)_ | {today's date} |
 ```
 
 If `docs/kb/_index.md` already exists, skip this step.
@@ -220,7 +221,15 @@ If no Knowledge Base section exists, append the following section to CLAUDE.md (
 ```markdown
 ## Knowledge Base
 
-Topic-specific knowledge is stored in `docs/kb/` and loaded contextually. Use the "When to Load" column below to decide which KB file(s) to read: load pinned entries ("Always (pinned)") at the start of every conversation, and load other entries when working in their matching area of the codebase.
+Topic-specific knowledge is stored in `docs/kb/` and loaded contextually based on the table below.
+
+**How to use the "When to Load" column:**
+1. **Pinned entries** (`Always (pinned)`): Load at the start of every conversation.
+2. **Scope patterns** (backtick-wrapped globs like `src/api/**`): Load when the files you are editing or creating match any of the listed glob patterns.
+3. **Keywords** (after the `—` dash): Load when the current task involves these topics, even if no file path matches.
+4. **When uncertain**: Read `docs/kb/_index.md` (pinned) for article summaries and scope patterns to help decide.
+
+**Loading notifications**: When you load a KB file, briefly notify the user so they know what context is being applied. Example: `📖 Loading KB: api-conventions.md`. Keep notifications to a single line per file.
 
 When a KB file's frontmatter contains `related: [[other-file]]` cross-references, also read the related file(s) for full context.
 
@@ -247,8 +256,9 @@ Display a summary:
   - `/kb-import` - Register an existing KB file in CLAUDE.md
   - `/kb-ingest` - Ingest specific markdown files into the KB
   - `/kb-absorb` - Migrate existing docs and CLAUDE.md content into the KB
+  - `/kb-load <name>` - Manually load a KB file into the current conversation
   - `/kb-list` - View all registered KB files and their status
   - `/kb-search <keyword>` - Search across KB files
   - `/kb-prune` - Clean up and consolidate the knowledge base
   - `/kb-auto` - Toggle automatic learning capture
-  - `/kb-obsidian` - One-time migration for Obsidian vault compatibility
+  - `/kb-upgrade` - Upgrade KB to latest practices (Obsidian compat, structured loading)

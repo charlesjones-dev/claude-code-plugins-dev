@@ -28,13 +28,14 @@ Inspired by Karpathy's [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914
 | `/kb-discover` | Analyze source code to extract implicit knowledge into KB articles |
 | `/kb-absorb` | Migrate existing CLAUDE.md sections and docs/ content into the KB |
 | `/kb-remove` | Remove a KB file and its CLAUDE.md reference |
+| `/kb-load` | Manually load a KB file into context by name, topic, or tag |
 | `/kb-list` | List all registered KB files with status, tags, dates, and cross-references |
 | `/kb-search` | Search across KB files by keyword, topic, or tag (`tag:security`) |
 | `/kb-prune` | Interactive cleanup: stale refs, duplicates, merges, frontmatter health |
 | `/kb-query` | Query the KB and synthesize answers (optionally filed back as articles) |
 | `/kb-auto` | Toggle automatic knowledge capture at end of conversations |
 | `/kb-organize` | Reorganize flat KB files into category folders |
-| `/kb-obsidian` | One-time upgrade for Obsidian compatibility, index, log, and folders |
+| `/kb-upgrade` | Upgrade KB to latest practices: Obsidian compat, structured loading, preamble, index |
 
 ## Getting Started
 
@@ -50,7 +51,7 @@ Inspired by Karpathy's [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914
 
 6. Periodically run `/kb-prune` to keep the knowledge base organized.
 
-7. Run `/kb-obsidian` to make an existing KB Obsidian-compatible, then open `docs/kb/` as an Obsidian vault.
+7. Run `/kb-upgrade` to bring your KB up to latest practices (Obsidian compatibility, structured loading, etc.).
 
 ## How It Works
 
@@ -61,9 +62,9 @@ The Knowledge Base table in CLAUDE.md tells Claude Code which KB files to read b
 
 | Topic | File | When to Load |
 |-------|------|--------------|
-| API Conventions | docs/kb/api-conventions.md | When working in packages/api/ |
+| API Conventions | docs/kb/api-conventions.md | `packages/api/**`, `*.controller.ts` — api, rest |
 | Auth Rules | docs/kb/auth.md | Always (pinned) |
-| React Patterns | docs/kb/frontend/react-patterns.md | When working in packages/web/ |
+| React Patterns | docs/kb/frontend/react-patterns.md | `packages/web/**` — react, frontend, components |
 ```
 
 When Claude Code starts a conversation and reads CLAUDE.md, it knows to load the relevant KB files based on the task context. Pinned files are always loaded.
@@ -79,7 +80,9 @@ related: [[api-conventions]]         # Cross-references to other KB files
 created: 2026-04-02                  # Date the file was created
 last-updated: 2026-04-02            # Date the file was last modified
 pinned: false                        # If true, always loaded regardless of context
-scope: "packages/api/**"             # Optional glob pattern for auto-matching
+scope:                               # Optional glob pattern(s) for auto-matching
+  - "packages/api/**"
+  - "*.controller.ts"
 ---
 ```
 
@@ -100,6 +103,6 @@ This is required because Obsidian does not parse frontmatter values as navigable
 
 ## Plugin Details
 
-- **Version**: 1.3.0
+- **Version**: 1.4.0
 - **Author**: [Charles Jones](https://charlesjones.dev)
 - **License**: MIT

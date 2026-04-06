@@ -19,7 +19,7 @@ related: [[source-kb-file]]            # Required: cross-references to KB files 
 created: YYYY-MM-DD                    # Required: date created
 last-updated: YYYY-MM-DD              # Required: date last modified
 pinned: false                          # Optional: default false
-scope: "src/api/**"                    # Optional: glob pattern for auto-matching
+scope: "src/api/**"                    # Optional: glob pattern(s) for auto-matching. String or array.
 type: synthesis                        # Required for filed queries: marks this as a synthesized answer
 query: "the original question"         # Required for filed queries: the question that prompted this
 sources: [[file1], [file2]]            # Required for filed queries: KB files consulted for the answer
@@ -126,7 +126,7 @@ Use AskUserQuestion:
 
 #### 6c: Register in CLAUDE.md
 
-1. Add a row to the Knowledge Base table with appropriate Topic, File, and When to Load.
+1. Add a row to the Knowledge Base table with appropriate Topic, File, and When to Load. Format the "When to Load" column using the structured format: `` `scope-glob1`, `scope-glob2` — tag1, tag2 ``. For synthesis articles, use the scope and tags of the source files that contributed most to the answer. For pinned files, use `Always (pinned)`.
 2. Keep the table sorted alphabetically by Topic.
 
 ### Step 7: Update Index and Log

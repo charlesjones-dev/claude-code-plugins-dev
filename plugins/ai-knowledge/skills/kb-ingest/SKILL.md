@@ -19,7 +19,7 @@ related: [[other-kb-file]]             # Optional: cross-references to related K
 created: YYYY-MM-DD                    # Required: date created
 last-updated: YYYY-MM-DD              # Required: date last modified (update on every write)
 pinned: false                          # Optional: true = always loaded. Default false
-scope: "src/api/**"                    # Optional: glob pattern for auto-matching
+scope: "src/api/**"                    # Optional: glob pattern(s) for auto-matching. String or array.
 ---
 ```
 
@@ -70,7 +70,7 @@ For each file, present the ingestion plan. Use AskUserQuestion:
   - Whether content is actionable knowledge or reference material
   - Destination KB file path (new file or append to existing)
   - Suggested topic name for the CLAUDE.md table
-  - Suggested "When to Load" context
+  - Suggested "When to Load" value (structured format: `` `scope-globs` — keywords ``)
   - Suggested tags
   - Whether it should be pinned
 - Options: "Looks good" | "Let me adjust" | "Skip this file"
@@ -104,6 +104,7 @@ For each approved file:
 1. **Remove placeholder row** if present ("_No entries yet_").
 2. **Add or update the row** with the confirmed Topic, File path, and When to Load.
    - For pinned KB files, set "When to Load" to "Always (pinned)".
+   - For non-pinned files, format the "When to Load" column using the structured format: `` `scope-glob1`, `scope-glob2` — tag1, tag2 ``. Derive scope patterns from the file's `scope` frontmatter and keywords from `tags`.
 3. **Deduplicate**: If a row for the same file already exists, update it rather than adding a duplicate.
 4. **Sort the table** alphabetically by Topic.
 

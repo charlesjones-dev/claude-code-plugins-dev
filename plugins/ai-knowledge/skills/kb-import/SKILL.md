@@ -19,7 +19,7 @@ related: [[other-kb-file]]             # Optional: cross-references to related K
 created: YYYY-MM-DD                    # Required: date created
 last-updated: YYYY-MM-DD              # Required: date last modified (update on every write)
 pinned: false                          # Optional: true = always loaded. Default false
-scope: "src/api/**"                    # Optional: glob pattern for auto-matching
+scope: "src/api/**"                    # Optional: glob pattern(s) for auto-matching. String or array.
 ---
 ```
 
@@ -72,7 +72,12 @@ For each file to register:
 For each file to register, determine the Topic and "When to Load" context:
 
 1. **Infer the Topic**: Use the file name, frontmatter tags, and content to suggest a topic name.
-2. **Infer "When to Load"**: Based on the file content and frontmatter `scope`, suggest when Claude Code should consult this file. If `pinned: true` in frontmatter, set to "Always (pinned)".
+2. **Build the "When to Load" value** using the structured format:
+   - If `pinned: true`, use `Always (pinned)`.
+   - Otherwise, extract scope patterns from the `scope` frontmatter field (handle both string and array forms). Extract keywords from the `tags` frontmatter field.
+   - Format as: `` `scope-glob1`, `scope-glob2` — tag1, tag2 ``
+   - If the file has no `scope`, try to infer scope patterns from the file content and path. If none can be inferred, use keywords only: `— tag1, tag2`.
+   - If the file has no `tags`, use scope patterns only: `` `scope-glob1` ``
 
 Present the inferred details and ask the user to confirm or adjust:
 

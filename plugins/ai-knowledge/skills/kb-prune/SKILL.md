@@ -23,7 +23,7 @@ related: [[other-kb-file]]             # Optional: cross-references to related K
 created: YYYY-MM-DD                    # Required: date created
 last-updated: YYYY-MM-DD              # Required: date last modified (update on every write)
 pinned: false                          # Optional: true = always loaded. Default false
-scope: "src/api/**"                    # Optional: glob pattern for auto-matching
+scope: "src/api/**"                    # Optional: glob pattern(s) for auto-matching. String or array.
 ---
 ```
 
@@ -81,7 +81,7 @@ For each existing KB file:
 
 #### 1g: Review Global Learnings
 
-Global learnings are stored in `docs/kb/_global-learnings.md`. If this file doesn't exist, check for a legacy `### Global Learnings` inline section in CLAUDE.md — if found, flag it as **NEEDS MIGRATION** and suggest running `/kb-obsidian`.
+Global learnings are stored in `docs/kb/_global-learnings.md`. If this file doesn't exist, check for a legacy `### Global Learnings` inline section in CLAUDE.md — if found, flag it as **NEEDS MIGRATION** and suggest running `/kb-upgrade`.
 
 1. Read `docs/kb/_global-learnings.md` (or the legacy inline section if the file doesn't exist).
 2. Check for entries that are:

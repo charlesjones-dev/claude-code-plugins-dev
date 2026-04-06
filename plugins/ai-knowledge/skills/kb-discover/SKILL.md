@@ -24,7 +24,9 @@ related: [[other-kb-file]]                 # Optional: cross-references to relat
 created: YYYY-MM-DD                        # Required: date created
 last-updated: YYYY-MM-DD                   # Required: date last modified
 pinned: false                              # Optional: true = always loaded. Default false
-scope: "src/api/**"                        # Optional: glob pattern for auto-matching
+scope:                                     # Optional: glob pattern(s) for auto-matching. String or array.
+  - "src/api/**"
+  - "src/middleware/**"
 discovered-from: "src/api/, src/models/"   # Required for discovered content: directories/files analyzed
 ---
 ```
@@ -183,7 +185,7 @@ Group the extracted knowledge into proposed KB articles. Each article should cov
 For each proposed article, prepare:
 - Suggested file path under `docs/kb/`
 - Topic name for the CLAUDE.md table
-- "When to Load" context
+- "When to Load" value (structured format: `` `scope-globs` — keywords ``)
 - Tags
 - The distilled rules/conventions (imperative voice, concise)
 - Which source directories/files the knowledge came from (`discovered-from`)
@@ -203,7 +205,7 @@ Tech stack: TypeScript, Express, Prisma, Jest
 
 ### 1. API Conventions
    → docs/kb/api-conventions.md
-   → When to Load: "Working in src/api/ or src/routes/"
+   → When to Load: `src/api/**`, `src/routes/**` — api, rest, conventions, express
    → Tags: [api, rest, conventions, express]
    → Discovered from: src/api/, src/middleware/
    Key findings:
@@ -215,7 +217,7 @@ Tech stack: TypeScript, Express, Prisma, Jest
 
 ### 2. Data Model Patterns
    → docs/kb/data-model-patterns.md
-   → When to Load: "Working with Prisma models or database"
+   → When to Load: `src/models/**`, `prisma/**` — database, prisma, models, data
    → Tags: [database, prisma, models, data]
    → Discovered from: src/models/, prisma/schema.prisma
    Key findings:
@@ -226,7 +228,7 @@ Tech stack: TypeScript, Express, Prisma, Jest
 
 ### 3. Testing Strategy
    → docs/kb/testing-strategy.md
-   → When to Load: "Writing or modifying tests"
+   → When to Load: `tests/**`, `*.test.ts`, `*.spec.ts` — testing, jest, fixtures
    → Tags: [testing, jest, fixtures]
    → Discovered from: tests/, src/__tests__/
    Key findings:
@@ -291,6 +293,7 @@ When appending, also present the diff (new content being added) to the user via 
 
 1. **Remove placeholder row** if present ("_No entries yet_").
 2. **Add or update rows** with Topic, File path, and When to Load.
+   - Format the "When to Load" column using the structured format: `` `scope-glob1`, `scope-glob2` — tag1, tag2 ``. Use the `scope` patterns from frontmatter and `tags` as keywords. Pinned files use `Always (pinned)`.
 3. **Deduplicate**: If a row for the same file exists, update it.
 4. **Sort alphabetically** by Topic.
 
