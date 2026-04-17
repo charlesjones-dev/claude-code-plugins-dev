@@ -1,6 +1,6 @@
 # Claude Code Plugins for Developers
 
-[![Version](https://img.shields.io/badge/version-2.3.4-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
+[![Version](https://img.shields.io/badge/version-2.4.0-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![GitHub Issues](https://img.shields.io/github/issues/charlesjones-dev/claude-code-plugins-dev.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/charlesjones-dev/claude-code-plugins-dev.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/stargazers)
@@ -29,6 +29,8 @@ This Claude Code plugin marketplace provides plugins that extend Claude Code's c
 | [ai-compliance](plugins/ai-compliance/) | AI-powered license compliance auditing and attribution generation | `/compliance-license-audit`, `/compliance-notice-generate` | - |
 | [ai-knowledge](plugins/ai-knowledge/) | AI-powered knowledge base management with Obsidian compatibility | `/kb-init`, `/kb-learn`, `/kb-add`, `/kb-query`, `/kb-import`, `/kb-ingest`, `/kb-harvest`, `/kb-discover`, `/kb-absorb`, `/kb-remove`, `/kb-load`, `/kb-list`, `/kb-search`, `/kb-prune`, `/kb-auto`, `/kb-organize`, `/kb-upgrade` | - |
 | [ai-modernize](plugins/ai-modernize/) | AI-powered codebase modernization assessment for technical debt | `/modernize-audit`, `/modernize-scan` | `modernize-auditor` |
+| [ai-seo](plugins/ai-seo/) | AI-powered modern SEO auditing that catches deprecated patterns LLMs still generate | `/seo-audit`, `/seo-fix`, `/seo-schema` | - |
+| [ai-geo](plugins/ai-geo/) | Generative Engine Optimization (GEO) for AI answer engines — llms.txt, AI crawler policy, citation-worthiness | `/geo-audit`, `/geo-fix`, `/geo-llms-txt` | - |
 | [ai-writing](plugins/ai-writing/) | AI-powered writing quality tools for natural-sounding text | `/writing-humanize` | - |
 
 > **📝 Note on Audit Plugins:** The `ai-accessibility`, `ai-security`, and `ai-performance` plugins are developer-focused analysis tools designed to identify issues during development. They perform static code analysis, with `ai-accessibility` and `ai-security` also offering URL scanning capabilities (`/accessibility-audit` with Playwright MCP and `/security-scan-dependencies` respectively). These plugins are meant to **complement** (not replace) runtime testing tools, professional services, and manual testing. Use these plugins to catch issues early in the development phase, then validate with specialized testing tools and services appropriate to your domain.

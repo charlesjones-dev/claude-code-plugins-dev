@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.0] - 2026-04-17
+
+### Added
+
+#### AI-GEO Plugin (v1.0.0) — New plugin
+
+- `/geo-audit` — Comprehensive Generative Engine Optimization audit across 10 weighted categories (llms.txt Protocol, AI Crawler Access, Content Structure, Citation-Worthiness, AI-Friendly Structured Data, Semantic Chunking, Content Freshness, Entity Optimization, Conversational Alignment, Technical AI Accessibility)
+  - Auto-detects framework (Next.js, Nuxt, TanStack Start, Astro, SvelteKit, Remix, vanilla HTML) and emits framework-idiomatic guidance (static/SSR preference, markdown-accessible routes, modified-time propagation)
+  - Parses `robots.txt` and distinguishes training crawlers (GPTBot, ClaudeBot, Google-Extended, CCBot, Applebot-Extended, Bytespider, Amazonbot, FacebookBot, Omgilibot) from answer/citation crawlers (ChatGPT-User, OAI-SearchBot, PerplexityBot, Perplexity-User, Claude-Web) — reports per-bot status and flags inconsistent patterns rather than prescribing a blanket policy
+  - Validates `llms.txt` and `llms-full.txt` against the llmstxt.org spec (H1 title, blockquote description, markdown throughout, `.md`-companion preference, staleness vs content mtime)
+  - Citation-readiness score 0-100 with grade (A+ through F) and per-category weighted scoring
+  - Experimental 🧪 markers for emerging practices (speakable specification, DefinedTerm, ClaimReview, markdown companion routes) so users can apply judgment
+  - Context7 MCP integration for up-to-date llms.txt spec, AI bot docs (OpenAI, Anthropic, Google, Perplexity), and latest Schema.org types; falls back to training data with explicit mode indicator and liberal 🧪 flagging
+  - Timestamped reports in `/docs/geo-audit/` preserve history (never overwrites); generates `README.md` index with trend indicators (📈 📉 ➡️) and `latest.md` copy
+- `/geo-fix` — Safe remediation workflow that reads `latest.md` and applies fixes in four tiers: safe-auto (add `dateModified` + `article:modified_time`, migrate microdata/RDFa to JSON-LD, wrap existing Q&A prose with FAQPage schema), intent-requiring (separate training-bot and citation-bot prompts before modifying `robots.txt`; emits framework-idiomatic output like `app/robots.ts` for Next.js), content-requiring (prompts for `sameAs` URLs, TL;DR copy, FAQ extraction — never fabricates identity URLs), larger refactors (SSR migration, paragraph restructuring, conversational heading rewording). Supports `--dry-run`.
+- `/geo-llms-txt` — Generate, update, or validate `llms.txt` and `llms-full.txt`. Four modes (generate/update/validate/full-text companion). Framework-aware placement (`public/llms.txt` or route handlers for Next.js, Nuxt, Astro, SvelteKit, TanStack Start, Remix, vanilla). Validation covers spec compliance, link reachability, `.md`-companion opportunities, file size, and staleness vs content source mtime. Suggests markdown companion routes (`.md` suffix) as the single biggest post-llms.txt citation-quality improvement.
+- LLM knowledge-gap corrections baked into every skill prompt: GEO is not SEO; distinguish training bots from citation bots (never blanket-block); `llms.txt` is a real emerging standard; AI engines prefer markdown; FAQPage and HowTo schemas are disproportionately cited; recency matters more than for traditional SEO; SSR/static is critical (many AI crawlers don't execute JS); entity `sameAs` disambiguation is high-value (Wikipedia/Wikidata, LinkedIn, GitHub, Crunchbase, ORCID); never cloak or serve different content to AI bots; mark emerging practices with 🧪; never fabricate `sameAs` URLs
+- Cross-references the companion `ai-seo` plugin — `ai-geo` reports direct users to `/seo-audit` for traditional search coverage; overlap areas (structured data, semantic HTML, authoritativeness signals) are cross-referenced rather than duplicated
+
+#### AI-SEO Plugin (v1.0.0) — New plugin
+
+- `/seo-audit` — Comprehensive modern SEO audit across 9 weighted categories (deprecated patterns, modern meta tags, semantic HTML, structured data, performance signals, accessibility, URL structure, security headers, framework best practices)
+  - Auto-detects framework (Next.js, Nuxt, TanStack Start, Astro, SvelteKit, Remix, vanilla HTML) and emits framework-idiomatic guidance
+  - Context7 MCP integration for up-to-date Google Search Central, Schema.org, and framework SEO API docs; falls back to training data with explicit mode indicator
+  - Timestamped reports in `/docs/seo-audit/` preserve history (never overwrites); generates `README.md` index with trend indicators (📈 📉 ➡️) and `latest.md` copy
+  - Per-category 0-100 scores and overall grade (A+ through F)
+- `/seo-fix` — Safe remediation workflow that reads `latest.md` and applies fixes in three tiers: safe-auto (deprecated tag removal, `rel="noopener noreferrer"`, `loading="lazy"`, lang/viewport/charset), content-requiring (proposes meta descriptions/titles with confirm-or-edit), larger refactors (div-soup → semantic HTML5). Supports `--dry-run`.
+- `/seo-schema` — JSON-LD structured data generator and validator for Article, BlogPosting, Product, Organization, LocalBusiness, FAQPage, BreadcrumbList, Event, HowTo, Recipe, VideoObject, Person, Course, JobPosting, and composite `@graph` structures. Emits framework-idiomatic injection code.
+- LLM knowledge-gap corrections baked into every skill prompt: never generate `<meta name="keywords">` (deprecated 2009, Bing spam signal), never recommend X-UA-Compatible, IE conditionals, jQuery, `float` layouts, `<b>`/`<i>` for emphasis, XHTML doctype, FID optimization (replaced by INP March 2024), or separate mobile subdomains; always prefer JSON-LD over microdata/RDFa
+
 ## [2.3.4] - 2026-04-06
 
 ### Added
@@ -972,7 +1002,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.2.2...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.0...HEAD
+[2.4.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.3.4...v2.4.0
 [2.2.2]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.2.1...v2.2.2
 [2.2.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.1.0...v2.2.0

@@ -1,0 +1,27 @@
+{
+  "name": "ai-seo",
+  "version": "1.0.0",
+  "description": "AI-powered modern SEO auditing and remediation - Identifies outdated SEO practices (deprecated keywords meta tags, IE-era patterns), validates modern best practices (Core Web Vitals, structured data, semantic HTML), and provides framework-specific remediation with Context7 MCP integration for up-to-date guidance",
+  "author": {
+    "name": "Charles Jones",
+    "url": "https://charlesjones.dev"
+  },
+  "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev",
+  "license": "MIT",
+  "keywords": [
+    "ai",
+    "seo",
+    "web",
+    "accessibility",
+    "performance",
+    "audit",
+    "meta-tags",
+    "structured-data",
+    "json-ld",
+    "schema-org",
+    "open-graph",
+    "core-web-vitals",
+    "semantic-html",
+    "skills"
+  ]
+}

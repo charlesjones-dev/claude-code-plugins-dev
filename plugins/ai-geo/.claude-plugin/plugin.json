@@ -1,0 +1,28 @@
+{
+  "name": "ai-geo",
+  "version": "1.0.0",
+  "description": "Generative Engine Optimization (GEO) auditing and remediation. Optimizes web content for AI answer engines like ChatGPT, Perplexity, Claude, and Google AI Overviews. Generates llms.txt files, audits AI crawler access, validates citation-worthiness signals, and structures content for LLM extraction.",
+  "author": {
+    "name": "Charles Jones",
+    "url": "https://charlesjones.dev"
+  },
+  "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev",
+  "license": "MIT",
+  "keywords": [
+    "geo",
+    "ai-seo",
+    "llms-txt",
+    "generative-engine-optimization",
+    "ai-crawlers",
+    "citation-optimization",
+    "answer-engines",
+    "content-optimization",
+    "chatgpt",
+    "perplexity",
+    "claude",
+    "gemini",
+    "schema-org",
+    "structured-data",
+    "skills"
+  ]
+}
