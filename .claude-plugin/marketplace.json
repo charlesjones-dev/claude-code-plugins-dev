@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A curated list of custom Claude Code plugins, agents, and skills for developers.",
-    "version": "2.4.0",
+    "version": "2.4.1",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -325,8 +325,8 @@
     {
       "name": "ai-geo",
       "source": "./plugins/ai-geo",
-      "description": "Generative Engine Optimization (GEO) auditing and remediation. Optimizes web content for AI answer engines like ChatGPT, Perplexity, Claude, and Google AI Overviews. Generates llms.txt files, audits AI crawler access, validates citation-worthiness signals, and structures content for LLM extraction.",
-      "version": "1.0.0",
+      "description": "Generative Engine Optimization (GEO) auditing and remediation. Optimizes web content for AI answer engines like ChatGPT, Perplexity, Claude, and Google AI Overviews. Generates llms.txt files, wires head link[rel=alternate] + sitemap + robots.txt discoverability signals, audits AI crawler access, validates citation-worthiness signals, and structures content for LLM extraction.",
+      "version": "1.1.0",
       "keywords": [
         "geo",
         "ai-seo",

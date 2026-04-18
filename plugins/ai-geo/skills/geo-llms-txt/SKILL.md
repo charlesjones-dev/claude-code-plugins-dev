@@ -234,6 +234,29 @@ Write directly to web root. Optional: a small Node/Python script to regenerate f
 
 For any framework where a static file is written, also offer to add a build-time generator script so `llms.txt` stays in sync automatically.
 
+#### Build pipeline — order dependency (IMPORTANT)
+
+When both `llms.txt` and `sitemap.xml` are build-time generated, **`llms.txt` MUST run before the sitemap generator**. The sitemap includes a `/llms.txt` entry and should reference the file's real mtime — if the sitemap generates first it either misses the entry or records a stale timestamp.
+
+Framework-by-framework rule:
+
+- **Next.js** — no order issue when both are served via the Metadata API (`app/sitemap.ts` + `app/llms.txt/route.ts`). Both resolve per-request (or at `next build` simultaneously via the same graph). No explicit ordering needed. Only a concern if a custom `scripts/generate-llms-txt.ts` writes `public/llms.txt` at build time; in that case put it before `next build`:
+  ```json
+  "scripts": {
+    "build:llms": "tsx scripts/generate-llms-txt.ts",
+    "build":      "npm run build:llms && next build"
+  }
+  ```
+- **Nuxt** — if using a custom generator script alongside `@nuxtjs/sitemap`, run the llms.txt writer in a pre-build hook (`"prebuild"` script or a Nitro plugin ordered before sitemap module).
+- **Astro (endpoint vs static)** — endpoint (`src/pages/llms.txt.ts`) resolves at request time; no order issue. Static (`public/llms.txt`) written by a script needs to run before `astro build` so `@astrojs/sitemap`'s `customPages` + mtime are accurate:
+  ```json
+  "scripts": {
+    "build:llms": "tsx scripts/generate-llms-txt.ts",
+    "build":      "npm run build:llms && astro build"
+  }
+  ```
+- **Vite / SvelteKit / Remix / TanStack Start (custom build scripts)** — whenever a vite plugin or npm script generates both, order them: llms.txt first, sitemap second. If the user has a single orchestrating script, print a warning and suggest the corrected order rather than silently reshuffling.
+
 ### Step 7: Markdown Companion Routes (recommended enhancement)
 
 If the site serves HTML-only, suggest exposing markdown companions for citation-worthy content:
@@ -243,6 +266,85 @@ If the site serves HTML-only, suggest exposing markdown companions for citation-
 - SvelteKit/Remix: analogous route returning `text/markdown`.
 
 Then reference `.md` URLs in `llms.txt`. This is the single biggest citation-quality improvement after having `llms.txt` at all.
+
+### Step 7.5: Wire Discoverability Signals (post-write)
+
+After writing `llms.txt`, offer these additional discovery hints. Each is skipped if already present or not applicable. 🧪 No major LLM provider has publicly committed to reading `llms.txt` as a first-class signal — these are cheap, stackable weak signals that compound crawler-discovery probability.
+
+**1. `<link rel="alternate">` in `<head>`**
+
+Prompt: "Also add a `<head>` link hint pointing at `/llms.txt`? (recommended)"
+
+On accept, wire via the framework-idiomatic head API. Skip silently if the hint already exists anywhere in the resolved head.
+
+- **Next.js (App Router)** — `app/layout.tsx` metadata:
+  ```ts
+  export const metadata: Metadata = {
+    alternates: {
+      types: { 'text/markdown': '/llms.txt' },
+    },
+  }
+  ```
+- **Nuxt** — root layout or `app.vue`:
+  ```ts
+  useHead({
+    link: [{ rel: 'alternate', type: 'text/markdown', title: 'llms.txt', href: '/llms.txt' }],
+  })
+  ```
+- **Vue + `@unhead/vue`** — equivalent `useHead` call in the root component.
+- **Astro** — in the base `<BaseLayout>.astro` `<head>`:
+  ```astro
+  <link rel="alternate" type="text/markdown" title="llms.txt" href="/llms.txt" />
+  ```
+- **SvelteKit** — `src/routes/+layout.svelte`:
+  ```svelte
+  <svelte:head>
+    <link rel="alternate" type="text/markdown" title="llms.txt" href="/llms.txt" />
+  </svelte:head>
+  ```
+- **Remix** — root `meta` export:
+  ```ts
+  export const meta: MetaFunction = () => [
+    { tagName: 'link', rel: 'alternate', type: 'text/markdown', title: 'llms.txt', href: '/llms.txt' },
+  ]
+  ```
+- **Vanilla HTML** — inject into each page's `<head>`:
+  ```html
+  <link rel="alternate" type="text/markdown" title="llms.txt" href="/llms.txt">
+  ```
+
+**2. `/llms.txt` entry in `sitemap.xml`**
+
+Prompt: "Add `/llms.txt` to your sitemap so sitemap-reading crawlers discover it?"
+
+Detect the sitemap source and patch it. Skip if entry already present, or if the project has no sitemap.
+
+- **Next.js `app/sitemap.ts`** — append:
+  ```ts
+  { url: `${SITE}/llms.txt`, changeFrequency: 'monthly' as const, priority: 0.5 }
+  ```
+- **Static `public/sitemap.xml`** — insert before `</urlset>`:
+  ```xml
+  <url>
+    <loc>https://<domain>/llms.txt</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  ```
+- **Nuxt `@nuxtjs/sitemap`** — add to `sitemap.urls` or module config.
+- **Astro `@astrojs/sitemap`** — use the `customPages` option.
+
+See "Build pipeline" below for an order rule that applies when both files are build-time generated.
+
+**3. `robots.txt` comment**
+
+Prompt: "Add a `# LLM index` comment pointing at `/llms.txt` in `robots.txt`?"
+
+On accept, append (or insert near the top):
+```
+# LLM index: https://<domain>/llms.txt
+```
+Auto-derive `<domain>` from detected base URL / sitemap / env config. Prompt once if unresolvable. For frameworks generating robots via a route (Next.js `app/robots.ts`, SvelteKit `+server.ts`, etc.) — if the generator cannot express comments cleanly, direct the user to add it to a static `public/robots.txt` instead.
 
 ### Step 8: Terminal Summary
 
@@ -270,6 +372,19 @@ Validation:
   Format:       <pass | issues>
   Links:        <reachable count / total>
   Freshness:    <current | stale pages: N>
+
+Discoverability signals:
+  <head> link[rel=alternate]:  <added | present | skipped | n/a>
+  sitemap /llms.txt entry:     <added | present | skipped | n/a — no sitemap>
+  robots.txt comment:          <added | present | skipped | n/a — no robots.txt>
+  Build-order (llms.txt → sitemap): <ok | warning: reorder <script>>
+
+Manual next step — submit to public directories:
+  - https://llmstxt.site/submit
+  - https://directory.llmstxt.cloud
+  (No major LLM provider reads llms.txt as a first-class signal yet 🧪.
+   Directory submission + these head/sitemap/robots hints are the current
+   weak-signal stack for discovery. Web forms, manual action.)
 
 Next:
   - Verify the site serves /llms.txt at your production URL.
@@ -378,4 +493,9 @@ Before finalizing:
 - [ ] Validation report includes broken-link and staleness checks when applicable
 - [ ] Framework-idiomatic placement (static file or route handler)
 - [ ] `--dry-run` writes nothing
+- [ ] Post-write: offered `<head>` `link[rel=alternate]` hint (skipped if present)
+- [ ] Post-write: offered sitemap `/llms.txt` entry (skipped if present or no sitemap)
+- [ ] Post-write: offered robots.txt `# LLM index` comment (skipped if present or no robots.txt)
+- [ ] Build-order rule surfaced when both files are build-time generated (llms.txt → sitemap)
+- [ ] Directory submission URLs printed in terminal summary (llmstxt.site, directory.llmstxt.cloud)
 - [ ] User directed back to `/geo-audit` to verify the finding clears

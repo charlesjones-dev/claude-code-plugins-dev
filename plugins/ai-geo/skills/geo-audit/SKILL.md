@@ -113,6 +113,13 @@ Analyze the scope across all ten categories. For each finding capture: exact fil
 - Staleness: compare `llms.txt` mtime vs newest content file mtime. Flag if content is materially newer.
 - If missing entirely, generate a tailored example in the report body and recommend running `/geo-llms-txt`.
 
+**Discoverability signals** (stackable hints beyond serving `/llms.txt` at root). No major LLM provider has publicly committed to reading `llms.txt` as a first-class signal 🧪, so discovery today depends on multiple weak signals stacked together. Audit each:
+
+- `<head>` includes `<link rel="alternate" type="text/markdown" title="llms.txt" href="/llms.txt">` on at least the root layout / index page. **Severity: Medium** if missing. Check via the framework's head API source (Next.js Metadata API, Nuxt `useHead`, Astro layout `<head>`, SvelteKit `<svelte:head>`, Remix `meta` export, vanilla `<head>`) or static HTML output.
+- `sitemap.xml` (or framework equivalent: `app/sitemap.ts`, `@nuxtjs/sitemap`, `astro-sitemap`) contains a `<url><loc>` entry for `/llms.txt`. **Severity: Medium** if missing. Confirms sitemap-reading crawlers pick up the path.
+- `robots.txt` contains a comment line referencing the llms.txt URL, e.g. `# LLM index: https://<domain>/llms.txt`. **Severity: Low (informational).** Comments are non-standard for robots.txt parsers but human/LLM readable.
+- Public directory submissions: llmstxt.site, directory.llmstxt.cloud, and similar aggregators. **Cannot be auto-detected.** Emit as a **Low / Suggestion** finding with text: "Manual: submit `https://<domain>/llms.txt` to llmstxt.site and directory.llmstxt.cloud." Never mark as Critical/High — outside the codebase.
+
 #### Category 2: AI Crawler Access Audit
 
 Parse `robots.txt` from project root or `public/`. Detect per-user-agent `Allow` / `Disallow` directives. Categorize bots:
@@ -378,6 +385,18 @@ Companion: run /seo-audit (ai-seo plugin) for traditional SEO coverage.
 ## What is GEO?
 
 Generative Engine Optimization (GEO) is the practice of optimizing web content for AI answer engines like ChatGPT, Perplexity, Claude, and Google AI Overviews. Unlike traditional SEO which targets search rankings, GEO targets citation probability and answer inclusion in AI-generated responses.
+
+### On llms.txt discovery
+
+🧪 No major LLM provider (OpenAI, Anthropic, Perplexity, Google) has publicly committed to reading `llms.txt` as a first-class signal. Adoption today is strongest among dev-tool platforms (Cursor, Continue.dev, Mintlify) and aggregator directories. There is no central submission portal. Discovery therefore relies on **multiple weak signals stacked together**:
+
+1. Serving `/llms.txt` at the web root (table-stakes).
+2. `<link rel="alternate" type="text/markdown" href="/llms.txt">` in `<head>` so HTML-aware crawlers can discover it.
+3. A `/llms.txt` entry in `sitemap.xml` so sitemap-reading crawlers pick up the path.
+4. A `# LLM index: https://<domain>/llms.txt` comment in `robots.txt` (human/LLM readable).
+5. Manual submission to public directories (llmstxt.site, directory.llmstxt.cloud).
+
+Each is cheap; stacking them compounds the probability of any given crawler discovering the index.
 
 ---
 

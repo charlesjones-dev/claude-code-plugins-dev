@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.1] - 2026-04-18
+
+### Changed
+
+#### AI-GEO Plugin (v1.0.0 → v1.1.0)
+
+- `/geo-audit` — Category 1 (llms.txt Protocol Compliance) extended with four discoverability-signal checks:
+  - `<head>` `<link rel="alternate" type="text/markdown" title="llms.txt" href="/llms.txt">` presence (Medium if missing)
+  - `sitemap.xml` `<url><loc>/llms.txt</loc></url>` entry presence (Medium if missing)
+  - `robots.txt` `# LLM index: https://<domain>/llms.txt` comment presence (Low / informational)
+  - Public directory submission to llmstxt.site and directory.llmstxt.cloud (Low / manual — never auto-detected, never Critical/High)
+- `/geo-audit` — "What is GEO?" report section gained "On llms.txt discovery" subsection documenting that no major LLM provider (OpenAI, Anthropic, Perplexity, Google) has publicly committed to reading `llms.txt` as a first-class signal, marked 🧪 experimental, and listing the five stackable weak signals (root serve, head link, sitemap entry, robots comment, directory submission)
+- `/geo-fix` — Safe-auto fix bucket extended with three new fixes:
+  - Inject `<link rel="alternate" type="text/markdown" href="/llms.txt">` via the framework-idiomatic head API (Next.js Metadata API `alternates.types`, Nuxt `useHead`, Vue + `@unhead/vue`, Astro layout, SvelteKit `<svelte:head>`, Remix `meta` export, vanilla `<head>`) — skip if already present
+  - Add `/llms.txt` entry to sitemap (Next.js `app/sitemap.ts` push, static `sitemap.xml` `<url>` block with `changefreq=monthly` + `priority=0.5`, `@nuxtjs/sitemap` `urls`, `@astrojs/sitemap` `customPages`) — skip if already present
+  - Add `# LLM index: https://<domain>/llms.txt` comment to `robots.txt` with auto-derived domain (falls back to prompt when unresolvable) — skip if already present
+- `/geo-fix` — New informational bucket for non-automatable actions: terminal summary prints directory-submission URLs (`llmstxt.site/submit`, `directory.llmstxt.cloud`) as a manual next step (web forms, never automated)
+- `/geo-fix` — Terminal summary gained "llms.txt discovery signals" block (head link / sitemap entry / robots comment statuses + build-order warning)
+- `/geo-fix` — Build-order rule codified: when both `llms.txt` and the sitemap are build-time generated, the llms.txt generator MUST run before the sitemap so the sitemap can read llms.txt's mtime (warn with suggested reordering rather than silent reshuffle)
+- `/geo-llms-txt` — New Step 7.5 "Wire Discoverability Signals (post-write)" offers to add the head `link[rel=alternate]` hint, sitemap `/llms.txt` entry, and `robots.txt` comment after writing llms.txt, with framework-specific code for Next.js, Nuxt, Vue + `@unhead/vue`, Astro, SvelteKit, Remix, and vanilla HTML (each step skipped silently if already present or not applicable)
+- `/geo-llms-txt` — New "Build pipeline — order dependency" subsection documents per-framework rules: Next.js Metadata API has no order issue, Astro endpoint vs static differ, Nuxt prebuild hook, Vite/SvelteKit/Remix/TanStack Start warn-don't-reshuffle
+- `/geo-llms-txt` — Terminal summary gained discoverability-signal statuses and manual directory-submission URLs
+- `/geo-llms-txt` — Quality Assurance Checklist extended with post-write wiring items, build-order surfacing, and directory-submission printout
+- Existing LLM Knowledge Gap Corrections, examples, and Quality Assurance Checklist items preserved across all three skills — `llms-full.txt` generator logic unchanged
+
 ## [2.4.0] - 2026-04-17
 
 ### Added
@@ -1002,7 +1027,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.0...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.1...HEAD
+[2.4.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.3.4...v2.4.0
 [2.2.2]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.2.1...v2.2.2
 [2.2.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.2.0...v2.2.1

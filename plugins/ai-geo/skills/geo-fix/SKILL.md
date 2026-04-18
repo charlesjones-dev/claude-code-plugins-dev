@@ -57,6 +57,20 @@ Split findings into four buckets:
 - Add `@type: "FAQPage"` wrapper around existing Q&A prose where H2/H3 are already question-shaped.
 - Add `<link rel="alternate" type="text/markdown" href="<url>.md">` when a markdown-accessible route exists.
 - Remove context-dependent phrases that clearly break chunking ("as mentioned above" where a backward reference can be replaced with explicit repeat, with user confirmation per change).
+- **llms.txt discovery — `<head>` hint.** If `/llms.txt` is present but the page `<head>` lacks `<link rel="alternate" type="text/markdown" title="llms.txt" href="/llms.txt">`, add it via the framework-idiomatic head API (Next.js Metadata API `alternates.types`, Nuxt `useHead`, Vue + `@unhead/vue` `useHead`, Astro layout `<head>`, SvelteKit `<svelte:head>`, Remix `meta` export, vanilla `<head>`). Skip if already present. Apply to the root layout so every page inherits.
+- **llms.txt discovery — sitemap entry.** If `sitemap.xml` (or the framework generator) exists and lacks a `/llms.txt` entry, add it. For Next.js `app/sitemap.ts` push an entry `{ url: '<base>/llms.txt', changeFrequency: 'monthly', priority: 0.5 }`. For static `sitemap.xml` emit:
+  ```xml
+  <url>
+    <loc>https://<domain>/llms.txt</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  ```
+  Skip if entry already present. **Build-order rule** (flag, don't silently reorder): if both `llms.txt` and the sitemap are build-time generated, the llms.txt generator MUST run before the sitemap generator so the sitemap can read llms.txt's mtime. If the detected build script runs them in the wrong order, surface as a warning with the suggested reordering.
+- **llms.txt discovery — robots.txt comment.** If `/llms.txt` exists, add a comment line to `robots.txt` (or the framework generator): `# LLM index: https://<domain>/llms.txt`. Auto-derive `<domain>` from canonical URL / existing sitemap declaration / environment config. If domain is not resolvable, prompt the user once. Skip if a matching comment is already present. For Next.js `app/robots.ts` emit the comment via a leading `host` / preamble string block, since `MetadataRoute.Robots` doesn't directly support comments — fall back to `public/robots.txt` if the route generator can't express it cleanly.
+
+**Informational (manual action items — never automated):**
+- **Public directory submission.** Print a manual action item in the terminal summary listing aggregator directories the user should submit `https://<domain>/llms.txt` to. Minimum list: `https://llmstxt.site/submit` and `https://directory.llmstxt.cloud`. These are web forms — do not attempt to automate submission. Emit as an informational line in the summary, not as a file edit.
 
 **Intent-requiring fixes** (prompt user for policy):
 - `robots.txt` AI-bot directives. Prompt separately:
@@ -233,6 +247,17 @@ Changes by category:
   Content Freshness:       <count>
   Entity Optimization:     <count>
   Technical Accessibility: <count>
+
+llms.txt discovery signals:
+  <head> link[rel=alternate]:  <added | present | n/a — no llms.txt>
+  sitemap /llms.txt entry:     <added | present | n/a — no sitemap>
+  robots.txt comment:          <added | present | n/a — no robots.txt>
+  Build-order warning:         <none | llms.txt must run before sitemap in <script>>
+
+Manual next step — submit llms.txt to public directories:
+  - https://llmstxt.site/submit
+  - https://directory.llmstxt.cloud
+  (Web forms — manual action, not automated.)
 
 Recommended next: run /geo-audit again to verify improvements.
 To generate/update llms.txt: run /geo-llms-txt.
