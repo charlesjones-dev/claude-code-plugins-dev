@@ -14,7 +14,7 @@ When modifying KB files, you MUST keep the `related` frontmatter AND the `## Rel
 
 ## Frontmatter Schema
 
-When modifying KB files during pruning (merges, promotions, etc.), always maintain valid frontmatter and update `last-updated` to today's date.
+When modifying KB files during pruning (merges, promotions, etc.), always maintain valid frontmatter and, if the file's content actually changed, set `last-updated` to today's date.
 
 ```yaml
 ---
@@ -26,6 +26,15 @@ pinned: false                          # Optional: true = always loaded. Default
 scope: "src/api/**"                    # Optional: glob pattern(s) for auto-matching. String or array.
 ---
 ```
+
+**Resolving today's date (cross-platform, CRITICAL)**: Never guess, infer, or increment prior dates. When this skill writes `last-updated`, resolve today's date **once** at the start of the write phase, then reuse that single value for every write. Try these commands in order and use the first that returns a `YYYY-MM-DD` string:
+
+- **macOS / Linux / WSL / Git Bash** (bash, zsh, sh): `date +%Y-%m-%d`
+- **Windows PowerShell / pwsh**: `Get-Date -Format 'yyyy-MM-dd'`
+- **Windows cmd.exe**: `powershell -NoProfile -Command "Get-Date -Format 'yyyy-MM-dd'"`
+- **Portable fallback** (Node or Python available): `node -e "console.log(new Date().toISOString().slice(0,10))"` or `python -c "import datetime; print(datetime.date.today().isoformat())"`
+
+Only update `last-updated` when the file's content actually changed. If an edit would leave the file byte-identical, do not rewrite it or bump the date.
 
 ## Instructions
 

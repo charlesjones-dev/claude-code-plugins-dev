@@ -26,6 +26,15 @@ sources: [[file1], [file2]]            # Required for filed queries: KB files co
 ---
 ```
 
+**Resolving today's date (cross-platform, CRITICAL)**: Never guess, infer, or increment prior dates. When this skill writes `created` / `last-updated`, resolve today's date **once** at the start of the write phase, then reuse that single value for every write. Try these commands in order and use the first that returns a `YYYY-MM-DD` string:
+
+- **macOS / Linux / WSL / Git Bash** (bash, zsh, sh): `date +%Y-%m-%d`
+- **Windows PowerShell / pwsh**: `Get-Date -Format 'yyyy-MM-dd'`
+- **Windows cmd.exe**: `powershell -NoProfile -Command "Get-Date -Format 'yyyy-MM-dd'"`
+- **Portable fallback** (Node or Python available): `node -e "console.log(new Date().toISOString().slice(0,10))"` or `python -c "import datetime; print(datetime.date.today().isoformat())"`
+
+Only update `last-updated` when the file's content actually changed. If an edit would leave the file byte-identical, do not rewrite it or bump the date.
+
 ## Obsidian-Compatible Related Links
 
 When filing an answer with `related` entries in frontmatter, include a `## Related` section at the **end** of the file body with matching `[[wiki-links]]`. Keep frontmatter and body section in sync.
@@ -118,11 +127,11 @@ Use AskUserQuestion:
    - `sources: [[file1], [file2]]` listing all KB files consulted
    - `related` pointing to the most relevant source KB files
    - Appropriate `tags` and `scope`
-   - Today's date for `created` and `last-updated`
+   - Today's date (resolved once via the cross-platform command in the Frontmatter Schema section) for `created` and `last-updated`
 
 3. **Add `## Related` body section** mirroring the `related` frontmatter.
 
-4. **Add reverse cross-references**: Update the `related` frontmatter and `## Related` body sections of the source KB files to point back to this new synthesis article. Update their `last-updated`.
+4. **Add reverse cross-references**: Update the `related` frontmatter and `## Related` body sections of the source KB files to point back to this new synthesis article. Update their `last-updated` to the resolved date (only for files that actually changed).
 
 #### 6c: Register in CLAUDE.md
 

@@ -23,6 +23,15 @@ scope: "src/api/**"                    # Optional: glob pattern(s) for auto-matc
 ---
 ```
 
+**Resolving today's date (cross-platform, CRITICAL)**: Never guess, infer, or increment prior dates. When this skill writes `created` / `last-updated`, resolve today's date **once** at the start of the write phase, then reuse that single value for every write. Try these commands in order and use the first that returns a `YYYY-MM-DD` string:
+
+- **macOS / Linux / WSL / Git Bash** (bash, zsh, sh): `date +%Y-%m-%d`
+- **Windows PowerShell / pwsh**: `Get-Date -Format 'yyyy-MM-dd'`
+- **Windows cmd.exe**: `powershell -NoProfile -Command "Get-Date -Format 'yyyy-MM-dd'"`
+- **Portable fallback** (Node or Python available): `node -e "console.log(new Date().toISOString().slice(0,10))"` or `python -c "import datetime; print(datetime.date.today().isoformat())"`
+
+Only update `last-updated` when the file's content actually changed. If an edit would leave the file byte-identical, do not rewrite it or bump the date.
+
 ## Obsidian-Compatible Related Links
 
 When a KB file has `related` entries in its frontmatter, you MUST also include a `## Related` section at the **end** of the file body with the same references as `[[wiki-links]]`. This enables Obsidian graph view and link navigation. Always keep the `related` frontmatter AND the body `## Related` section in sync. If there are no related files, omit the section entirely.
@@ -88,7 +97,7 @@ For each approved file:
    - Remove filler, redundant context, and content that only matters for human reading.
    - Organize under clear headings (`## Key Rules`, `## Context`, etc.).
    - Keep the distilled content focused. A KB file should be quick to scan.
-2. **Add proper frontmatter** with the confirmed tags, scope, pinned status, today's date for `created` and `last-updated`, and any `related` cross-references to existing KB files.
+2. **Add proper frontmatter** with the confirmed tags, scope, pinned status, today's date (resolved once via the cross-platform command in the Frontmatter Schema section) for `created` and `last-updated`, and any `related` cross-references to existing KB files.
 3. **Write the file** to the confirmed `docs/kb/` path.
 
 #### 5b: Appending to an Existing KB File
@@ -96,7 +105,7 @@ For each approved file:
 1. **Read the existing KB file**.
 2. **Distill only new content** that isn't already covered.
 3. **Append** new rules under the appropriate section. Do not duplicate existing entries.
-4. **Update `last-updated`** in frontmatter to today's date.
+4. **Update `last-updated`** in frontmatter to the date resolved at the start of the write phase (only if content actually changed).
 5. **Add new tags** to frontmatter if the ingested content introduces new topics.
 
 #### 5c: Update CLAUDE.md Table

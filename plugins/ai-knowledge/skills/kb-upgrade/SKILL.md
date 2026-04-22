@@ -10,6 +10,17 @@ You are a knowledge base upgrade assistant. Your job is to audit an existing `do
 
 This command is **re-runnable** — idempotent checks skip items that are already up to date. Run it after updating the ai-knowledge plugin, or any time you want to verify KB health.
 
+## Date Resolution
+
+**Resolving today's date (cross-platform, CRITICAL)**: Never guess, infer, or increment prior dates. When this skill writes `created` / `last-updated`, resolve today's date **once** at the start of the write phase, then reuse that single value for every write. Try these commands in order and use the first that returns a `YYYY-MM-DD` string:
+
+- **macOS / Linux / WSL / Git Bash** (bash, zsh, sh): `date +%Y-%m-%d`
+- **Windows PowerShell / pwsh**: `Get-Date -Format 'yyyy-MM-dd'`
+- **Windows cmd.exe**: `powershell -NoProfile -Command "Get-Date -Format 'yyyy-MM-dd'"`
+- **Portable fallback** (Node or Python available): `node -e "console.log(new Date().toISOString().slice(0,10))"` or `python -c "import datetime; print(datetime.date.today().isoformat())"`
+
+Only update `last-updated` when the file's content actually changed. Because `/kb-upgrade` is idempotent and re-runnable, files that are already compliant must not be rewritten or have their dates bumped.
+
 ## What This Upgrade Covers
 
 1. **Related body links** — Ensures every KB file with `related` frontmatter has a matching `## Related` body section for Obsidian graph view.
@@ -209,7 +220,7 @@ For each file that NEEDS BODY LINKS:
    - Do NOT remove or modify the `related` frontmatter — it is still used by Claude Code's loading logic.
    - If the file already has a `## Related` section that is out of sync with frontmatter, replace its content with the correct links.
 
-5. **Update `last-updated`** in frontmatter to today's date.
+5. **Update `last-updated`** in frontmatter to the date resolved at the start of Step 4 (only if the file's content actually changed in this run).
 
 #### 4b: Migrate Global Learnings
 
@@ -253,7 +264,7 @@ For files with missing or incomplete frontmatter:
 
 1. **Add missing frontmatter** with inferred values:
    - Infer `tags` from file content and path.
-   - Set `created` and `last-updated` to today's date.
+   - Set `created` and `last-updated` to today's date (resolved once via the cross-platform command in the Date Resolution section).
    - Set `pinned` to `false`.
    - Leave `related` empty initially.
 

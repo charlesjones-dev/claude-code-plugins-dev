@@ -10,7 +10,7 @@ You are a knowledge base assistant. Your job is to take a piece of knowledge fro
 
 ## Frontmatter Schema
 
-Every KB file you create or update MUST have valid YAML frontmatter. When creating a new file, include all required fields. When updating an existing file, always update the `last-updated` field to today's date.
+Every KB file you create or update MUST have valid YAML frontmatter. When creating a new file, include all required fields. When updating an existing file whose content actually changed, set `last-updated` to today's date.
 
 ```yaml
 ---
@@ -22,6 +22,15 @@ pinned: false                          # Optional: true = always loaded. Default
 scope: "src/api/**"                    # Optional: glob pattern(s) for auto-matching. String or array.
 ---
 ```
+
+**Resolving today's date (cross-platform, CRITICAL)**: Never guess, infer, or increment prior dates. When this skill writes `created` / `last-updated`, resolve today's date **once** at the start of the write phase, then reuse that single value for every write. Try these commands in order and use the first that returns a `YYYY-MM-DD` string:
+
+- **macOS / Linux / WSL / Git Bash** (bash, zsh, sh): `date +%Y-%m-%d`
+- **Windows PowerShell / pwsh**: `Get-Date -Format 'yyyy-MM-dd'`
+- **Windows cmd.exe**: `powershell -NoProfile -Command "Get-Date -Format 'yyyy-MM-dd'"`
+- **Portable fallback** (Node or Python available): `node -e "console.log(new Date().toISOString().slice(0,10))"` or `python -c "import datetime; print(datetime.date.today().isoformat())"`
+
+Only update `last-updated` when the file's content actually changed. If an edit would leave the file byte-identical, do not rewrite it or bump the date.
 
 ## Obsidian-Compatible Related Links
 
@@ -91,7 +100,7 @@ If saving to a new KB file, gather metadata:
 2. Append the learning under the appropriate section (typically `## Key Rules`).
 3. Use imperative voice, keep it concise.
 4. Deduplicate: if a substantially similar entry exists, update it rather than adding a duplicate.
-5. **Update `last-updated`** in the frontmatter to today's date.
+5. **Update `last-updated`** in the frontmatter to the date resolved at the start of the write phase (only if file content actually changed).
 6. Add any new tags to the frontmatter `tags` array if the learning introduces a new cross-cutting topic.
 7. Add cross-references to `related` if the learning connects to other KB files.
 
@@ -132,7 +141,7 @@ If saving to a new KB file, gather metadata:
 2. Append as a bullet point under `## Key Rules`.
 3. Remove placeholder text if present ("_No global learnings captured yet..._").
 4. Deduplicate against existing entries.
-5. Update `last-updated` in frontmatter to today's date.
+5. Update `last-updated` in frontmatter to the date resolved at the start of the write phase (only if `_global-learnings.md`'s content actually changed).
 6. Ensure `_global-learnings.md` is registered in the CLAUDE.md Knowledge Base table as: `| Global Learnings | docs/kb/_global-learnings.md | Always (pinned) |`
 
 ### Step 6: Update Index and Log

@@ -10,7 +10,16 @@ You are a knowledge extraction specialist. Your job is to analyze the current co
 
 ## Frontmatter Schema
 
-Every KB file you create or update MUST have valid YAML frontmatter. When creating a new file, include all required fields. When updating an existing file, always update the `last-updated` field to today's date.
+Every KB file you create or update MUST have valid YAML frontmatter. When creating a new file, include all required fields. When updating an existing file whose content actually changed, set `last-updated` to today's date.
+
+**Resolving today's date (cross-platform, CRITICAL)**: Never guess, infer, or increment prior dates. When this skill writes `created` / `last-updated`, resolve today's date **once** at the start of the write phase, then reuse that single value for every write. Try these commands in order and use the first that returns a `YYYY-MM-DD` string:
+
+- **macOS / Linux / WSL / Git Bash** (bash, zsh, sh): `date +%Y-%m-%d`
+- **Windows PowerShell / pwsh**: `Get-Date -Format 'yyyy-MM-dd'`
+- **Windows cmd.exe**: `powershell -NoProfile -Command "Get-Date -Format 'yyyy-MM-dd'"`
+- **Portable fallback** (Node or Python available): `node -e "console.log(new Date().toISOString().slice(0,10))"` or `python -c "import datetime; print(datetime.date.today().isoformat())"`
+
+Only update `last-updated` when the file's content actually changed. If an edit would leave the file byte-identical, do not rewrite it or bump the date.
 
 ```yaml
 ---
@@ -105,6 +114,8 @@ If "Let me pick which ones", present each learning individually and ask whether 
 
 After approval:
 
+**First, resolve today's date**: Run the platform-appropriate command from the Frontmatter Schema section (try `date +%Y-%m-%d`, then `Get-Date -Format 'yyyy-MM-dd'` on Windows, then the Node/Python fallback) and store the result. Use this single value for every `created` / `last-updated` assignment below. Do not compute dates from file contents.
+
 #### 4a: Create/Update KB Files
 
 For each topic-specific learning:
@@ -136,7 +147,7 @@ For each topic-specific learning:
 
    Only include the `## Related` section if there are related files. It must be the last section in the file.
 
-2. **Existing KB file**: Read the file, append new learnings under the appropriate section. Do not duplicate existing entries. If a learning contradicts an existing one, replace the old entry with the new one (the latest conversation has the most current information). **Always update `last-updated` in the frontmatter to today's date.** Add any new tags or related references to the frontmatter.
+2. **Existing KB file**: Read the file, append new learnings under the appropriate section. Do not duplicate existing entries. If a learning contradicts an existing one, replace the old entry with the new one (the latest conversation has the most current information). **If (and only if) the file content actually changed, set `last-updated` to the date resolved at the start of Phase 4.** If no content change occurred, leave `last-updated` alone. Never derive it by incrementing the existing value. Add any new tags or related references to the frontmatter.
 
 **KB file writing rules:**
 - **Prefer subfolder organization**: When creating new KB files, place them in a category folder (e.g., `docs/kb/architecture/`, `docs/kb/conventions/`, `docs/kb/testing/`). Use existing folder structure as a guide. If the KB is still small (< 5 files) or flat, placing files at the root is fine.
@@ -151,7 +162,7 @@ After creating/updating KB files:
 1. For any new KB file that relates to existing KB files, add `[[new-file]]` to the existing files' `related` frontmatter.
 2. For any existing KB file referenced by new content, add the reverse reference.
 3. Update the `## Related` body section on any file whose `related` frontmatter was modified (keep them in sync).
-4. Update `last-updated` on any file whose frontmatter was modified.
+4. Update `last-updated` on any file whose frontmatter or body was actually modified, using the date resolved at the start of Phase 4. Files left untouched must not be rewritten.
 
 #### 4c: Update Global Learnings
 
@@ -162,7 +173,7 @@ Global learnings are stored in `docs/kb/_global-learnings.md` (a pinned KB file)
 3. Append new learnings as bullet points under `## Key Rules`.
 4. Deduplicate: if a learning is substantially similar to an existing one, update the existing entry rather than adding a duplicate.
 5. If a new learning contradicts an existing one, replace the old one.
-6. Update `last-updated` in frontmatter to today's date.
+6. Update `last-updated` in frontmatter to the date resolved at the start of Phase 4 (only if `_global-learnings.md`'s content actually changed).
 7. Ensure `_global-learnings.md` is registered in the CLAUDE.md Knowledge Base table as: `| Global Learnings | docs/kb/_global-learnings.md | Always (pinned) |`
 
 #### 4d: Update CLAUDE.md Reference Table
@@ -204,4 +215,4 @@ After writing all changes, display a summary:
 - **Actionable entries only**: Don't capture vague observations. Every entry should change behavior in future sessions.
 - **Freshest knowledge wins**: If the conversation revealed that a previous learning was wrong, update or replace it.
 - **Organize naturally**: Use nesting when there's a clear hierarchy (e.g., monorepo packages), keep flat when topics are independent.
-- **Maintain frontmatter**: Every KB file write must include valid, complete frontmatter. Always update `last-updated`. Always add relevant tags.
+- **Maintain frontmatter**: Every KB file write must include valid, complete frontmatter. Always add relevant tags. Update `last-updated` only when content actually changed, and only with the date resolved at the start of Phase 4 via the platform-appropriate command (`date +%Y-%m-%d` on POSIX / `Get-Date -Format 'yyyy-MM-dd'` on PowerShell) - never by incrementing or inferring from existing values.

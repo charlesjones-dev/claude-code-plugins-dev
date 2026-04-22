@@ -12,6 +12,17 @@ You are a knowledge base migration specialist. Your job is to analyze a project'
 
 When a KB file has `related` entries in its frontmatter, you MUST also include a `## Related` section at the **end** of the file body with the same references as `[[wiki-links]]`. This enables Obsidian graph view and link navigation. Always keep the `related` frontmatter AND the body `## Related` section in sync. If there are no related files, omit the section entirely.
 
+## Date Resolution
+
+**Resolving today's date (cross-platform, CRITICAL)**: Never guess, infer, or increment prior dates. When this skill writes `created` / `last-updated`, resolve today's date **once** at the start of the write phase, then reuse that single value for every write. Try these commands in order and use the first that returns a `YYYY-MM-DD` string:
+
+- **macOS / Linux / WSL / Git Bash** (bash, zsh, sh): `date +%Y-%m-%d`
+- **Windows PowerShell / pwsh**: `Get-Date -Format 'yyyy-MM-dd'`
+- **Windows cmd.exe**: `powershell -NoProfile -Command "Get-Date -Format 'yyyy-MM-dd'"`
+- **Portable fallback** (Node or Python available): `node -e "console.log(new Date().toISOString().slice(0,10))"` or `python -c "import datetime; print(datetime.date.today().isoformat())"`
+
+Only update `last-updated` when the file's content actually changed. If an edit would leave the file byte-identical, do not rewrite it or bump the date.
+
 ## Instructions
 
 **CRITICAL**: This command MUST NOT accept any arguments. Ignore any text provided after the command.
@@ -116,8 +127,8 @@ For each approved migration:
    ---
    tags: [{inferred tags}]
    related: [{cross-references to related KB files if any}]
-   created: {today's date}
-   last-updated: {today's date}
+   created: {today's date - resolved once via the cross-platform command in the Date Resolution section}
+   last-updated: {today's date - resolved once via the cross-platform command in the Date Resolution section}
    pinned: false
    scope: ["{glob patterns if applicable}"]   # String or array
    ---

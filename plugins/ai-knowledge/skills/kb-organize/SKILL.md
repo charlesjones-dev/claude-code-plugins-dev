@@ -8,6 +8,17 @@ disable-model-invocation: true
 
 You are a knowledge base organization assistant. Your job is to reorganize KB files from a flat structure into category folders for better navigation and scalability. This is a safe, preview-first operation — no files are moved without user approval.
 
+## Date Resolution
+
+**Resolving today's date (cross-platform, CRITICAL)**: Never guess, infer, or increment prior dates. When this skill writes `last-updated`, resolve today's date **once** at the start of the write phase, then reuse that single value for every write. Try these commands in order and use the first that returns a `YYYY-MM-DD` string:
+
+- **macOS / Linux / WSL / Git Bash** (bash, zsh, sh): `date +%Y-%m-%d`
+- **Windows PowerShell / pwsh**: `Get-Date -Format 'yyyy-MM-dd'`
+- **Windows cmd.exe**: `powershell -NoProfile -Command "Get-Date -Format 'yyyy-MM-dd'"`
+- **Portable fallback** (Node or Python available): `node -e "console.log(new Date().toISOString().slice(0,10))"` or `python -c "import datetime; print(datetime.date.today().isoformat())"`
+
+A moved file's `last-updated` should only be bumped if its path changed AND its frontmatter was actually rewritten (path changes alone do not bump `last-updated` unless frontmatter was edited). Never bump dates on untouched files.
+
 ## Instructions
 
 **CRITICAL**: This command MUST NOT accept any arguments. Ignore any text provided after the command.
@@ -100,7 +111,7 @@ For each approved move:
    - Otherwise, format as: `` `scope-glob1`, `scope-glob2` — tag1, tag2 ``.
    - This ensures the table uses the structured format after reorganization.
 5. **DO NOT modify `[[wiki-links]]`** in frontmatter `related` fields or `## Related` body sections — Obsidian and KB commands resolve `[[filename]]` by name, not by path. Only the CLAUDE.md table paths and "When to Load" column need updating.
-6. **Update `last-updated`** in frontmatter of moved files to today's date.
+6. **Update `last-updated`** in frontmatter of moved files to the date resolved at the start of the write phase (moves count as a meaningful change; files not moved must not have their dates touched).
 
 ### Step 6: Update Index and Log
 

@@ -103,6 +103,6 @@ This is required because Obsidian does not parse frontmatter values as navigable
 
 ## Plugin Details
 
-- **Version**: 1.4.0
+- **Version**: 1.5.0
 - **Author**: [Charles Jones](https://charlesjones.dev)
 - **License**: MIT

@@ -22,6 +22,13 @@ You are a knowledge base setup assistant. Your job is to initialize the Knowledg
 
 ### Step 2: Create Directory Structure
 
+**Resolve today's date (cross-platform, CRITICAL)**: Before writing any file below, run the first command that works in the current shell and use the returned `YYYY-MM-DD` string for every `{today's date}` placeholder in the templates. Never guess, never infer, never increment.
+
+- **macOS / Linux / WSL / Git Bash** (bash, zsh, sh): `date +%Y-%m-%d`
+- **Windows PowerShell / pwsh**: `Get-Date -Format 'yyyy-MM-dd'`
+- **Windows cmd.exe**: `powershell -NoProfile -Command "Get-Date -Format 'yyyy-MM-dd'"`
+- **Portable fallback** (Node or Python available): `node -e "console.log(new Date().toISOString().slice(0,10))"` or `python -c "import datetime; print(datetime.date.today().isoformat())"`
+
 If `docs/kb/` does not exist, create it with a placeholder README:
 
 **File: `docs/kb/README.md`**

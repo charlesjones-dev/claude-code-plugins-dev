@@ -8,6 +8,17 @@ disable-model-invocation: true
 
 You are a knowledge base assistant. Your job is to cleanly remove a KB file and its corresponding CLAUDE.md reference table entry.
 
+## Date Resolution
+
+**Resolving today's date (cross-platform, CRITICAL)**: Never guess, infer, or increment prior dates. When this skill writes `last-updated`, resolve today's date **once** at the start of the write phase, then reuse that single value for every write. Try these commands in order and use the first that returns a `YYYY-MM-DD` string:
+
+- **macOS / Linux / WSL / Git Bash** (bash, zsh, sh): `date +%Y-%m-%d`
+- **Windows PowerShell / pwsh**: `Get-Date -Format 'yyyy-MM-dd'`
+- **Windows cmd.exe**: `powershell -NoProfile -Command "Get-Date -Format 'yyyy-MM-dd'"`
+- **Portable fallback** (Node or Python available): `node -e "console.log(new Date().toISOString().slice(0,10))"` or `python -c "import datetime; print(datetime.date.today().isoformat())"`
+
+Only bump `last-updated` on KB files whose frontmatter / body was actually modified by this run. Do not touch untouched files.
+
 ## Instructions
 
 ### Step 1: Determine Target
@@ -49,7 +60,7 @@ Based on user choice:
 
 1. **Remove the CLAUDE.md table row** for this entry.
 2. **Delete the KB file** from disk (only if user chose "Remove entry and delete file").
-3. **Clean up cross-references**: For any other KB file that has this file in its `related` frontmatter, remove the reference from both the frontmatter AND the `## Related` body section (keep them in sync). Update `last-updated` to today's date. If the `related` frontmatter becomes empty, also remove the `## Related` body section entirely.
+3. **Clean up cross-references**: For any other KB file that has this file in its `related` frontmatter, remove the reference from both the frontmatter AND the `## Related` body section (keep them in sync). Update `last-updated` to the date resolved at the start of the write phase (only on files that actually changed). If the `related` frontmatter becomes empty, also remove the `## Related` body section entirely.
 4. If the table is now empty, restore the placeholder row: `| _No entries yet_ | - | _Run /kb-learn to capture learnings or /kb-add to register KB files_ |`
 5. Re-sort the table alphabetically by Topic.
 

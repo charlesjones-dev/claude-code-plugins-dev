@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.2] - 2026-04-21
+
+### Fixed
+
+#### AI-Knowledge Plugin (v1.4.0 → v1.5.0)
+
+- All `/kb-*` skills — Fixed `last-updated` frontmatter bug where Claude would infer the date by incrementing the existing value (often producing a date in the future) instead of checking what today actually is. Every skill that writes `created` / `last-updated` now mandates resolving today's date once at the start of its write phase by running a shell command and reusing that single value for every write. Guessing, inferring, and incrementing are explicitly forbidden.
+- All `/kb-*` skills — Cross-platform date resolution documented for each writing skill: `date +%Y-%m-%d` on macOS / Linux / WSL / Git Bash, `Get-Date -Format 'yyyy-MM-dd'` on Windows PowerShell, `powershell -NoProfile -Command ...` fallback for cmd.exe, plus Node / Python portable fallbacks. Skills walk the list until one returns a valid `YYYY-MM-DD` string, making them reliable on both macOS and Windows environments.
+- All `/kb-*` skills — `last-updated` is now only bumped when the file's content actually changed. Untouched files are no longer rewritten, so drive-by date bumps during cross-reference and index passes stop happening. `/kb-upgrade` explicitly notes that already-compliant files must not be rewritten on re-runs.
+- Skills covered: `kb-learn`, `kb-add`, `kb-harvest`, `kb-discover`, `kb-query`, `kb-import`, `kb-absorb`, `kb-organize`, `kb-prune`, `kb-remove`, `kb-ingest`, `kb-upgrade`, `kb-init`.
+
 ## [2.4.1] - 2026-04-18
 
 ### Changed
@@ -1027,7 +1038,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.1...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.2...HEAD
+[2.4.2]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.1...v2.4.2
 [2.4.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.3.4...v2.4.0
 [2.2.2]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.2.1...v2.2.2
