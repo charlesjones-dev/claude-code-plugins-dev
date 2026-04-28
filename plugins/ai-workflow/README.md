@@ -145,6 +145,62 @@ Generate a context-aware Development Principles section for your CLAUDE.md, tail
 # Written directly to CLAUDE.md
 ```
 
+### `/workflow-rules`
+
+Add, remove, or list curated **behavior rules** in CLAUDE.md — short instructions that correct repeated Claude Code annoyances (PR padding, fabricated test plans, "Generated with Claude Code" footers, internal-deliberation narration).
+
+> **Rules vs. Principles:** `/workflow-rules` controls **how Claude behaves** (communication style, PR/commit hygiene, scope discipline) and is cross-project, picked from a curated library. `/workflow-principles` controls **how code is written in this project** (SOLID, DRY, testing philosophy) and is generated from project discovery. Use `/workflow-rules` when you keep correcting Claude on the same thing across every project; use `/workflow-principles` when you want project-specific coding standards.
+
+**What it does:**
+
+- Reads the curated rule library shipped with the plugin
+- Picks target file: user `~/.claude/CLAUDE.md` (default, applies everywhere) or project `./CLAUDE.md`
+- Cross-platform path resolution (Windows `%USERPROFILE%\.claude\CLAUDE.md` and POSIX `~/.claude/CLAUDE.md`)
+- Multi-select picker grouped by section, with already-installed rules filtered out
+- Wraps each installed rule in HTML comment markers (`<!-- workflow-rules:id=... -->`) so adds are idempotent and removes are precise — even if you edit the rule's title later
+- Shows a unified diff before any write and requires explicit confirmation
+- Sync across machines via `/plugin update` — pull the latest library, then re-run to install new rules
+
+**Usage:**
+
+```
+/workflow-rules
+```
+
+**Modes (chosen interactively):**
+
+- **Add** — install one or more curated rules into the chosen CLAUDE.md
+- **Remove** — uninstall previously-installed rules (matched by ID, not title)
+- **List** — show what's currently installed and where
+
+**Rule library (curated, lean):**
+
+| Section | Rules |
+|---------|-------|
+| PR and Commit Hygiene | Scope to current session, no fabricated test plans, no speculative deploy steps, short PR bodies, scoped commit messages, no "Generated with Claude Code" footers |
+| Scope Discipline | No unrequested features, confirm before risky/shared-state actions |
+| Communication Style | No internal-deliberation narration, match response length to task |
+
+**Before (manual fixes every project):**
+
+```
+# Edit ~/.claude/CLAUDE.md by hand
+# Copy-paste the same rules into every new project
+# Forget which corrections you already wrote down
+# Drift between machines
+```
+
+**After (with workflow-rules):**
+
+```
+/workflow-rules
+# Pick "Add rules to CLAUDE.md"
+# Pick user-level (applies everywhere) or project-level
+# Multi-select the rules you want
+# Review diff, confirm
+# /plugin update on another machine to sync the library
+```
+
 ### `/workflow-preflight`
 
 Run comprehensive code quality checks before commits, PRs, or deployments.
@@ -360,12 +416,13 @@ Plus improved code quality, fewer context overflows, and more efficient sub-agen
 ## Plugin Details
 
 - **Name:** AI-Workflow
-- **Version:** 1.4.0
+- **Version:** 1.5.0
 - **Type:** Development Workflow Automation
 - **Features:**
-  - Skills: `/workflow-plan-phases`, `/workflow-implement-phases`, `/workflow-preflight`, `/workflow-ship`, `/workflow-principles`
+  - Skills: `/workflow-plan-phases`, `/workflow-implement-phases`, `/workflow-preflight`, `/workflow-ship`, `/workflow-principles`, `/workflow-rules`
   - Security scanning: pnpm/npm/yarn audit, eslint-plugin-security, Semgrep (CLI or Docker)
   - Development principles: Context-aware CLAUDE.md generation with project discovery
+  - Behavior rules: Curated, marker-wrapped rule library for user/project CLAUDE.md (cross-project sync via `/plugin update`)
 - **License:** MIT
 - **Author:** Charles Jones
 

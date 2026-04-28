@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.3] - 2026-04-28
+
+### Added
+
+#### AI-Workflow Plugin (v1.4.0 → v1.5.0)
+
+- `/workflow-rules` — Add, remove, or list curated **behavior rules** in CLAUDE.md (cross-project, picked from a shipped library). Distinct from `/workflow-principles` (project-specific coding standards): `/workflow-rules` controls *how Claude behaves* (PR/commit hygiene, scope discipline, communication style) and is identical across projects.
+  - Interactive flow via `AskUserQuestion`: choose Add / Remove / List / Cancel.
+  - Cross-platform target resolution — user-level `~/.claude/CLAUDE.md` (POSIX) or `%USERPROFILE%\.claude\CLAUDE.md` (Windows), or project-level `./CLAUDE.md`.
+  - Each installed rule is wrapped in `<!-- workflow-rules:id=<id> -->` comment markers so adds are idempotent and removes are precise — even after the user edits the rule's title.
+  - Already-installed rules are filtered from the add picker; multi-select lets the user install many at once.
+  - Diff preview + explicit confirm before any write. Never auto-creates `~/.claude/CLAUDE.md` without asking.
+  - Library ships lean (10 rules across PR & Commit Hygiene, Scope Discipline, Communication Style); syncs across machines via `/plugin update`.
+
 ## [2.4.2] - 2026-04-21
 
 ### Fixed
@@ -1039,6 +1053,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
 [Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.2...HEAD
+[2.4.3]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.2...v2.4.3
 [2.4.2]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.1...v2.4.2
 [2.4.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.3.4...v2.4.0

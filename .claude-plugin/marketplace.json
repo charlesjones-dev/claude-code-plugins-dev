@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A curated list of custom Claude Code plugins, agents, and skills for developers.",
-    "version": "2.4.2",
+    "version": "2.4.3",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -124,8 +124,8 @@
     {
       "name": "ai-workflow",
       "source": "./plugins/ai-workflow",
-      "description": "AI-powered development workflow automation - Phase-based planning, implementation orchestration, preflight code quality checks with security scanning, ship-it workflow, and development principles generator for CLAUDE.md",
-      "version": "1.4.0",
+      "description": "AI-powered development workflow automation - Phase-based planning, implementation orchestration, preflight code quality checks with security scanning, ship-it workflow, development principles generator, and curated CLAUDE.md behavior rules manager",
+      "version": "1.5.0",
       "keywords": [
         "ai",
         "workflow",
@@ -149,7 +149,9 @@
         "productivity",
         "principles",
         "standards",
-        "claude-md"
+        "claude-md",
+        "rules",
+        "behavior-rules"
       ],
       "author": {
         "name": "Charles Jones",
