@@ -1,6 +1,6 @@
 # Claude Code Plugins for Developers
 
-[![Version](https://img.shields.io/badge/version-2.4.3-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
+[![Version](https://img.shields.io/badge/version-2.5.0-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![GitHub Issues](https://img.shields.io/github/issues/charlesjones-dev/claude-code-plugins-dev.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/charlesjones-dev/claude-code-plugins-dev.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/stargazers)
@@ -25,6 +25,7 @@ This Claude Code plugin marketplace provides plugins that extend Claude Code's c
 | [ai-performance](plugins/ai-performance/) | AI-powered performance optimization and bottleneck detection | `/performance-audit` | `performance-auditor` |
 | [ai-security](plugins/ai-security/) | AI-powered security auditing with reproducible reports | `/security-init`, `/security-audit`, `/security-scan-dependencies`, `/security-supply-chain` | `security-auditor`, `security-dependency-scanner` |
 | [ai-statusline](plugins/ai-statusline/) | AI-powered status line customization with progress bars | `/statusline-wizard`, `/statusline-edit` | - |
+| [ai-swift](plugins/ai-swift/) | AI-powered Swift/iOS/macOS release-readiness — catches Xcode Cloud & TestFlight blockers before upload | `/swift-preflight`, `/swift-diagnose`, `/swift-ci-scaffold`, `/swift-verify`, `/swift-concurrency-review` | `swift-release-auditor` |
 | [ai-workflow](plugins/ai-workflow/) | AI-powered development workflow automation | `/workflow-plan-phases`, `/workflow-implement-phases`, `/workflow-preflight`, `/workflow-ship`, `/workflow-principles`, `/workflow-rules` | - |
 | [ai-compliance](plugins/ai-compliance/) | AI-powered license compliance auditing and attribution generation | `/compliance-license-audit`, `/compliance-notice-generate` | - |
 | [ai-knowledge](plugins/ai-knowledge/) | AI-powered knowledge base management with Obsidian compatibility | `/kb-init`, `/kb-learn`, `/kb-add`, `/kb-query`, `/kb-import`, `/kb-ingest`, `/kb-harvest`, `/kb-discover`, `/kb-absorb`, `/kb-remove`, `/kb-load`, `/kb-list`, `/kb-search`, `/kb-prune`, `/kb-auto`, `/kb-organize`, `/kb-upgrade` | - |
