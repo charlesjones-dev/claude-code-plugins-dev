@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-06-03
+
+### Added
+
+#### AI-Swift Plugin (new — v1.0.0)
+
+New plugin for Swift / iOS / macOS development whose primary job is to catch release blockers **before** they reach Xcode Cloud or TestFlight, plus reusable Swift 6 + SwiftUI quality checks. Lessons are encoded portably from a real Swift 6 / SwiftUI / XcodeGen project; no project-specific identifiers are hardcoded. Every check probes the target project's shape first (XcodeGen vs plain `.xcodeproj` vs SwiftPM vs Tuist; iOS / macOS / both; Xcode Cloud or not) and only runs the applicable checks.
+
+- `/swift-preflight` — flagship read-only release-readiness audit. Probes project shape, then runs 8 checks and prints a categorized PASS / WARN / FAIL report with `file:line`, remedy, and a one-line "why":
+  1. XcodeGen pbxproj drift from `project.yml` (bundle id / team / signing hand-edited in Xcode that a CI regen would silently revert)
+  2. Static build number with no `CI_BUILD_NUMBER` stamping (duplicate-build-number TestFlight rejection) plus double-increment warning
+  3. Missing / malformed `ci_scripts/ci_post_clone.sh` on a generator project (stale pbxproj on CI)
+  4. macOS App Store readiness — ITMS-90242 (`LSApplicationCategoryType`), ITMS-90296 (App Sandbox), ITMS-90683 (privacy usage strings), `ITSAppUsesNonExemptEncryption` export-compliance prompt, `network.client`, hardened runtime
+  5. CI test isolation — tests touching the real keychain / `UserDefaults.standard` / disk / network that break on a headless runner (`errSecAuthFailed` -25293); prescribes the seam+fake and catch-all probe+`XCTSkipIf` remedies
+  6. Ad-hoc signing carrying capability entitlements that require a development certificate; plus the harmful `keychain-access-groups` own-item footgun
+  7. Scheme sharing + flaky-UITest release gating (unit-test-only CI scheme recommendation)
+  8. Local gate health (verify script / format-lint config presence; stale-SourceKit guidance)
+- `/swift-diagnose` — reactive failure diagnostician. Paste a red Xcode Cloud log, an ITMS rejection email, or a bare code (`ITMS-90296`, `-25293`) and get the root cause + exact fix, grounded in the actual repo files when present. Catalog covers ITMS-90242/90296/90683, `errSec` keychain codes (-25293/-25300/-25308/-34018), "entitlements that require signing with a development certificate", duplicate build numbers, missing ci_scripts / unshared schemes, stale SourceKit, and the Swift 6.3.x `Binding(get:set:)` IRGen crash.
+- `/swift-ci-scaffold` — opt-in writer (diff + confirm). Generates `ci_scripts/ci_post_clone.sh` (`set -e`, `cd "$CI_PRIMARY_REPOSITORY_PATH"`, `brew install xcodegen`, guarded `CI_BUILD_NUMBER` stamp before generate), proposes a unit-test-only CI scheme in `project.yml`, prints the exact App Store Connect workflow checklist (workflows live in ASC, not the repo), and optionally installs a `.githooks/pre-push` gate. Refuses to add a CI regen step when `project.yml` is missing the real bundle id / team (which regen would revert).
+- `/swift-verify` — portable local gate. Detects the build system and runs `xcodegen generate` (if applicable) → `swiftformat --lint` → `swiftlint --strict` → `xcodebuild test` on the cheapest valid destination (macOS for pure-Swift), or `swift build` / `swift test` for SwiftPM. `--fix` lets SwiftFormat rewrite; `--no-test` skips the build/test stage. Swift-native specialization of `/workflow-preflight`, not a duplicate.
+- `/swift-concurrency-review` — read-only Swift 6 strict-concurrency + SwiftUI idiom review of changed files: Sendability across actor boundaries, `@MainActor` witness vs nonisolated requirement, Combine/`ObservableObject` reintroduction, force-unwraps, `#Predicate` macro limits, the 6.3.x `Binding` IRGen crash, missing `#if os()` guards, and unjustified `@unchecked Sendable` / `nonisolated(unsafe)` escape hatches. Defers general bug-finding to `/code-review`.
+- `swift-release-auditor` agent — runs `/swift-preflight` in fresh context for automated release-readiness review (mirrors `security-auditor` / `performance-auditor`).
+- Marketplace metadata version bumped `2.4.3` → `2.5.0` (significant addition).
+
 ## [2.4.3] - 2026-04-28
 
 ### Added
@@ -1052,7 +1076,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.2...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.5.0...HEAD
+[2.5.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.3...v2.5.0
 [2.4.3]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.2...v2.4.3
 [2.4.2]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.1...v2.4.2
 [2.4.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.0...v2.4.1
