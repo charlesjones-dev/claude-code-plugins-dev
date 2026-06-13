@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.0] - 2026-06-13
+
+### Added
+
+#### AI-Git Plugin (v1.2.0 → v1.3.0)
+
+- `/git-pr-codex-loop` — Opens a PR for the current branch, then loops on Codex Code Review until it comes back clean: resolves each finding locally, replies, and re-requests review. Never merges — the human makes the final merge decision.
+  - Opens or finds the PR for the current branch (refuses to run on `main`/`master`), matching the PR attribution style of `/git-commit-push-pr`.
+  - Waits for CI to go green before involving Codex, then waits for the `chatgpt-codex-connector` bot's review to fully *settle* — Codex acknowledges with a 👀 reaction (which means "received," not "done") then trickles findings in as several comments seconds apart, so the loop waits for the summary comment (or a quiet window with no new comments) before resolving, rather than acting on the first comment.
+  - Recognizes Codex's no-comment "all clear": when it finds nothing, Codex may post no review and instead add a 👍 reaction to the PR description — the loop reads the issue reactions API and treats that as a clean pass.
+  - Resolves every finding worst-priority-first (P0 → P1 → P2): fixes correct findings, commits, pushes, and replies on each thread with the commit SHA + what changed (no per-thread `@codex` tag), then posts a single `@codex review` comment once the whole pass is handled — triggering exactly one fresh review instead of one per comment.
+  - Reads and resolves review threads via the GitHub GraphQL API (`reviewThreads` query + `resolveReviewThread` mutation), since the REST comments endpoint cannot mark a thread resolved.
+  - Loops Steps 4–5 until a pass comes back clean — Codex's summary verdict or a 👍 on the PR description — and every thread is resolved, then hands back the PR URL and a summary.
+  - Guardrails: never merges, never force pushes, never opens extra PRs, makes every fix locally with Claude (never delegates to Codex — the only mention it posts is one `@codex review` per pass), stops and tells the user to enable Automatic reviews if Codex never picks the PR up, and pushes back with a reasoned reply when Codex is wrong instead of churning the diff.
+- Marketplace metadata version bumped `2.5.0` → `2.6.0` (significant addition).
+
 ## [2.5.0] - 2026-06-03
 
 ### Added
@@ -1076,7 +1092,8 @@ New plugin for Swift / iOS / macOS development whose primary job is to catch rel
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.5.0...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.6.0...HEAD
+[2.6.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.5.0...v2.6.0
 [2.5.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.3...v2.5.0
 [2.4.3]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.2...v2.4.3
 [2.4.2]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.1...v2.4.2

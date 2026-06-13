@@ -58,6 +58,32 @@ Commit, push, and create a pull request in one interactive flow. A lightweight s
 # ✅ Done! PR URL returned
 ```
 
+### `/git-pr-codex-loop`
+
+Open a PR for the current branch, then loop on Codex Code Review until it comes back clean. The human always makes the final merge decision — this skill never merges.
+
+**What it does:**
+
+- Opens or finds the PR for the current branch (refuses to run on main/master)
+- Waits for CI to go green before involving Codex, then waits for the `chatgpt-codex-connector` bot's review to fully settle — Codex acknowledges with a 👀 reaction ("received," not "done") then trickles findings in as several comments seconds apart, so the loop never acts on just the first comment
+- Handles Codex's no-comment "all clear": when nothing is found, Codex may post no review and just add a 👍 reaction to the PR description, which the skill treats as a clean pass
+- Resolves every finding worst-priority-first (P0 → P1 → P2): fixes, commits, pushes, and replies per thread (no `@codex` tag), then posts one `@codex review` comment after the whole pass to re-request a single review
+- Reads and resolves review threads via the GitHub GraphQL API (the REST endpoint cannot mark threads resolved)
+- Loops until a pass comes back clean (summary verdict or a 👍 on the PR description) and every thread is resolved, then hands back the PR URL and a summary
+- Makes every fix locally with Claude — never delegates fixes to Codex (the only mention it posts is one `@codex review` per pass); if Codex never picks the PR up, it stops and tells you to enable Automatic reviews
+- Never merges, never force pushes, and pushes back with a reasoned reply when Codex is wrong
+
+**Usage:**
+
+```
+/git-pr-codex-loop
+# ✨ Opens or finds the PR for the current branch
+# ✨ Waits for CI, then for Codex Code Review
+# ✨ Resolves each finding and re-requests review (@codex)
+# ✨ Loops until the review is clean
+# ✅ Hands back the PR URL — you decide when to merge
+```
+
 ### `/git-commit-push`
 
 Analyze changes, generate intelligent commit messages, and push to origin - all in one command.
@@ -238,8 +264,8 @@ No configuration needed! The plugin works out of the box and adapts to your repo
 
 - **Name:** AI-Git Plugin
 - **Type:** AI Instruction Plugin (Skills)
-- **Version:** 1.2.0
-- **Skills:** `/git-init`, `/git-commit-push`, `/git-commit-push-pr`
+- **Version:** 1.3.0
+- **Skills:** `/git-init`, `/git-commit-push`, `/git-commit-push-pr`, `/git-pr-codex-loop`
 - **License:** MIT
 - **Author:** Charles Jones
 

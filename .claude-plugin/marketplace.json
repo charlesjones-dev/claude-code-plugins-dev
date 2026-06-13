@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A curated list of custom Claude Code plugins, agents, and skills for developers.",
-    "version": "2.5.0",
+    "version": "2.6.0",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -56,8 +56,8 @@
     {
       "name": "ai-git",
       "source": "./plugins/ai-git",
-      "description": "AI-powered git automation - Intelligent git skills that streamline version control workflows with .gitignore generation, commit-push-PR workflow, and more",
-      "version": "1.2.0",
+      "description": "AI-powered git automation - Intelligent git skills that streamline version control workflows with .gitignore generation, commit-push-PR workflow, and a Codex Code Review loop that drives a PR to clean review",
+      "version": "1.3.0",
       "keywords": [
         "ai",
         "git",
@@ -67,7 +67,9 @@
         "productivity",
         "devops",
         "version-control",
-        "pull-request"
+        "pull-request",
+        "codex",
+        "code-review"
       ],
       "author": {
         "name": "Charles Jones",
