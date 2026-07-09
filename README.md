@@ -100,9 +100,9 @@ MIT License - See [LICENSE](LICENSE) file for details.
 - [This Repository](https://github.com/charlesjones-dev/claude-code-plugins-dev)
 - [Claude Code Plugins Documentation](https://docs.claude.com/en/docs/claude-code/plugins)
 
-## ⭐ Star History
+## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=charlesjones-dev/claude-code-plugins-dev&type=date&legend=bottom-right)](https://www.star-history.com/#charlesjones-dev/claude-code-plugins-dev&type=date&legend=bottom-right)
+[![Star History Chart](https://api.star-history.com/chart?repos=charlesjones-dev/claude-code-plugins-dev&type=date&legend=bottom-right&sealed_token=_0yv5MGXVJ1oD5GXaPNG5bkcHVoquKUyqcfEsy0s4G9DScPsO-0c-mdNKq9Azb5rK8laSJeQe1yfD0SbfA2OnhgIP3jkbS-_Ygm5B0vLqnAOQeC6dKQjZKh_y3h3X8azNaQLG8fOidK3SLPhlOB9MKSNrHg-kB1xDFDVtOsTypQ-ztjPzxdjM_t5yLiN)](https://www.star-history.com/?type=date&legend=bottom-right&repos=charlesjones-dev%2Fclaude-code-plugins-dev)
 
 ---
 
