@@ -7,6 +7,65 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.7.0] - 2026-07-09
+
+Marketplace-wide "aged-out" audit against native Claude Code features (July 2026): native Dynamic Workflows, auto memory (per-project MEMORY.md), native `/code-review` / `/security-review`, native `/statusline`, and Tool Search (deferred MCP schemas). Every plugin was inventoried; superseded functionality was removed or repositioned, and staleness bugs found along the way were fixed.
+
+### Removed
+
+#### AI-Workflow Plugin (v1.5.0 → v2.0.0) — BREAKING
+
+- `/workflow-plan-phases` and `/workflow-implement-phases` removed — superseded by Claude Code's native Dynamic Workflows (a JavaScript runtime that orchestrates subagent fan-out with per-agent token tracking and budgets, GA ~v2.1.154). The manual 30-50k-token phase sizing and `.claude/phase-coordination/` orchestration these skills implemented is now handled natively at runtime. Both skills remain available in git history.
+- README reframed around the four maintained skills: `/workflow-preflight`, `/workflow-ship`, `/workflow-principles`, `/workflow-rules`; token-budget marketing claims removed; obsolete keywords (`planning`, `phases`, `orchestration`, `sub-agents`) dropped from manifests.
+
+#### AI-Learn Plugin (removed)
+
+- Entire plugin removed (was v1.1.0) — Claude Code's built-in **Learning** output style (`/config` → "Output style" → "Learning") natively provides the collaborative mentor / learn-by-doing mode (with `TODO(human)` markers), and an **Explanatory** style ships alongside it. Removed outright rather than deprecated so `/learn` and `/learn-review` no longer appear in the slash-command dropdown; the plugin remains available in git history. Marketplace now lists 14 plugins.
+
+### Changed
+
+#### AI-Knowledge Plugin (v1.5.0 → v1.5.1)
+
+- Repositioned against Claude Code's native auto memory (default since ~v2.1.59): the README no longer premises that knowledge is lost between sessions. New "How This Differs from Claude Code's Auto Memory" section — auto memory is Claude's personal per-machine notebook; this KB is deliberate, curated, git-versioned, team-shared institutional knowledge with an Obsidian-compatible graph and query tooling. No skills changed or deprecated.
+
+#### AI-Security Plugin (v1.5.0 → v1.5.1)
+
+- Rewrote the dated "Why Not Just Use `/security-review`?" README section as an honest complement-not-compete comparison: native `/security-review` and `/code-review` (effort tiers, `--fix`/`--comment`, cloud ultra mode) cover core detection; this plugin adds archived OWASP-mapped audit reports, deployed-site dependency scanning without source access, `.claude/settings.json` hardening, and npm supply-chain protection.
+- `/security-scan-dependencies` — noted that MCP tool schemas (Context7) are deferred by default under Tool Search and may need on-demand loading.
+
+#### AI-Statusline Plugin (v1.2.3 → v1.2.4)
+
+- Repositioned as an enhancement over Claude Code's native `/statusline` command: the plugin's value is the visual progress bar with color thresholds, 5h/7d rate-limit display, cost/duration segments, granular toggles, and the `/statusline-edit` flow.
+- Removed vestigial "requires Claude Code 2.1.80+" caveats; refreshed "Claude Opus 4.6" example labels to "Claude Opus 4.8".
+
+#### AI-Git Plugin (v1.3.0 → v1.3.1)
+
+- `/git-pr-codex-loop` — added positioning note: native `/code-review` (`--fix`, `--comment`, ultra) covers automated review-and-fix loops without external dependencies; this skill remains the right tool for repos standardized on OpenAI's Codex Code Review bot.
+
+#### AI-Accessibility (v1.4.0 → v1.4.1), AI-Performance (v1.2.0 → v1.2.1), AI-Swift (v1.0.0 → v1.0.1)
+
+- Auditor agents (`accessibility-auditor`, `performance-auditor`, `swift-release-auditor`) reframed from "use when context is saturated" to automated/unattended domain reviews.
+
+### Added
+
+#### AI-Modernize Plugin (v1.0.0 → v1.1.0)
+
+- `modernize-auditor` agent — the `/modernize-audit` and `/modernize-scan` skills delegated to an `ai-modernize:modernize-auditor` subagent that never shipped; the agent now exists (mirrors the `security-auditor` pattern, `model: inherit`), fixing the broken delegation in both skills.
+
+### Fixed
+
+- **ai-git** `/git-commit-push-pr` — removed the hardcoded `Co-Authored-By: Claude Opus 4.6` commit trailer; commits now carry no Claude attribution, consistent with `/git-commit-push` and repo convention.
+- **ai-workflow** `/workflow-ship` — removed the same hardcoded `Claude Opus 4.6` commit trailer.
+- **ai-statusline** `/statusline-wizard` — fixed a broken reference to the renamed `statusline-setup` skill (setup workflow now resolves inline).
+- **ai-security** `/security-scan-dependencies` — report template scanner version updated from the stale `v1.4.0`; `/security-supply-chain` frontmatter fixed `minimumReleaseAge` → `minimum-release-age`.
+- **ai-performance** `performance-auditor` agent — fixed typos ("it's methodology" → "its methodology"; skill reference `performance-auditing` → `performance-audit`).
+- **ai-geo** — README version drift corrected (badge and Plugin Details now match plugin.json v1.1.0).
+- **ai-ado** (v1.3.1 → v1.3.2) — README now documents the shipped `/ado-work-items` skill (7 skills, previously 6 listed).
+
+### Audit Notes
+
+- Verified against official docs as still current with no native overlap: ai-learn, ai-writing, ai-compliance, ai-seo, ai-geo, ai-swift, ai-ado, ai-accessibility, ai-performance skills. No hardcoded API model IDs, token-budget claims, or removed-command references remain in any plugin.
+
 ## [2.6.0] - 2026-06-13
 
 ### Added
@@ -1092,7 +1151,8 @@ New plugin for Swift / iOS / macOS development whose primary job is to catch rel
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.6.0...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.7.0...HEAD
+[2.7.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.6.0...v2.7.0
 [2.6.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.5.0...v2.6.0
 [2.5.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.3...v2.5.0
 [2.4.3]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.4.2...v2.4.3

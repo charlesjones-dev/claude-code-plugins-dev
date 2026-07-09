@@ -30,6 +30,10 @@ Interactively create a new Task work item as a child of an existing User Story, 
 
 Rapidly log completed work to a User Story by creating a Task work item with completed hours already set. Designed for quick logging multiple times per day. Supports AI-powered generation with automatic git commit hash detection and optional placeholder task hour subtraction.
 
+### `/ado-work-items`
+
+Reference guide for creating Azure DevOps work items with the ADO MCP tools. Covers the Feature → User Story → Task hierarchy, required HTML formatting for Description and Acceptance Criteria fields, naming conventions, and Story Points and hour estimation standards.
+
 ### `/ado-timesheet-report`
 
 Generate a summarized report of hours logged from work items during a specified week, with flexible filtering for closed, worked on, or both types of tasks. Creates a hierarchical tree structure (Feature > User Story > Task) showing rolled-up hours for weekly timesheet purposes.
@@ -503,14 +507,15 @@ All work item creation commands (`/ado-create-feature`, `/ado-create-story`, `/a
 
 ### Core Skills
 
-The plugin provides six slash commands for complete Azure DevOps work item lifecycle management:
+The plugin provides seven slash commands for complete Azure DevOps work item lifecycle management:
 
 1. **`/ado-init`**: Initialize Azure DevOps configuration with organization settings
 2. **`/ado-create-feature`**: Create Feature work items with AI or manual input
 3. **`/ado-create-story`**: Create User Story work items with AI-generated structured content
 4. **`/ado-create-task`**: Create Task work items with AI-generated titles
 5. **`/ado-log-story-work`**: Rapidly log completed work with git commit detection and placeholder hour tracking
-6. **`/ado-timesheet-report`**: Generate weekly timesheet reports with hierarchical hour rollups
+6. **`/ado-work-items`**: Reference guide for work item hierarchy, HTML formatting, naming conventions, and estimation standards
+7. **`/ado-timesheet-report`**: Generate weekly timesheet reports with hierarchical hour rollups
 
 ### `/ado-init` Command
 
@@ -739,8 +744,8 @@ Future commands and features planned for this plugin:
 
 - **Name:** AI-ADO Plugin
 - **Type:** AI Instruction Plugin (Skills)
-- **Version:** 1.3.1
-- **Skills:** `/ado-init`, `/ado-create-feature`, `/ado-create-story`, `/ado-create-task`, `/ado-log-story-work`, `/ado-timesheet-report`
+- **Version:** 1.3.2
+- **Skills:** `/ado-init`, `/ado-create-feature`, `/ado-create-story`, `/ado-create-task`, `/ado-log-story-work`, `/ado-work-items`, `/ado-timesheet-report`
 - **MCP Integration:** Microsoft Azure DevOps MCP Server (optional, OS-aware configuration)
 - **Requirements:** Node.js 20+
 - **License:** MIT

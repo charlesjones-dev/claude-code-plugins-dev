@@ -1,7 +1,7 @@
 {
   "name": "ai-statusline",
-  "version": "1.2.3",
-  "description": "AI-powered status line customization - Interactive setup and edit wizards for configuring Claude Code's status line with progress bars and customizable display options",
+  "version": "1.2.4",
+  "description": "AI-powered status line customization - Enhances Claude Code's native /statusline command with visual progress bars, 5h/7d rate-limit display, cost and duration segments, granular display toggles, and an interactive edit wizard",
   "author": {
     "name": "Charles Jones",
     "url": "https://charlesjones.dev"

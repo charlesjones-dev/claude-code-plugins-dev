@@ -4,7 +4,7 @@ AI-powered knowledge base management for Claude Code. Capture conversation learn
 
 ## Overview
 
-Over time, you accumulate project-specific knowledge during Claude Code conversations: things that didn't work, best practices, client requirements, and codebase gotchas. This plugin captures that knowledge so future sessions benefit from it automatically.
+Claude Code now remembers things on its own: auto memory writes learnings to a per-project MEMORY.md that loads at the start of each session. That covers personal, per-machine recall. This plugin builds on top of it — a deliberate, curated knowledge base for the project itself: things that didn't work, best practices, client requirements, and codebase gotchas, organized into structured topic files that live in git and travel with the repository so your whole team (and every machine) benefits.
 
 The knowledge base is a persistent, compounding wiki maintained by the LLM. It has three layers:
 - **KB articles** (`docs/kb/{category}/*.md`): Topic-specific knowledge organized in category folders, loaded contextually
@@ -14,6 +14,22 @@ The knowledge base is a persistent, compounding wiki maintained by the LLM. It h
 The knowledge base is fully **Obsidian-compatible** — open `docs/kb/` as an Obsidian vault to browse your knowledge graph, navigate between related topics, and visualize connections.
 
 Inspired by Karpathy's [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) pattern — the LLM does all the summarizing, cross-referencing, filing, and bookkeeping that makes a knowledge base useful over time.
+
+## How This Differs from Claude Code's Auto Memory
+
+Claude Code's built-in auto memory and this knowledge base solve different problems and work well together:
+
+| | Auto memory (MEMORY.md) | AI Knowledge KB (`docs/kb/`) |
+|---|---|---|
+| **Curation** | Automatic — Claude decides what to write | Deliberate — you review and file learnings intentionally |
+| **Location** | Per-machine, outside the repo | Checked into git, versioned with the code |
+| **Sharing** | Personal, single machine | Shared with your whole team via the repository |
+| **Structure** | Single flat file | Categorized topic files with frontmatter, tags, and cross-references |
+| **Loading** | Loaded wholesale at session start | Dynamic — loaded by scope globs, tags, and pinning based on task context |
+| **Tooling** | None | Query, search, synthesis, pruning, and import/harvest commands |
+| **Browsing** | Plain markdown | Obsidian-compatible knowledge graph with wiki-links |
+
+In short: auto memory is Claude's personal notebook; this KB is your team's institutional knowledge, reviewed, versioned, and queryable.
 
 ## Commands
 
@@ -103,6 +119,6 @@ This is required because Obsidian does not parse frontmatter values as navigable
 
 ## Plugin Details
 
-- **Version**: 1.5.0
+- **Version**: 1.5.1
 - **Author**: [Charles Jones](https://charlesjones.dev)
 - **License**: MIT

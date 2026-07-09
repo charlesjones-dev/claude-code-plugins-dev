@@ -1,6 +1,6 @@
 # Claude Code Plugins for Developers
 
-[![Version](https://img.shields.io/badge/version-2.6.0-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
+[![Version](https://img.shields.io/badge/version-2.7.0-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![GitHub Issues](https://img.shields.io/github/issues/charlesjones-dev/claude-code-plugins-dev.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/charlesjones-dev/claude-code-plugins-dev.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/stargazers)
@@ -10,28 +10,27 @@ AI-powered plugins that streamline your entire development workflow in Claude Co
 
 ## 🎯 Overview
 
-This Claude Code plugin marketplace provides plugins that extend Claude Code's capabilities, focusing on developer productivity and automation.
+This Claude Code plugin marketplace provides 14 plugins that extend Claude Code's capabilities, focusing on developer productivity and automation.
 
 ## 📦 Available Plugins
 
-> **💡 Usage Note:** All skills are invoked as slash commands without arguments (e.g., `/accessibility-audit`). Interactive skills will prompt you for any required information; non-interactive skills run directly on your codebase.
+> **💡 Usage Note:** All skills are invoked as slash commands (e.g., `/accessibility-audit`). Interactive skills prompt you for any required information; non-interactive skills run directly on your codebase. A few accept optional flags (e.g., `/seo-fix --dry-run`, `/swift-verify --fix`) — see each plugin's README for details.
 
 | Plugin | Description | Skills (Slash Commands) | Agents |
 |--------|-------------|------------------------|--------|
 | [ai-accessibility](plugins/ai-accessibility/) | AI-powered accessibility auditing with WCAG compliance | `/accessibility-audit` | `accessibility-auditor` |
-| [ai-ado](plugins/ai-ado/) | AI-powered Azure DevOps integration with MCP support | `/ado-init`, `/ado-create-feature`, `/ado-create-story`, `/ado-create-task`, `/ado-log-story-work`, `/ado-timesheet-report` | - |
-| [ai-git](plugins/ai-git/) | AI-powered git automation and workflow streamlining | `/git-init`, `/git-commit-push`, `/git-commit-push-pr`, `/git-pr-codex-loop` | - |
-| [ai-learn](plugins/ai-learn/) | AI-powered Socratic learning mode for guided problem-solving | `/learn`, `/learn-review` | - |
-| [ai-performance](plugins/ai-performance/) | AI-powered performance optimization and bottleneck detection | `/performance-audit` | `performance-auditor` |
-| [ai-security](plugins/ai-security/) | AI-powered security auditing with reproducible reports | `/security-init`, `/security-audit`, `/security-scan-dependencies`, `/security-supply-chain` | `security-auditor`, `security-dependency-scanner` |
-| [ai-statusline](plugins/ai-statusline/) | AI-powered status line customization with progress bars | `/statusline-wizard`, `/statusline-edit` | - |
-| [ai-swift](plugins/ai-swift/) | AI-powered Swift/iOS/macOS release-readiness — catches Xcode Cloud & TestFlight blockers before upload | `/swift-preflight`, `/swift-diagnose`, `/swift-ci-scaffold`, `/swift-verify`, `/swift-concurrency-review` | `swift-release-auditor` |
-| [ai-workflow](plugins/ai-workflow/) | AI-powered development workflow automation | `/workflow-plan-phases`, `/workflow-implement-phases`, `/workflow-preflight`, `/workflow-ship`, `/workflow-principles`, `/workflow-rules` | - |
+| [ai-ado](plugins/ai-ado/) | AI-powered Azure DevOps integration with MCP support | `/ado-init`, `/ado-work-items`, `/ado-create-feature`, `/ado-create-story`, `/ado-create-task`, `/ado-log-story-work`, `/ado-timesheet-report` | - |
 | [ai-compliance](plugins/ai-compliance/) | AI-powered license compliance auditing and attribution generation | `/compliance-license-audit`, `/compliance-notice-generate` | - |
-| [ai-knowledge](plugins/ai-knowledge/) | AI-powered knowledge base management with Obsidian compatibility | `/kb-init`, `/kb-learn`, `/kb-add`, `/kb-query`, `/kb-import`, `/kb-ingest`, `/kb-harvest`, `/kb-discover`, `/kb-absorb`, `/kb-remove`, `/kb-load`, `/kb-list`, `/kb-search`, `/kb-prune`, `/kb-auto`, `/kb-organize`, `/kb-upgrade` | - |
-| [ai-modernize](plugins/ai-modernize/) | AI-powered codebase modernization assessment for technical debt | `/modernize-audit`, `/modernize-scan` | `modernize-auditor` |
-| [ai-seo](plugins/ai-seo/) | AI-powered modern SEO auditing that catches deprecated patterns LLMs still generate | `/seo-audit`, `/seo-fix`, `/seo-schema` | - |
 | [ai-geo](plugins/ai-geo/) | Generative Engine Optimization (GEO) for AI answer engines — llms.txt, AI crawler policy, citation-worthiness | `/geo-audit`, `/geo-fix`, `/geo-llms-txt` | - |
+| [ai-git](plugins/ai-git/) | AI-powered git automation and workflow streamlining | `/git-init`, `/git-commit-push`, `/git-commit-push-pr`, `/git-pr-codex-loop` | - |
+| [ai-knowledge](plugins/ai-knowledge/) | Curated, git-versioned team knowledge base with Obsidian compatibility — complements Claude Code's native auto memory | `/kb-init`, `/kb-learn`, `/kb-add`, `/kb-query`, `/kb-import`, `/kb-ingest`, `/kb-harvest`, `/kb-discover`, `/kb-absorb`, `/kb-remove`, `/kb-load`, `/kb-list`, `/kb-search`, `/kb-prune`, `/kb-auto`, `/kb-organize`, `/kb-upgrade` | - |
+| [ai-modernize](plugins/ai-modernize/) | AI-powered codebase modernization assessment for technical debt | `/modernize-audit`, `/modernize-scan` | `modernize-auditor` |
+| [ai-performance](plugins/ai-performance/) | AI-powered performance optimization and bottleneck detection | `/performance-audit` | `performance-auditor` |
+| [ai-security](plugins/ai-security/) | AI-powered security auditing — complements native `/security-review` with archived OWASP-mapped reports, deployed-site scanning, and settings/supply-chain hardening | `/security-init`, `/security-audit`, `/security-scan-dependencies`, `/security-supply-chain` | `security-auditor`, `security-dependency-scanner` |
+| [ai-seo](plugins/ai-seo/) | AI-powered modern SEO auditing that catches deprecated patterns LLMs still generate | `/seo-audit`, `/seo-fix`, `/seo-schema` | - |
+| [ai-statusline](plugins/ai-statusline/) | Enhances Claude Code's native `/statusline` with progress bars and rate-limit widgets | `/statusline-wizard`, `/statusline-edit` | - |
+| [ai-swift](plugins/ai-swift/) | AI-powered Swift/iOS/macOS release-readiness — catches Xcode Cloud & TestFlight blockers before upload | `/swift-preflight`, `/swift-diagnose`, `/swift-ci-scaffold`, `/swift-verify`, `/swift-concurrency-review` | `swift-release-auditor` |
+| [ai-workflow](plugins/ai-workflow/) | AI-powered development workflow automation — preflight quality gates, ship-it workflow, principles & behavior rules | `/workflow-preflight`, `/workflow-ship`, `/workflow-principles`, `/workflow-rules` | - |
 | [ai-writing](plugins/ai-writing/) | AI-powered writing quality tools for natural-sounding text | `/writing-humanize` | - |
 
 > **📝 Note on Audit Plugins:** The `ai-accessibility`, `ai-security`, and `ai-performance` plugins are developer-focused analysis tools designed to identify issues during development. They perform static code analysis, with `ai-accessibility` and `ai-security` also offering URL scanning capabilities (`/accessibility-audit` with Playwright MCP and `/security-scan-dependencies` respectively). These plugins are meant to **complement** (not replace) runtime testing tools, professional services, and manual testing. Use these plugins to catch issues early in the development phase, then validate with specialized testing tools and services appropriate to your domain.
@@ -75,6 +74,16 @@ Once installed, plugins add slash commands directly to Claude Code. Use any comm
 /ado-init              # Initialize Azure DevOps + MCP server configuration
 ```
 
+## 🗄️ Deprecated & Removed
+
+As Claude Code ships features natively, plugins and skills that duplicate them are retired here. Removed plugins and skills live on in git history.
+
+| Item | Status | Superseded by | Details |
+|------|--------|---------------|---------|
+| ai-learn (`/learn`, `/learn-review`) | 🗑️ Removed (July 2026) | Native **Learning** output style — `/config` → "Output style" → "Learning" | Built-in collaborative mentor mode with `TODO(human)` markers; an **Explanatory** style also ships natively |
+| ai-workflow `/workflow-plan-phases` | 🗑️ Removed (July 2026, v2.0.0) | Native **Dynamic Workflows** | JavaScript runtime orchestrating subagent fan-out with per-agent token budgets — replaces manual 30–50k-token phase sizing |
+| ai-workflow `/workflow-implement-phases` | 🗑️ Removed (July 2026, v2.0.0) | Native **Dynamic Workflows** | Runtime-managed orchestration replaces manual `Task()` fan-out and phase-coordination bookkeeping |
+
 ## 📄 License
 
 MIT License - See [LICENSE](LICENSE) file for details.
@@ -91,7 +100,7 @@ MIT License - See [LICENSE](LICENSE) file for details.
 - [This Repository](https://github.com/charlesjones-dev/claude-code-plugins-dev)
 - [Claude Code Plugins Documentation](https://docs.claude.com/en/docs/claude-code/plugins)
 
-## Star History
+## ⭐ Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=charlesjones-dev/claude-code-plugins-dev&type=date&legend=bottom-right)](https://www.star-history.com/#charlesjones-dev/claude-code-plugins-dev&type=date&legend=bottom-right)
 

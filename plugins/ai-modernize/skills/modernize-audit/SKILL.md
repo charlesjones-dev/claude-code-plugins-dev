@@ -735,7 +735,7 @@ The Modernization Score (0-100) is calculated across the assessed categories. Ea
 | Phase 4: Polish | X findings | Xh | Within 2 months |
 | **Total** | **X findings** | **Xh** | |
 
-*All estimates assume AI-assisted development using modern frontier models (Claude Opus 4.6 / Sonnet 4.6 or equivalent). Actual time may vary based on codebase complexity, testing requirements, and developer familiarity.*
+*All estimates assume AI-assisted development using current frontier models (e.g., Claude Opus 4.8 / Sonnet 5 or equivalent). Actual time may vary based on codebase complexity, testing requirements, and developer familiarity.*
 
 ---
 
@@ -770,7 +770,7 @@ When determining finding severity, apply these criteria:
 
 ## AI-Assisted Time Estimation Guidelines
 
-All time estimates MUST assume AI-assisted development (using modern frontier models like Claude Opus 4.6 / Sonnet 4.6). Guidelines:
+All time estimates MUST assume AI-assisted development (using current frontier models like Claude Opus 4.8 / Sonnet 5). Guidelines:
 
 | Task Type | Manual Estimate | AI-Assisted Estimate | Speedup |
 |-----------|----------------|---------------------|---------|

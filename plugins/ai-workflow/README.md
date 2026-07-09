@@ -1,94 +1,25 @@
 # AI-Workflow Plugin
 
-**AI-powered development workflow automation for Claude Code.** Phase-based planning, implementation orchestration, preflight code quality checks, and ship-it workflow for efficient sub-agent execution.
+**AI-powered development workflow automation for Claude Code.** Preflight code quality checks, ship-it workflow, development principles generator, and curated CLAUDE.md behavior rules.
+
+> **Removed skills (July 2026):** `/workflow-plan-phases` and `/workflow-implement-phases` were removed as of July 2026 — Claude Code now ships **Dynamic Workflows** natively (a JavaScript runtime that orchestrates subagent fan-out with per-agent token budgets), which supersedes manual phase planning/orchestration. They remain available in git history. This plugin now provides `/workflow-preflight`, `/workflow-ship`, `/workflow-principles`, and `/workflow-rules`.
 
 ---
 
 ## What This Plugin Does
 
-Provides tools for managing complex development workflows including breaking features into context-efficient phases, orchestrating multi-phase implementations via sub-agents, running comprehensive code quality checks, and shipping code with a single command.
+Provides tools for day-to-day development workflows: running comprehensive code quality checks, shipping code with a single command, generating project-aware development principles, and managing curated CLAUDE.md behavior rules.
 
 ### Key Capabilities
 
-- **Phase Planning**: Break large features into properly-sized phases (30-50k tokens each) optimized for sub-agent execution
-- **Implementation Orchestration**: Analyze dependencies and execute phases with optimal parallel/sequential strategies
 - **Preflight Checks**: Auto-detect and run type checking, linting, formatting, security scanning, and tests across multiple ecosystems
 - **Ship It**: Run preflight checks, commit, push, and create a PR in one streamlined flow
+- **Development Principles**: Generate a context-aware Development Principles section for CLAUDE.md from project discovery
+- **Behavior Rules**: Install curated, marker-wrapped behavior rules into user or project CLAUDE.md
 
 ---
 
 ## Available Skills
-
-### `/workflow-plan-phases`
-
-Create structured implementation plans from feature descriptions, optimized for context-efficient sub-agent execution.
-
-**What it does:**
-
-- Asks clarifying questions to understand scope and requirements
-- Breaks features into right-sized phases (30-50k tokens each)
-- Uses whole number phases only (no sub-phases like 1.1, 1.2)
-- Defines clear acceptance criteria per phase
-- Maps dependencies between phases
-- Recommends execution strategy (parallel/sequential/mixed)
-- Outputs structured markdown to `docs/plans/`
-
-**Usage:**
-
-```
-/workflow-plan-phases "Build a user authentication system with OAuth, MFA, and session management"
-/workflow-plan-phases --output=docs/plans/auth-system.md "Build authentication system..."
-```
-
-**Before (manual planning):**
-
-```
-# Manually break down feature into tasks
-# Guess at task sizes and dependencies
-# Hope sub-agents don't run out of context
-# Lose track of what depends on what
-```
-
-**After (with ai-workflow plugin):**
-
-```
-/workflow-plan-phases "Build user authentication"
-# Answers clarifying questions
-# AI creates optimally-sized phases
-# Dependencies clearly mapped
-# Execution strategy recommended
-# Plan saved to docs/plans/
-```
-
-### `/workflow-implement-phases`
-
-Orchestrate multi-phase implementation from a plan document using intelligent parallel/sequential execution.
-
-**What it does:**
-
-- Parses plan documents and extracts phase definitions
-- Analyzes dependencies (explicit and implicit)
-- Determines optimal execution strategy
-- Presents execution plan for user confirmation
-- Executes via Task() sub-agents with coordination directory
-- Handles failures gracefully (skips dependent phases, continues independent ones)
-- Aggregates results and provides comprehensive summary
-
-**Usage:**
-
-```
-/workflow-implement-phases @docs/plans/user-authentication.md
-/workflow-implement-phases @docs/plans/feature.md --phases=1,2,3
-/workflow-implement-phases @docs/plans/feature.md --strategy=parallel
-```
-
-**Execution Strategies:**
-
-| Strategy | When Used | Benefits |
-|----------|-----------|----------|
-| **Parallel** | No dependencies between phases | Fastest execution, maximum context isolation |
-| **Sequential** | Linear dependency chain | Safest execution, full context from prior phases |
-| **Mixed** | Some independent, some dependent | Best of both worlds |
 
 ### `/workflow-principles`
 
@@ -268,76 +199,22 @@ Run comprehensive code quality checks before commits, PRs, or deployments.
 ### Usage
 
 ```
-# Plan a new feature
-/workflow-plan-phases "Add user profile editing with avatar upload"
-
-# Review the generated plan
-# Located at: docs/plans/user-profile-editing.md
-
-# Implement the phases
-/workflow-implement-phases @docs/plans/user-profile-editing.md
-
 # Run preflight checks before committing
 /workflow-preflight
 
 # Or ship everything in one go (preflight + commit + push + PR)
 /workflow-ship
+
+# Generate project-aware development principles for CLAUDE.md
+/workflow-principles
+
+# Manage curated behavior rules in CLAUDE.md
+/workflow-rules
 ```
 
 ---
 
 ## How It Works
-
-### Phase Planning Flow
-
-```
-User Description
-      |
-      v
-Clarifying Questions  <-- Never skipped
-      |
-      v
-Requirements Analysis
-      |
-      v
-Phase Sizing (30-50k tokens each)
-      |
-      v
-Dependency Mapping
-      |
-      v
-Execution Strategy
-      |
-      v
-Plan Document (docs/plans/)
-```
-
-### Phase Implementation Flow
-
-```
-Plan Document
-      |
-      v
-Parse Phases & Extract Specs
-      |
-      v
-Analyze Dependencies
-      |
-      v
-Build Execution Graph
-      |
-      v
-Present Plan to User
-      |
-      v
-Execute via Sub-Agents
-      |
-      v
-Aggregate Results
-      |
-      v
-Summary Report
-```
 
 ### Preflight Check Flow
 
@@ -367,21 +244,6 @@ Verify Fixes
 
 ## Best Practices
 
-### When to Use Phase Planning
-
-- Large features that would exceed a single context window
-- Complex implementations with multiple dependencies
-- Team projects where different phases could be assigned to different people
-- Features requiring careful dependency management
-
-### Phase Sizing Guidelines
-
-| Phase Size | Tokens | Files | Recommendation |
-|------------|--------|-------|----------------|
-| Too Small | <15k | 1 | Combine with related work |
-| Right-Sized | 30-50k | 2-5 | Ideal for sub-agents |
-| Too Large | >60k | 6+ | Split by layer, entity, or concern |
-
 ### Preflight Integration
 
 - Run `/workflow-preflight` before every commit
@@ -393,11 +255,6 @@ Verify Fixes
 
 ## Time Savings
 
-**Per feature implementation:**
-
-- Manual planning: ~1-2 hours (for complex features)
-- With plan-phases: ~10-15 minutes
-
 **Per preflight check:**
 
 - Manual checks: ~5-10 minutes (remembering commands, running each tool)
@@ -405,21 +262,19 @@ Verify Fixes
 
 **Estimated monthly savings:**
 
-- Phase planning: Save ~4-8 hours
 - Preflight checks: Save ~2-4 hours
-- Total: Save ~6-12 hours/month
 
-Plus improved code quality, fewer context overflows, and more efficient sub-agent execution.
+Plus improved code quality and a streamlined commit-to-PR flow.
 
 ---
 
 ## Plugin Details
 
 - **Name:** AI-Workflow
-- **Version:** 1.5.0
+- **Version:** 2.0.0
 - **Type:** Development Workflow Automation
 - **Features:**
-  - Skills: `/workflow-plan-phases`, `/workflow-implement-phases`, `/workflow-preflight`, `/workflow-ship`, `/workflow-principles`, `/workflow-rules`
+  - Skills: `/workflow-preflight`, `/workflow-ship`, `/workflow-principles`, `/workflow-rules`
   - Security scanning: pnpm/npm/yarn audit, eslint-plugin-security, Semgrep (CLI or Docker)
   - Development principles: Context-aware CLAUDE.md generation with project discovery
   - Behavior rules: Curated, marker-wrapped rule library for user/project CLAUDE.md (cross-project sync via `/plugin update`)

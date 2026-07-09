@@ -1,6 +1,6 @@
 {
   "name": "ai-git",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "AI-powered git automation - Intelligent git skills that streamline version control workflows with .gitignore generation, commit-push-PR workflow, and a Codex Code Review loop that drives a PR to clean review",
   "author": {
     "name": "Charles Jones",

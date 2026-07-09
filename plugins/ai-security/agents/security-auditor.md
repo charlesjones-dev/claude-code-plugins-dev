@@ -1,6 +1,6 @@
 ---
 name: security-auditor
-description: Conducts comprehensive security audits in fresh context using the Security Audit skill. Use when context is saturated or for automated security reviews.
+description: Conducts comprehensive automated security audits in a fresh context using the Security Audit skill. Use for unattended or scheduled security reviews.
 model: inherit
 color: red
 ---

@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A curated list of custom Claude Code plugins, agents, and skills for developers.",
-    "version": "2.6.0",
+    "version": "2.7.0",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -14,7 +14,7 @@
       "name": "ai-ado",
       "source": "./plugins/ai-ado",
       "description": "AI-powered Azure DevOps integration with skills - Intelligent work item management, configuration, and automation for Azure DevOps workflows with MCP integration",
-      "version": "1.3.1",
+      "version": "1.3.2",
       "keywords": [
         "ai",
         "azure-devops",
@@ -36,7 +36,7 @@
       "name": "ai-accessibility",
       "source": "./plugins/ai-accessibility",
       "description": "AI-powered accessibility analysis - Interactive accessibility audit skill and automated agent with comprehensive WCAG compliance detection and reporting",
-      "version": "1.4.0",
+      "version": "1.4.1",
       "keywords": [
         "ai",
         "accessibility",
@@ -57,7 +57,7 @@
       "name": "ai-git",
       "source": "./plugins/ai-git",
       "description": "AI-powered git automation - Intelligent git skills that streamline version control workflows with .gitignore generation, commit-push-PR workflow, and a Codex Code Review loop that drives a PR to clean review",
-      "version": "1.3.0",
+      "version": "1.3.1",
       "keywords": [
         "ai",
         "git",
@@ -81,7 +81,7 @@
       "name": "ai-performance",
       "source": "./plugins/ai-performance",
       "description": "AI-powered performance optimization - Interactive performance audit skill and automated agent with comprehensive bottleneck detection and optimization",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "keywords": [
         "ai",
         "performance",
@@ -100,8 +100,8 @@
     {
       "name": "ai-security",
       "source": "./plugins/ai-security",
-      "description": "AI-powered security auditing with interactive skills, automated agents, web dependency scanning, and supply chain hardening for comprehensive vulnerability detection and reporting",
-      "version": "1.5.0",
+      "description": "AI-powered security auditing that complements native /security-review with archived OWASP-mapped audit reports, deployed-site dependency scanning, settings hardening, and supply chain protection",
+      "version": "1.5.1",
       "keywords": [
         "ai",
         "security",
@@ -126,15 +126,11 @@
     {
       "name": "ai-workflow",
       "source": "./plugins/ai-workflow",
-      "description": "AI-powered development workflow automation - Phase-based planning, implementation orchestration, preflight code quality checks with security scanning, ship-it workflow, development principles generator, and curated CLAUDE.md behavior rules manager",
-      "version": "1.5.0",
+      "description": "AI-powered development workflow automation - Preflight code quality checks with security scanning, ship-it workflow, development principles generator, and curated CLAUDE.md behavior rules manager",
+      "version": "2.0.0",
       "keywords": [
         "ai",
         "workflow",
-        "planning",
-        "phases",
-        "orchestration",
-        "sub-agents",
         "preflight",
         "code-quality",
         "typecheck",
@@ -164,8 +160,8 @@
     {
       "name": "ai-statusline",
       "source": "./plugins/ai-statusline",
-      "description": "AI-powered status line customization - Interactive setup and edit wizards for configuring Claude Code's status line with progress bars, rate limit display, and customizable display options",
-      "version": "1.2.3",
+      "description": "AI-powered status line customization - Enhances Claude Code's native /statusline command with visual progress bars, 5h/7d rate-limit display, cost and duration segments, granular display toggles, and an interactive edit wizard",
+      "version": "1.2.4",
       "keywords": [
         "ai",
         "statusline",
@@ -205,32 +201,10 @@
       "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev"
     },
     {
-      "name": "ai-learn",
-      "source": "./plugins/ai-learn",
-      "description": "AI-powered Socratic learning mode - Transform Claude into a patient coding mentor that guides you through problem-solving without giving direct answers",
-      "version": "1.1.0",
-      "keywords": [
-        "ai",
-        "learning",
-        "teaching",
-        "socratic",
-        "mentor",
-        "education",
-        "coding",
-        "tutorial",
-        "guided-learning"
-      ],
-      "author": {
-        "name": "Charles Jones",
-        "url": "https://charlesjones.dev"
-      },
-      "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev"
-    },
-    {
       "name": "ai-modernize",
       "source": "./plugins/ai-modernize",
-      "description": "AI-powered codebase modernization assessment - Interactive audit and quick scan skills to identify technical debt, anti-patterns, and quality issues from older AI-generated code",
-      "version": "1.0.0",
+      "description": "AI-powered codebase modernization assessment - Interactive audit and quick scan skills with an automated auditor agent to identify technical debt, anti-patterns, and quality issues from older AI-generated code",
+      "version": "1.1.0",
       "keywords": [
         "ai",
         "modernization",
@@ -276,8 +250,8 @@
     {
       "name": "ai-knowledge",
       "source": "./plugins/ai-knowledge",
-      "description": "AI-powered knowledge base management - Capture conversation learnings, maintain topic-specific KB files, Obsidian-compatible knowledge graph, structured dynamic context loading, harvest cross-repo and web documentation, discover implicit knowledge from source code, and institutional knowledge in CLAUDE.md",
-      "version": "1.5.0",
+      "description": "Curated, git-versioned team knowledge base that complements Claude Code's native auto memory - Capture conversation learnings, maintain topic-specific KB files, Obsidian-compatible knowledge graph, structured dynamic context loading, and institutional knowledge in CLAUDE.md",
+      "version": "1.5.1",
       "keywords": [
         "ai",
         "knowledge-base",
@@ -358,7 +332,7 @@
       "name": "ai-swift",
       "source": "./plugins/ai-swift",
       "description": "AI-powered Swift / iOS / macOS release-readiness and quality toolkit - catches Xcode Cloud and TestFlight blockers before upload (XcodeGen pbxproj drift, static build numbers, missing ci_scripts, macOS App Store entitlements/Info.plist, headless-CI keychain test failures, ad-hoc signing entitlement rejections, flaky-UITest release gating), diagnoses ITMS rejection emails and red CI logs, scaffolds Xcode Cloud CI, runs a portable local verify gate, and reviews Swift 6 strict-concurrency + SwiftUI code",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "keywords": [
         "swift",
         "swift-6",

@@ -12,7 +12,7 @@ Set up a custom status line for Claude Code with visual progress bars and config
 
 **CRITICAL**: This command MUST NOT accept any arguments. If the user provided any text after this command, COMPLETELY IGNORE it.
 
-Invoke the `ai-statusline:statusline-setup` skill and follow its workflow to:
+Follow the Setup Workflow defined in this skill (see the "Status Line Setup Skill" section below) to:
 
 1. Detect the operating system (Mac/Linux/Windows)
 2. Check for existing statusLine configuration and offer to back up if present
@@ -156,7 +156,7 @@ Run `chmod +x ~/.claude/statusline.sh` to make the script executable.
 # Configuration - Set these to customize your status line
 # =============================================================================
 
-SHOW_MODEL=true           # Show model name (e.g., "Claude Opus 4.6")
+SHOW_MODEL=true           # Show model name (e.g., "Claude Opus 4.8")
 SHOW_TOKEN_COUNT=true     # Show token usage count (e.g., "50k/100k")
 SHOW_PROGRESS_BAR=true    # Show visual progress bar
 SHOW_DIRECTORY=true       # Show current directory name
@@ -165,7 +165,7 @@ SHOW_COST=false           # Show session cost (useful for API/Pro users)
 SHOW_DURATION=true        # Show session duration
 SHOW_TIME=true            # Show current time
 SHOW_VERSION=true         # Show Claude Code version
-SHOW_RATE_LIMITS=true     # Show rate limit usage (5h/7d windows, requires Claude Code 2.1.80+)
+SHOW_RATE_LIMITS=true     # Show rate limit usage (5h/7d windows)
 
 # =============================================================================
 
@@ -286,7 +286,7 @@ else
   fi
 fi
 
-# Rate limits (requires Claude Code 2.1.80+)
+# Rate limits (5h/7d windows)
 if [ "$SHOW_RATE_LIMITS" = true ]; then
   rl_5h=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty | (. * 100 | round) / 100')
   rl_7d=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty | (. * 100 | round) / 100')
@@ -356,7 +356,7 @@ printf '%b' "$output"
 # Configuration - Set these to customize your status line
 # =============================================================================
 
-$SHOW_MODEL = $true           # Show model name (e.g., "Claude Opus 4.6")
+$SHOW_MODEL = $true           # Show model name (e.g., "Claude Opus 4.8")
 $SHOW_TOKEN_COUNT = $true     # Show token usage count (e.g., "50k/100k")
 $SHOW_PROGRESS_BAR = $true    # Show visual progress bar
 $SHOW_DIRECTORY = $true       # Show current directory name
@@ -365,7 +365,7 @@ $SHOW_COST = $false           # Show session cost (useful for API/Pro users)
 $SHOW_DURATION = $true        # Show session duration
 $SHOW_TIME = $true            # Show current time
 $SHOW_VERSION = $true         # Show Claude Code version
-$SHOW_RATE_LIMITS = $true     # Show rate limit usage (5h/7d windows, requires Claude Code 2.1.80+)
+$SHOW_RATE_LIMITS = $true     # Show rate limit usage (5h/7d windows)
 
 # =============================================================================
 
@@ -499,7 +499,7 @@ if ($null -ne $usage) {
     }
 }
 
-# Rate limits (requires Claude Code 2.1.80+)
+# Rate limits (5h/7d windows)
 if ($SHOW_RATE_LIMITS) {
     $rl = $data.rate_limits
     if ($null -ne $rl) {
@@ -565,7 +565,7 @@ Write-Host -NoNewline ($segments -join $sep)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| SHOW_MODEL | true | Display model name (e.g., "Claude Opus 4.6") |
+| SHOW_MODEL | true | Display model name (e.g., "Claude Opus 4.8") |
 | SHOW_TOKEN_COUNT | true | Display token usage (e.g., "50k/100k") |
 | SHOW_PROGRESS_BAR | true | Display visual progress bar with percentage |
 | SHOW_DIRECTORY | true | Display current working directory name |
@@ -574,7 +574,7 @@ Write-Host -NoNewline ($segments -join $sep)
 | SHOW_DURATION | true | Display session duration |
 | SHOW_TIME | true | Display current time |
 | SHOW_VERSION | true | Display Claude Code version |
-| SHOW_RATE_LIMITS | true | Display rate limit usage (5h/7d windows, requires Claude Code 2.1.80+) |
+| SHOW_RATE_LIMITS | true | Display rate limit usage (5h/7d windows) |
 
 ## Important Notes
 

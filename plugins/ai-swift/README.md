@@ -99,7 +99,7 @@ Swift 6 strict-concurrency + SwiftUI idiom review of the changed files (or a giv
 
 ### `swift-release-auditor`
 
-Runs `/swift-preflight` in fresh context for a clean, automated release-readiness review before a TestFlight upload. Useful when the main context is saturated. Read-only.
+Runs `/swift-preflight` in a fresh context for a clean, automated release-readiness review before a TestFlight upload. Use for unattended or scheduled reviews. Read-only.
 
 ---
 
@@ -124,7 +124,7 @@ Every check traces back to a real, avoidable incident:
 ## 📦 Plugin Details
 
 - **Name:** AI-Swift
-- **Version:** 1.0.0
+- **Version:** 1.0.1
 - **Type:** Swift / iOS / macOS Release-Readiness & Quality Toolkit
 - **Features:**
   - Skills: `/swift-preflight`, `/swift-diagnose`, `/swift-ci-scaffold`, `/swift-verify`, `/swift-concurrency-review`

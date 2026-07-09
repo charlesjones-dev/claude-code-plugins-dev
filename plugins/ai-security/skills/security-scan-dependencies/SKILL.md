@@ -349,6 +349,8 @@ To audit security header configurations, check for:
 
 To check for latest versions and security documentation:
 
+**Note**: In current Claude Code versions, MCP tool schemas are deferred by default (Tool Search); the Context7 tools may need to be loaded on demand (e.g., via the ToolSearch tool) before they can be called.
+
 **Workflow**:
 1. **Resolve Library ID**: Use `mcp__context7__resolve-library-id` to get Context7-compatible ID
    - Input: Library name (e.g., "react", "vue", "jquery")
@@ -534,7 +536,7 @@ You MUST use this exact template structure for ALL web dependency scan reports. 
 - **Target URL**: [Website URL scanned]
 - **Scan Date**: [Date and Time]
 - **Scan Scope**: [Frontend Libraries / CMS Detection / Security Headers / Comprehensive]
-- **Scanner**: Claude Code Security Dependency Scanner v1.4.0
+- **Scanner**: Claude Code Security Dependency Scanner v1.5.1
 
 ### Risk Assessment Summary
 

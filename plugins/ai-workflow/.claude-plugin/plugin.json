@@ -1,7 +1,7 @@
 {
   "name": "ai-workflow",
-  "version": "1.5.0",
-  "description": "AI-powered development workflow automation - Phase-based planning, implementation orchestration, preflight code quality checks with security scanning, ship-it workflow, development principles generator, and curated CLAUDE.md behavior rules manager",
+  "version": "2.0.0",
+  "description": "AI-powered development workflow automation - Preflight code quality checks with security scanning, ship-it workflow, development principles generator, and curated CLAUDE.md behavior rules manager",
   "author": {
     "name": "Charles Jones",
     "url": "https://charlesjones.dev"
@@ -10,10 +10,6 @@
   "license": "MIT",
   "keywords": [
     "workflow",
-    "planning",
-    "phases",
-    "orchestration",
-    "sub-agents",
     "preflight",
     "code-quality",
     "typecheck",

@@ -65,10 +65,7 @@ Then proceed with the commit:
 1. Run `git log --oneline -5` to match the repo's commit message style
 2. Stage relevant files (prefer specific files over `git add -A`)
 3. Draft a concise commit message focused on the "why"
-4. Create the commit with the Co-Authored-By trailer:
-   ```
-   Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
-   ```
+4. Do NOT include any Claude attribution in the commit message (no "Generated with Claude Code" lines or Co-Authored-By trailers)
 5. Use a HEREDOC for the commit message to ensure proper formatting
 
 ### Step 3: Push

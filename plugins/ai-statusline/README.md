@@ -2,6 +2,8 @@
 
 **AI-powered status line customization for Claude Code.** Interactive setup and edit wizards for configuring a custom status line with progress bars and customizable display options.
 
+> **How this relates to the native `/statusline` command:** Claude Code ships a built-in `/statusline` command that covers baseline setup (describe what you want, or auto-configure from your shell prompt). This plugin goes further with richer, opinionated widgets: a Unicode progress bar with color thresholds, 5-hour/7-day rate-limit percentages with color coding, session cost and duration segments, granular per-segment toggles, and a matching `/statusline-edit` flow for reconfiguring later without regenerating the script.
+
 ---
 
 ## What This Plugin Does
@@ -11,7 +13,7 @@ Provides interactive commands to configure Claude Code's status line with visual
 ### Example Status Line
 
 ```
-Claude Opus 4.6 · 42k/100k ▓▓▓▓░░░░░░ 42% · 5h:12% 7d:4% · my-project · main · 5m 23s · 2:45pm · v2.1.80
+Claude Opus 4.8 · 42k/100k ▓▓▓▓░░░░░░ 42% · 5h:12% 7d:4% · my-project · main · 5m 23s · 2:45pm · v2.1.80
 ```
 
 ---
@@ -44,7 +46,7 @@ The wizard asks about three categories of display options:
 1. **Context Display** (what to show about your Claude session)
    - Token count (e.g., "50k/100k")
    - Progress bar (visual percentage indicator)
-   - Model name (e.g., "Claude Opus 4.6")
+   - Model name (e.g., "Claude Opus 4.8")
 
 2. **Project Display** (what to show about your project)
    - Current directory name
@@ -55,7 +57,7 @@ The wizard asks about three categories of display options:
    - Current time
    - Claude Code version
    - Session cost (disabled by default)
-   - Rate limit usage - 5h and 7d windows (requires Claude Code 2.1.80+)
+   - Rate limit usage - 5h and 7d windows
 
 ### `/statusline-edit`
 
@@ -107,7 +109,7 @@ Edit your existing status line configuration.
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| Model name | On | Display model name (e.g., "Claude Opus 4.6") |
+| Model name | On | Display model name (e.g., "Claude Opus 4.8") |
 | Token count | On | Display token usage (e.g., "50k/100k") |
 | Progress bar | On | Display visual progress bar with percentage |
 | Current directory | On | Display current working directory name |
@@ -116,7 +118,7 @@ Edit your existing status line configuration.
 | Current time | On | Display current time |
 | Claude Code version | On | Display Claude Code version number |
 | Session cost | Off | Display session cost in USD |
-| Rate limit usage | On | Display 5-hour and 7-day rate limit percentages (requires Claude Code 2.1.80+) |
+| Rate limit usage | On | Display 5-hour and 7-day rate limit percentages |
 
 ---
 
@@ -144,7 +146,7 @@ Shows your 5-hour and 7-day rate limit usage with color coding:
 5h:92% 7d:85%   (Red - 80%+)
 ```
 
-Requires Claude Code 2.1.80 or later. The `rate_limits` field is not available in earlier versions.
+Color changes automatically so you can see at a glance how close you are to either rate-limit window.
 
 ### Cross-Platform Support
 
@@ -237,7 +239,7 @@ SHOW_COST=false           # Show session cost
 SHOW_DURATION=true        # Show session duration
 SHOW_TIME=true            # Show current time
 SHOW_VERSION=true         # Show Claude Code version
-SHOW_RATE_LIMITS=true     # Show rate limit usage (5h/7d, requires CC 2.1.80+)
+SHOW_RATE_LIMITS=true     # Show rate limit usage (5h/7d windows)
 ```
 
 **PowerShell (`~/.claude/statusline.ps1`):**
@@ -283,7 +285,7 @@ Install jq using your package manager (see Requirements section above).
 ## Plugin Details
 
 - **Name:** AI-Statusline
-- **Version:** 1.2.3
+- **Version:** 1.2.4
 - **Type:** UI Customization
 - **Features:**
   - Skills: `/statusline-wizard`, `/statusline-edit`

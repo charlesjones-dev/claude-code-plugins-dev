@@ -62,6 +62,8 @@ Commit, push, and create a pull request in one interactive flow. A lightweight s
 
 Open a PR for the current branch, then loop on Codex Code Review until it comes back clean. The human always makes the final merge decision — this skill never merges.
 
+> **Note:** Claude Code's native `/code-review` (with `--fix`, `--comment`, and cloud "ultra" mode) now covers automated review-and-fix loops without external dependencies. This skill is specifically for repositories standardized on OpenAI's Codex Code Review bot, where it remains the right tool for that cross-tool workflow.
+
 **What it does:**
 
 - Opens or finds the PR for the current branch (refuses to run on main/master)
@@ -264,7 +266,7 @@ No configuration needed! The plugin works out of the box and adapts to your repo
 
 - **Name:** AI-Git Plugin
 - **Type:** AI Instruction Plugin (Skills)
-- **Version:** 1.3.0
+- **Version:** 1.3.1
 - **Skills:** `/git-init`, `/git-commit-push`, `/git-commit-push-pr`, `/git-pr-codex-loop`
 - **License:** MIT
 - **Author:** Charles Jones

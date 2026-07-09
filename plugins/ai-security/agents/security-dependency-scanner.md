@@ -1,6 +1,6 @@
 ---
 name: security-dependency-scanner
-description: Scans websites for outdated dependencies, CVEs, and security misconfigurations. Use when analyzing deployed web applications or when context is saturated.
+description: Scans deployed websites for outdated dependencies, CVEs, and security misconfigurations. Use for analyzing deployed web applications or for unattended dependency reviews.
 model: inherit
 color: red
 ---

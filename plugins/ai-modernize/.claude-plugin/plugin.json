@@ -1,7 +1,7 @@
 {
   "name": "ai-modernize",
-  "version": "1.0.0",
-  "description": "AI-powered codebase modernization assessment - Interactive audit and quick scan skills to identify technical debt, anti-patterns, and quality issues from older AI-generated code",
+  "version": "1.1.0",
+  "description": "AI-powered codebase modernization assessment - Interactive audit and quick scan skills with an automated auditor agent to identify technical debt, anti-patterns, and quality issues from older AI-generated code",
   "author": {
     "name": "Charles Jones",
     "url": "https://charlesjones.dev"

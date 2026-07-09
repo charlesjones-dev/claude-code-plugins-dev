@@ -1,6 +1,6 @@
 ---
 name: swift-release-auditor
-description: Audits a Swift / iOS / macOS repo for Xcode Cloud and TestFlight release blockers in fresh context using the swift-preflight skill. Use when context is saturated or for automated release-readiness reviews before a TestFlight upload.
+description: Audits a Swift / iOS / macOS repo for Xcode Cloud and TestFlight release blockers in a fresh context using the swift-preflight skill. Use for automated, unattended, or scheduled release-readiness reviews before a TestFlight upload.
 model: inherit
 color: orange
 ---

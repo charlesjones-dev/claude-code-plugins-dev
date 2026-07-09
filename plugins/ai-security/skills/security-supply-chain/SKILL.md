@@ -1,6 +1,6 @@
 ---
 name: security-supply-chain
-description: "Harden your project against npm supply chain attacks by configuring pnpm's minimumReleaseAge quarantine and frozen lockfile enforcement."
+description: "Harden your project against npm supply chain attacks by configuring pnpm's minimum-release-age quarantine and frozen lockfile enforcement."
 disable-model-invocation: true
 allowed-tools: [Bash, Read, Write, Edit, Glob, Grep, AskUserQuestion]
 ---

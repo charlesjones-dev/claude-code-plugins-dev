@@ -2,7 +2,7 @@
 
 > Generative Engine Optimization (GEO) auditing and remediation for Claude Code.
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 **Optimize your web content for AI answer engines — ChatGPT, Perplexity, Claude, Gemini, Google AI Overviews, and Bing Copilot — rather than traditional search rankings.**
@@ -309,7 +309,7 @@ Without Context7 the plugin falls back to training-data knowledge and flags expe
 ## Plugin Details
 
 - **Name:** `ai-geo`
-- **Version:** 1.0.0
+- **Version:** 1.1.0
 - **Author:** [Charles Jones](https://charlesjones.dev)
 - **License:** MIT
 - **Repository:** https://github.com/charlesjones-dev/claude-code-plugins-dev

@@ -16,6 +16,12 @@ disable-model-invocation: true
 
 # /git-pr-codex-loop - Codex Code Review loop
 
+> **Positioning:** Claude Code's native `/code-review` command (with `--fix`,
+> `--comment`, and the cloud "ultra" mode) now covers automated
+> review-and-fix loops natively, with no external dependencies. This skill is
+> specifically for repositories standardized on OpenAI's Codex Code Review
+> bot, and remains the right tool for that cross-tool workflow.
+
 You drive the current branch's pull request through Codex Code Review until the
 review is clean. The human makes the final merge decision; you never merge.
 

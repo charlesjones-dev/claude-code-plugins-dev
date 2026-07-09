@@ -59,27 +59,20 @@ Provides a complete suite of AI-powered security tools including commands, agent
 
 **Best Practice**: Use this plugin during development to catch code-level vulnerabilities early, then validate with dependency scanners, runtime security tools, and professional security assessments.
 
-### Why Not Just Use `/security-review`?
+### How This Plugin Relates to Native `/security-review` and `/code-review`
 
-Claude Code ships with a native `/security-review` command that provides basic security analysis. However, it has limitations:
+Claude Code ships with native `/security-review` (security analysis of the pending changes on your branch) and `/code-review` (multi-agent review with configurable effort levels, including a deep cloud-based "ultra" mode and `--fix`/`--comment` options). These cover core security vulnerability detection in diffs and codebases well — use them as your first line of defense during development.
 
-❌ **No custom scan templates** - You can't define what the report should include
-❌ **No output file control** - Results appear in chat but aren't saved to a specific location
-❌ **No reproducibility** - Each scan produces different output formats
-❌ **No standardization** - Can't ensure consistent audit documentation across projects
+This plugin **complements** the native commands rather than competing with them:
 
-This plugin enhances security scanning by providing:
+✅ **Archived, reproducible audit reports** - `/security-audit` writes a standardized, timestamped, OWASP-mapped report to `/docs/security/{timestamp}-security-audit.md`, giving you a durable audit trail for compliance and for comparing audits over time (native review results live in the chat/PR)
+✅ **Deployed-site dependency scanning** - `/security-scan-dependencies` assesses live websites by URL with no source code access — there is no native analog
+✅ **Settings hardening** - `/security-init` configures tech-stack-aware `permissions.deny` patterns in `.claude/settings.json` to keep Claude Code away from secrets and build artifacts
+✅ **Supply-chain hardening** - `/security-supply-chain` configures pnpm `minimum-release-age` quarantine and frozen lockfile enforcement
 
-✅ **Custom scan templates** - Define exactly what your audit should cover
-✅ **Controlled output location** - Reports saved to `/docs/security/{timestamp}-security-audit.md` (timestamp prevents overwrites)
-✅ **Reproducible audits** - Same comprehensive format every time
-✅ **Standardized documentation** - Consistent audit reports across all projects
-✅ **Timestamped tracking** - Easy to compare audits over time
-✅ **Enterprise-ready** - Professional audit documents suitable for compliance
+**Use `/security-review` or `/code-review` for:** Detecting security issues in your changes and codebase during development
 
-**Use `/security-review` for:** Quick ad-hoc security checks during development
-
-**Use `/security-audit` for:** Formal security audits, compliance documentation, and repeatable security assessments
+**Use this plugin for:** Formal audit documentation and compliance trails (`/security-audit`), deployed-site assessment (`/security-scan-dependencies`), and environment hardening (`/security-init`, `/security-supply-chain`)
 
 ## 📋 Available Skills
 
@@ -628,7 +621,7 @@ This timestamp-based naming ensures multiple audits on the same day don't overwr
 ## 📦 Plugin Details
 
 - **Name:** AI-Security
-- **Version:** 1.5.0
+- **Version:** 1.5.1
 - **Type:** Comprehensive Security Toolkit
 - **Features:**
   - Skills: `/security-init`, `/security-audit`, `/security-scan-dependencies`, `/security-supply-chain`

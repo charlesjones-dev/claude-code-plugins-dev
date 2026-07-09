@@ -90,14 +90,14 @@ Update ONLY the SHOW_* variables at the top of the existing script file based on
 
 **For Bash**: Use Edit tool to replace the configuration block:
 ```bash
-SHOW_MODEL=true           # Show model name (e.g., "Claude Opus 4.6")
+SHOW_MODEL=true           # Show model name (e.g., "Claude Opus 4.8")
 SHOW_TOKEN_COUNT=true     # Show token usage count (e.g., "50k/100k")
 ...
 ```
 
 **For PowerShell**: Use Edit tool to replace the configuration block:
 ```powershell
-$SHOW_MODEL = $true           # Show model name (e.g., "Claude Opus 4.6")
+$SHOW_MODEL = $true           # Show model name (e.g., "Claude Opus 4.8")
 $SHOW_TOKEN_COUNT = $true     # Show token usage count (e.g., "50k/100k")
 ...
 ```

@@ -49,6 +49,12 @@ Fast, non-interactive scan that accepts a file or directory path. Runs all categ
 
 If no path is provided, it will ask for one.
 
+## Agents
+
+### `modernize-auditor`
+
+Specialized agent that conducts automated codebase modernization audits in fresh context using the modernize-audit skill's methodology (12-category assessment, Modernization Score, phased roadmap). Automatically invoked by the `/modernize-audit` and `/modernize-scan` commands.
+
 ## Assessment Categories
 
 | # | Category | What It Checks |
@@ -97,7 +103,7 @@ The plugin auto-detects and provides stack-specific analysis for:
 
 | Field | Value |
 |-------|-------|
-| Version | 1.0.0 |
+| Version | 1.1.0 |
 | Author | [Charles Jones](https://charlesjones.dev) |
 | License | MIT |
 | Repository | [claude-code-plugins-dev](https://github.com/charlesjones-dev/claude-code-plugins-dev) |

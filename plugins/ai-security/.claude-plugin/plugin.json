@@ -1,7 +1,7 @@
 {
   "name": "ai-security",
-  "version": "1.5.0",
-  "description": "AI-powered security auditing with interactive skills, automated agents, web dependency scanning, and supply chain hardening for comprehensive vulnerability detection and reporting",
+  "version": "1.5.1",
+  "description": "AI-powered security auditing that complements native /security-review with archived OWASP-mapped audit reports, deployed-site dependency scanning, settings hardening, and supply chain protection",
   "author": {
     "name": "Charles Jones",
     "url": "https://charlesjones.dev"

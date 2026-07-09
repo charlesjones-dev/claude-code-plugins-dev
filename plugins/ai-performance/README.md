@@ -329,7 +329,7 @@ This timestamp-based naming ensures multiple audits on the same day don't overwr
 ## 📦 Plugin Details
 
 - **Name:** AI-Performance
-- **Version:** 1.2.0
+- **Version:** 1.2.1
 - **Type:** Comprehensive Performance Optimization Toolkit
 - **Features:**
   - Skills: `/performance-audit`

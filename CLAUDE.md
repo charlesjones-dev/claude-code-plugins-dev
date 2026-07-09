@@ -40,12 +40,15 @@ plugins/
     skills/
       {skill-name}/
         SKILL.md            # Skill implementation
+    agents/                 # Optional
+      {agent-name}.md       # Subagent definition
 ```
 
 ### Plugin Types
 
 Plugins can include:
 - **Skills**: Markdown files in `skills/{skill-name}/SKILL.md` directories that define executable skills invoked as slash commands
+- **Agents**: Markdown files in `agents/{agent-name}.md` that define subagents for automated/unattended runs (e.g., `security-auditor`, `modernize-auditor`). Agents should use `model: inherit` rather than hardcoding a model ID, and skills that delegate to an agent must reference one that actually ships with the plugin (`{plugin-name}:{agent-name}`)
 - Each skill is a markdown file with instructions for Claude Code to execute
 
 ## Development Workflow
@@ -63,26 +66,6 @@ Before developing plugins in this repository, it's recommended to:
    **Important**: Restart Claude Code after running this command for the settings to take effect.
 
 ### Adding a New Plugin
-
-You can create a new plugin either manually or using the ai-plugins scaffolding tool:
-
-#### Option 1: Using the AI-Plugins Scaffolding Tool (Recommended)
-
-The ai-plugins plugin provides a `/plugins-scaffold` command that interactively creates a complete plugin structure:
-
-```bash
-/plugins-scaffold
-```
-
-This will:
-1. Ask interactive questions about your plugin (name, description, category, skills)
-2. Create the complete directory structure under `plugins/{plugin-name}/`
-3. Generate plugin.json with proper metadata
-4. Create skill templates with instructions
-5. Optionally generate README and LICENSE files
-6. Automatically register the plugin in `.claude-plugin/marketplace.json`
-
-#### Option 2: Manual Plugin Creation
 
 1. Create the plugin directory structure under `plugins/{plugin-name}/`
 2. Add plugin metadata in `.claude-plugin/plugin.json` with:
@@ -168,3 +151,14 @@ When adding new features or fixing bugs in a plugin, follow this workflow:
 - Plugin version: 1.0.0 → 1.1.0 (new feature = minor bump)
 - Marketplace version: 1.0.1 → 1.1.0 (significant update)
 - Updated all 5 files listed above to maintain consistency
+
+### Deprecating or Removing Plugins and Skills
+
+When Claude Code ships a native feature that supersedes a plugin or skill (e.g., native Dynamic Workflows superseded `/workflow-plan-phases`, the native Learning output style superseded ai-learn):
+
+1. **Prefer removal over deprecation notices for skills** — a deprecated skill still appears in users' slash-command dropdowns; git history preserves the content
+2. **Removing a skill is a breaking change**: MAJOR version bump for the plugin (e.g., ai-workflow 1.5.0 → 2.0.0)
+3. **Removing an entire plugin**: delete its directory and its `marketplace.json` entry
+4. **Record it in the root README's "Deprecated & Removed" table** with a dated status (e.g., "Removed (July 2026)") and the native feature that supersedes it — use concrete dates, not "recently"
+5. **Document in CHANGELOG.md** under a "Removed" heading
+6. When a plugin is only *partially* superseded, reframe its README and manifest description against the native feature (state what the plugin adds on top) instead of deprecating it
