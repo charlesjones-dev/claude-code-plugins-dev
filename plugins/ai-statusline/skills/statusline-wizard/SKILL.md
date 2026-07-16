@@ -29,6 +29,7 @@ Use AskUserQuestion with these grouped questions:
 - Token count (50k/100k) - default selected
 - Progress bar - default selected
 - Model name - default selected
+- Effort level (low/medium/high/xhigh/max/ultracode) - default selected
 
 **Question 2 - Project Display** (multiSelect: true):
 - Current directory - default selected
@@ -92,6 +93,7 @@ Use the AskUserQuestion tool to gather user preferences. Group questions logical
 - Show model name (default: yes)
 - Show token count e.g. "50k/100k" (default: yes)
 - Show progress bar (default: yes)
+- Show effort level e.g. "high" (default: yes)
 
 **Question 2: Project Information**
 - Show current directory (default: yes)
@@ -157,6 +159,7 @@ Run `chmod +x ~/.claude/statusline.sh` to make the script executable.
 # =============================================================================
 
 SHOW_MODEL=true           # Show model name (e.g., "Claude Opus 4.8")
+SHOW_EFFORT=true          # Show reasoning effort level (e.g., "high")
 SHOW_TOKEN_COUNT=true     # Show token usage count (e.g., "50k/100k")
 SHOW_PROGRESS_BAR=true    # Show visual progress bar
 SHOW_DIRECTORY=true       # Show current directory name
@@ -171,12 +174,21 @@ SHOW_RATE_LIMITS=true     # Show rate limit usage (5h/7d windows)
 
 input=$(cat)
 model_name=$(echo "$input" | jq -r '.model.display_name')
+effort_level=$(echo "$input" | jq -r '.effort.level // empty')
+transcript_path=$(echo "$input" | jq -r '.transcript_path // empty')
 current_dir=$(basename "$(echo "$input" | jq -r '.workspace.current_dir')")
 version=$(echo "$input" | jq -r '.version')
 usage=$(echo "$input" | jq '.context_window.current_usage')
 cost=$(echo "$input" | jq -r '.cost.total_cost_usd')
 duration_ms=$(echo "$input" | jq -r '.cost.total_duration_ms')
 current_time=$(date +"%I:%M%p" | tr '[:upper:]' '[:lower:]')
+
+# Ultracode reports as plain "xhigh" in the payload; detect it from the session
+# transcript (the /effort command's stdout records the actual level chosen).
+if [ "$effort_level" = "xhigh" ] && [ -n "$transcript_path" ] && [ -f "$transcript_path" ]; then
+  last_effort_set=$(grep -ho '<local-command-stdout>Set effort level to [a-z]*' "$transcript_path" 2>/dev/null | tail -1 | awk '{print $NF}')
+  [ "$last_effort_set" = "ultracode" ] && effort_level="ultracode"
+fi
 
 # Format cost
 if [ "$cost" != "null" ] && [ -n "$cost" ]; then
@@ -224,6 +236,19 @@ build_progress_bar() {
   printf '\033[%sm%s %d%%\033[0m' "$color" "$bar" "$pct"
 }
 
+# Color each character of a string, cycling through the given 256-color codes
+colorize_chars() {
+  local text=$1
+  shift
+  local palette=("$@")
+  local out="" i ch
+  for ((i=0; i<${#text}; i++)); do
+    ch=${text:i:1}
+    out+="\033[38;5;${palette[i % ${#palette[@]}]}m${ch}"
+  done
+  printf '%s\033[0m' "$out"
+}
+
 # ANSI color codes
 reset='\033[0m'
 white='\033[97m'
@@ -243,11 +268,28 @@ if [ "$SHOW_MODEL" = true ]; then
   output="${white}${model_name}${reset}"
 fi
 
+# Effort level (absent when the model doesn't support effort)
+# Colors match the /effort picker: yellow/green/light purple/dark purple/rainbow/purple explosion
+if [ "$SHOW_EFFORT" = true ] && [ -n "$effort_level" ]; then
+  case "$effort_level" in
+    low) effort_fmt="${yellow}${effort_level}${reset}" ;;
+    medium) effort_fmt="${green}${effort_level}${reset}" ;;
+    high) effort_fmt="\033[38;5;141m${effort_level}${reset}" ;;
+    xhigh) effort_fmt="\033[38;5;93m${effort_level}${reset}" ;;
+    max) effort_fmt=$(colorize_chars "$effort_level" 196 208 226 46 39 129) ;;
+    ultracode) effort_fmt=$(colorize_chars "✦${effort_level}✦" 93 129 135 141 171 177) ;;
+    *) effort_fmt="${white}${effort_level}${reset}" ;;
+  esac
+  [ -n "$output" ] && output="$output · "
+  output="$output${effort_fmt}"
+fi
+
 # Token count and progress bar
-if [ "$usage" != "null" ]; then
-  current=$(echo "$usage" | jq '.input_tokens + .cache_creation_input_tokens + .cache_read_input_tokens')
-  size=$(echo "$input" | jq '.context_window.context_window_size')
+size=$(echo "$input" | jq '.context_window.context_window_size // 0')
+if [ "$usage" != "null" ] && [ "$size" -gt 0 ]; then
+  current=$(echo "$usage" | jq '(.input_tokens // 0) + (.cache_creation_input_tokens // 0) + (.cache_read_input_tokens // 0)')
   pct=$((current * 100 / size))
+  [ $pct -gt 100 ] && pct=100
   current_k=$((current / 1000))
   size_k=$((size / 1000))
 
@@ -291,20 +333,28 @@ if [ "$SHOW_RATE_LIMITS" = true ]; then
   rl_5h=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty | (. * 100 | round) / 100')
   rl_7d=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty | (. * 100 | round) / 100')
 
-  if [ -n "$rl_5h" ] && [ -n "$rl_7d" ]; then
-    rl_5h_int=${rl_5h%%.*}
-    rl_7d_int=${rl_7d%%.*}
+  rl_segment=""
 
+  if [ -n "$rl_5h" ]; then
+    rl_5h_int=${rl_5h%%.*}
     if [ "$rl_5h_int" -lt 50 ]; then rl_5h_color='32'
     elif [ "$rl_5h_int" -lt 80 ]; then rl_5h_color='33'
     else rl_5h_color='31'; fi
+    rl_segment="\033[${rl_5h_color}m5h:${rl_5h}%\033[0m"
+  fi
 
+  if [ -n "$rl_7d" ]; then
+    rl_7d_int=${rl_7d%%.*}
     if [ "$rl_7d_int" -lt 50 ]; then rl_7d_color='32'
     elif [ "$rl_7d_int" -lt 80 ]; then rl_7d_color='33'
     else rl_7d_color='31'; fi
+    [ -n "$rl_segment" ] && rl_segment="$rl_segment "
+    rl_segment="$rl_segment\033[${rl_7d_color}m7d:${rl_7d}%\033[0m"
+  fi
 
+  if [ -n "$rl_segment" ]; then
     [ -n "$output" ] && output="$output · "
-    output="$output\033[${rl_5h_color}m5h:${rl_5h}%\033[0m \033[${rl_7d_color}m7d:${rl_7d}%\033[0m"
+    output="$output${rl_segment}"
   fi
 fi
 
@@ -357,6 +407,7 @@ printf '%b' "$output"
 # =============================================================================
 
 $SHOW_MODEL = $true           # Show model name (e.g., "Claude Opus 4.8")
+$SHOW_EFFORT = $true          # Show reasoning effort level (e.g., "high")
 $SHOW_TOKEN_COUNT = $true     # Show token usage count (e.g., "50k/100k")
 $SHOW_PROGRESS_BAR = $true    # Show visual progress bar
 $SHOW_DIRECTORY = $true       # Show current directory name
@@ -376,12 +427,24 @@ $inputJson = [System.Console]::In.ReadToEnd()
 $data = $inputJson | ConvertFrom-Json
 
 $model_name = $data.model.display_name
+$effort_level = $data.effort.level
+$transcript_path = $data.transcript_path
 $current_dir = Split-Path -Leaf "$($data.workspace.current_dir)"
 $version = $data.version
 $usage = $data.context_window.current_usage
 $cost = $data.cost.total_cost_usd
 $duration_ms = $data.cost.total_duration_ms
 $current_time = (Get-Date -Format "h:mmtt").ToLower()
+
+# Ultracode reports as plain "xhigh" in the payload; detect it from the session
+# transcript (the /effort command's stdout records the actual level chosen).
+if ($effort_level -eq 'xhigh' -and $transcript_path -and (Test-Path $transcript_path)) {
+    $effort_matches = Select-String -Path $transcript_path -Pattern '<local-command-stdout>Set effort level to ([a-z]+)' -AllMatches |
+        ForEach-Object { $_.Matches }
+    if ($effort_matches -and ($effort_matches | Select-Object -Last 1).Groups[1].Value -eq 'ultracode') {
+        $effort_level = 'ultracode'
+    }
+}
 
 # Format cost
 if ($null -ne $cost) {
@@ -442,6 +505,20 @@ function Build-ProgressBar {
     return "$Color$bar $Percent%$reset"
 }
 
+# Color each character of a string, cycling through the given 256-color codes
+function Set-CharColors {
+    param (
+        [string]$Text,
+        [int[]]$Palette
+    )
+    $out = ""
+    for ($i = 0; $i -lt $Text.Length; $i++) {
+        $code = $Palette[$i % $Palette.Count]
+        $out += "$esc[38;5;${code}m$($Text[$i])"
+    }
+    return "$out$reset"
+}
+
 # Build output segments
 $segments = @()
 
@@ -450,11 +527,26 @@ if ($SHOW_MODEL) {
     $segments += "$white$model_name$reset"
 }
 
+# Effort level (absent when the model doesn't support effort)
+# Colors match the /effort picker: yellow/green/light purple/dark purple/rainbow/purple explosion
+if ($SHOW_EFFORT -and $effort_level) {
+    switch ($effort_level) {
+        'low'       { $effort_fmt = "$yellow$effort_level$reset" }
+        'medium'    { $effort_fmt = "$green$effort_level$reset" }
+        'high'      { $effort_fmt = "$esc[38;5;141m$effort_level$reset" }
+        'xhigh'     { $effort_fmt = "$esc[38;5;93m$effort_level$reset" }
+        'max'       { $effort_fmt = Set-CharColors -Text $effort_level -Palette 196, 208, 226, 46, 39, 129 }
+        'ultracode' { $effort_fmt = Set-CharColors -Text ([string][char]0x2726 + $effort_level + [char]0x2726) -Palette 93, 129, 135, 141, 171, 177 }
+        default     { $effort_fmt = "$white$effort_level$reset" }
+    }
+    $segments += $effort_fmt
+}
+
 # Token count and progress bar
-if ($null -ne $usage) {
-    $current = $usage.input_tokens + $usage.cache_creation_input_tokens + $usage.cache_read_input_tokens
-    $size = $data.context_window.context_window_size
-    $pct = [math]::Floor($current * 100 / $size)
+$size = [long]$data.context_window.context_window_size
+if ($null -ne $usage -and $size -gt 0) {
+    $current = [long]$usage.input_tokens + [long]$usage.cache_creation_input_tokens + [long]$usage.cache_read_input_tokens
+    $pct = [math]::Min(100, [math]::Floor($current * 100 / $size))
     $current_k = [math]::Floor($current / 1000)
     $size_k = [math]::Floor($size / 1000)
 
@@ -566,6 +658,7 @@ Write-Host -NoNewline ($segments -join $sep)
 | Variable | Default | Description |
 |----------|---------|-------------|
 | SHOW_MODEL | true | Display model name (e.g., "Claude Opus 4.8") |
+| SHOW_EFFORT | true | Display reasoning effort level with /effort-matched colors |
 | SHOW_TOKEN_COUNT | true | Display token usage (e.g., "50k/100k") |
 | SHOW_PROGRESS_BAR | true | Display visual progress bar with percentage |
 | SHOW_DIRECTORY | true | Display current working directory name |
@@ -583,3 +676,6 @@ Write-Host -NoNewline ($segments -join $sep)
 - Unicode progress bar characters should work on modern terminals
 - Colors use ANSI escape codes which work on most modern terminals
 - Status line updates appear immediately after setup
+- The effort segment reads `.effort.level` from the status line payload and is hidden entirely when the current model doesn't support the effort parameter (the field is absent)
+- Effort colors match the `/effort` picker: yellow (low), green (medium), light purple (high), dark purple (xhigh), per-character rainbow (max), and a purple-explosion `✦ultracode✦` treatment
+- Ultracode reports as plain `xhigh` in the payload, so the scripts detect it by grepping the session transcript (`.transcript_path`) for the most recent `/effort` command output ("Set effort level to …"); if a session starts in ultracode without `/effort` ever being run, it displays as `xhigh`

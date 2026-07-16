@@ -1,6 +1,6 @@
 # Claude Code Plugins for Developers
 
-[![Version](https://img.shields.io/badge/version-2.7.0-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
+[![Version](https://img.shields.io/badge/version-2.7.1-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![GitHub Issues](https://img.shields.io/github/issues/charlesjones-dev/claude-code-plugins-dev.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/charlesjones-dev/claude-code-plugins-dev.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/stargazers)
@@ -28,7 +28,7 @@ This Claude Code plugin marketplace provides 14 plugins that extend Claude Code'
 | [ai-performance](plugins/ai-performance/) | AI-powered performance optimization and bottleneck detection | `/performance-audit` | `performance-auditor` |
 | [ai-security](plugins/ai-security/) | AI-powered security auditing — complements native `/security-review` with archived OWASP-mapped reports, deployed-site scanning, and settings/supply-chain hardening | `/security-init`, `/security-audit`, `/security-scan-dependencies`, `/security-supply-chain` | `security-auditor`, `security-dependency-scanner` |
 | [ai-seo](plugins/ai-seo/) | AI-powered modern SEO auditing that catches deprecated patterns LLMs still generate | `/seo-audit`, `/seo-fix`, `/seo-schema` | - |
-| [ai-statusline](plugins/ai-statusline/) | Enhances Claude Code's native `/statusline` with progress bars and rate-limit widgets | `/statusline-wizard`, `/statusline-edit` | - |
+| [ai-statusline](plugins/ai-statusline/) | Enhances Claude Code's native `/statusline` with progress bars, rate-limit widgets, and an effort-level indicator | `/statusline-wizard`, `/statusline-edit` | - |
 | [ai-swift](plugins/ai-swift/) | AI-powered Swift/iOS/macOS release-readiness — catches Xcode Cloud & TestFlight blockers before upload | `/swift-preflight`, `/swift-diagnose`, `/swift-ci-scaffold`, `/swift-verify`, `/swift-concurrency-review` | `swift-release-auditor` |
 | [ai-workflow](plugins/ai-workflow/) | AI-powered development workflow automation — preflight quality gates, ship-it workflow, principles & behavior rules | `/workflow-preflight`, `/workflow-ship`, `/workflow-principles`, `/workflow-rules` | - |
 | [ai-writing](plugins/ai-writing/) | AI-powered writing quality tools for natural-sounding text | `/writing-humanize` | - |

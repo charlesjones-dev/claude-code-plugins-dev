@@ -2,7 +2,7 @@
 
 **AI-powered status line customization for Claude Code.** Interactive setup and edit wizards for configuring a custom status line with progress bars and customizable display options.
 
-> **How this relates to the native `/statusline` command:** Claude Code ships a built-in `/statusline` command that covers baseline setup (describe what you want, or auto-configure from your shell prompt). This plugin goes further with richer, opinionated widgets: a Unicode progress bar with color thresholds, 5-hour/7-day rate-limit percentages with color coding, session cost and duration segments, granular per-segment toggles, and a matching `/statusline-edit` flow for reconfiguring later without regenerating the script.
+> **How this relates to the native `/statusline` command:** Claude Code ships a built-in `/statusline` command that covers baseline setup (describe what you want, or auto-configure from your shell prompt). This plugin goes further with richer, opinionated widgets: a Unicode progress bar with color thresholds, 5-hour/7-day rate-limit percentages with color coding, a reasoning-effort indicator with `/effort`-matched colors (including ultracode detection), session cost and duration segments, granular per-segment toggles, and a matching `/statusline-edit` flow for reconfiguring later without regenerating the script.
 
 ---
 
@@ -13,7 +13,7 @@ Provides interactive commands to configure Claude Code's status line with visual
 ### Example Status Line
 
 ```
-Claude Opus 4.8 · 42k/100k ▓▓▓▓░░░░░░ 42% · 5h:12% 7d:4% · my-project · main · 5m 23s · 2:45pm · v2.1.80
+Claude Opus 4.8 · high · 42k/100k ▓▓▓▓░░░░░░ 42% · 5h:12% 7d:4% · my-project · main · 5m 23s · 2:45pm · v2.1.80
 ```
 
 ---
@@ -47,6 +47,7 @@ The wizard asks about three categories of display options:
    - Token count (e.g., "50k/100k")
    - Progress bar (visual percentage indicator)
    - Model name (e.g., "Claude Opus 4.8")
+   - Effort level (e.g., "high", with `/effort`-matched colors)
 
 2. **Project Display** (what to show about your project)
    - Current directory name
@@ -110,6 +111,7 @@ Edit your existing status line configuration.
 | Option | Default | Description |
 |--------|---------|-------------|
 | Model name | On | Display model name (e.g., "Claude Opus 4.8") |
+| Effort level | On | Display reasoning effort level with `/effort`-matched colors |
 | Token count | On | Display token usage (e.g., "50k/100k") |
 | Progress bar | On | Display visual progress bar with percentage |
 | Current directory | On | Display current working directory name |
@@ -147,6 +149,23 @@ Shows your 5-hour and 7-day rate limit usage with color coding:
 ```
 
 Color changes automatically so you can see at a glance how close you are to either rate-limit window.
+
+### Effort Level Display
+
+Shows the session's reasoning effort level, colored to match Claude Code's `/effort` picker:
+
+| Level | Color |
+|-------|-------|
+| `low` | Yellow |
+| `medium` | Green |
+| `high` | Light purple |
+| `xhigh` | Dark purple |
+| `max` | Per-character rainbow |
+| `ultracode` | Purple explosion (`✦ultracode✦`, cycling purple shades) |
+
+The segment reflects live `/effort` changes and is hidden entirely when the current model doesn't support the effort parameter.
+
+**Ultracode detection:** Claude Code reports ultracode as plain `xhigh` in the status line payload, so the scripts scan the session transcript for the most recent `/effort` command output to tell them apart. If a session never ran `/effort`, the payload value is shown as-is.
 
 ### Cross-Platform Support
 
@@ -231,6 +250,7 @@ After running the wizard, you can manually edit the configuration variables at t
 **Bash (`~/.claude/statusline.sh`):**
 ```bash
 SHOW_MODEL=true           # Show model name
+SHOW_EFFORT=true          # Show reasoning effort level
 SHOW_TOKEN_COUNT=true     # Show token usage count
 SHOW_PROGRESS_BAR=true    # Show visual progress bar
 SHOW_DIRECTORY=true       # Show current directory name
@@ -245,6 +265,7 @@ SHOW_RATE_LIMITS=true     # Show rate limit usage (5h/7d windows)
 **PowerShell (`~/.claude/statusline.ps1`):**
 ```powershell
 $SHOW_MODEL = $true
+$SHOW_EFFORT = $true
 $SHOW_TOKEN_COUNT = $true
 $SHOW_PROGRESS_BAR = $true
 $SHOW_DIRECTORY = $true
@@ -285,7 +306,7 @@ Install jq using your package manager (see Requirements section above).
 ## Plugin Details
 
 - **Name:** AI-Statusline
-- **Version:** 1.2.4
+- **Version:** 1.3.0
 - **Type:** UI Customization
 - **Features:**
   - Skills: `/statusline-wizard`, `/statusline-edit`
