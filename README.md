@@ -1,6 +1,6 @@
 # Claude Code Plugins for Developers
 
-[![Version](https://img.shields.io/badge/version-2.7.1-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
+[![Version](https://img.shields.io/badge/version-2.8.0-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![GitHub Issues](https://img.shields.io/github/issues/charlesjones-dev/claude-code-plugins-dev.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/charlesjones-dev/claude-code-plugins-dev.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/stargazers)
@@ -26,7 +26,7 @@ This Claude Code plugin marketplace provides 14 plugins that extend Claude Code'
 | [ai-knowledge](plugins/ai-knowledge/) | Curated, git-versioned team knowledge base with Obsidian compatibility — complements Claude Code's native auto memory | `/kb-init`, `/kb-learn`, `/kb-add`, `/kb-query`, `/kb-import`, `/kb-ingest`, `/kb-harvest`, `/kb-discover`, `/kb-absorb`, `/kb-remove`, `/kb-load`, `/kb-list`, `/kb-search`, `/kb-prune`, `/kb-auto`, `/kb-organize`, `/kb-upgrade` | - |
 | [ai-modernize](plugins/ai-modernize/) | AI-powered codebase modernization assessment for technical debt | `/modernize-audit`, `/modernize-scan` | `modernize-auditor` |
 | [ai-performance](plugins/ai-performance/) | AI-powered performance optimization and bottleneck detection | `/performance-audit` | `performance-auditor` |
-| [ai-security](plugins/ai-security/) | AI-powered security auditing — complements native `/security-review` with archived OWASP-mapped reports, deployed-site scanning, and settings/supply-chain hardening | `/security-init`, `/security-audit`, `/security-scan-dependencies`, `/security-supply-chain` | `security-auditor`, `security-dependency-scanner` |
+| [ai-security](plugins/ai-security/) | AI-powered security auditing — complements native `/security-review` with evidence-based Markdown/JSON reports, coverage and baseline reconciliation, deployed-site scanning, and settings/supply-chain hardening | `/security-init`, `/security-audit`, `/security-scan-dependencies`, `/security-supply-chain` | `security-auditor`, `security-dependency-scanner` |
 | [ai-seo](plugins/ai-seo/) | AI-powered modern SEO auditing that catches deprecated patterns LLMs still generate | `/seo-audit`, `/seo-fix`, `/seo-schema` | - |
 | [ai-statusline](plugins/ai-statusline/) | Enhances Claude Code's native `/statusline` with progress bars, rate-limit widgets, and an effort-level indicator | `/statusline-wizard`, `/statusline-edit` | - |
 | [ai-swift](plugins/ai-swift/) | AI-powered Swift/iOS/macOS release-readiness — catches Xcode Cloud & TestFlight blockers before upload | `/swift-preflight`, `/swift-diagnose`, `/swift-ci-scaffold`, `/swift-verify`, `/swift-concurrency-review` | `swift-release-auditor` |

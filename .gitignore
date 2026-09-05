@@ -17,3 +17,6 @@ Thumbs.db
 
 # Claude
 .claude/
+
+# Generated security-audit Python files
+/plugins/ai-security/skills/security-audit/**/__pycache__/

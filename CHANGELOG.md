@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.8.0] - 2026-09-05
+
+### Changed
+
+#### AI-Security Plugin (v1.5.1 → v2.0.0) — upgrade notes
+
+- **New report format:** Audits now save a readable Markdown report and a matching JSON file for scripts and automation. Tools that read the old report layout need updating; see the [report format guide](plugins/ai-security/skills/security-audit/references/artifacts.md). Previous reports can still be used for comparisons.
+- **Scheduled audits:** Use `/ai-security:security-audit` for a full audit. The `security-auditor` helper now reviews assigned parts using the active model, without restarting the entire audit process.
+- Audits respect the folders and exclusions you request. Missing Claude Code file-access settings no longer block an audit or count as an application security problem.
+- **Clearer completion status:** The default audit reviews repository code with practical local checks; it does not require access to production or vendor dashboards. A finished review can still flag questions for follow-up. Unread code and other unfinished review work remain partial. New JSON reports use format 1.1; older 1.0 reports retain their original status rules.
+- Shortened the plugin README and added plain-language command descriptions and examples.
+
+### Added
+
+- **Clearer evidence:** Reports record what was checked, what supports each suspected problem, and why a concern was confirmed or dismissed. Uncertain concerns and optional improvements are kept separate from confirmed problems.
+- **More consistent checks:** Reviews use OWASP ASVS 5.0.0, an application security checklist, alongside checks specific to your project. Reports explain how serious each problem is and how urgently it should be addressed.
+- **Comparisons with previous audits:** Reports explain whether earlier findings remain, were fixed, were dismissed, were combined, or still need review. Finding IDs stay the same when their importance changes.
+- **Report checking:** A Python tool catches missing information and inconsistent records before formatting the report. Unfinished audits can still produce useful reports clearly labeled partial.
+
+### Fixed
+
+- Audit reports now open with a summary and table of contents, followed by findings and next steps. Full evidence stays in the matching JSON instead of filling the Markdown with thousands of checklist entries; a full technical export remains available on request.
+- Audits use at most two reviewers at a time by default and explicitly finish or stop their workers. Completed agents should no longer be left waiting or restarted by courtesy messages.
+- Audits must finish available, authorized checks before handing back a report. Unfinished reports explain actual blockers or reached limits; saving a valid report is no longer a stopping point while useful checks remain.
+- Removed unsupported security scores and claims that a percentage of the application meets security standards.
+- Removed an incomplete example for preventing **server-side request forgery (SSRF)**, where an attacker tricks an application into making requests to unintended destinations. Guidance now covers checking the actual destination, including redirects.
+- Suggested fixes are labeled as proposals until applied and tested; optional precautions are no longer automatically counted as security flaws.
+
 ## [2.7.1] - 2026-07-15
 
 ### Added
@@ -1168,7 +1196,8 @@ New plugin for Swift / iOS / macOS development whose primary job is to catch rel
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.7.1...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.8.0...HEAD
+[2.8.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.7.1...v2.8.0
 [2.7.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.7.0...v2.7.1
 [2.7.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.6.0...v2.7.0
 [2.6.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.5.0...v2.6.0
