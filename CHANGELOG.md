@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.8.1] - 2026-09-10
+
+### Added
+
+#### AI-Statusline Plugin (v1.3.0 → v1.4.0)
+
+- **Monthly spend budget segment** — both script templates (Bash and PowerShell) can now display month-to-date spend across all Claude Code sessions on this machine, e.g. `mo:$47.20/$2000 2.4%`, colored on the same thresholds as the rate-limit segment (green < 50%, yellow < 80%, red above). New `SHOW_SPEND_BUDGET` toggle (default **off**), `SPEND_LIMIT_USD` cap (default `0` = no cap, bare total), and `SPEND_RESET_DAY` / `SPEND_RESET_TIME` (default 1st of the month at 00:00 UTC, matching the Anthropic console) that control when the total rolls over. Existing status lines are unchanged after upgrading.
+  - Built for Enterprise seats and API-billed accounts on a monthly spend cap: the host omits `rate_limits` entirely for those accounts, so the 5h/7d segment has nothing to show.
+  - The host only reports the current session's `cost.total_cost_usd`, so each render records it to `~/.claude/statusline-spend/<period-start>/<session_id>` (one file per session so concurrent sessions never contend) and the segment sums the current billing period's files. Older period directories are pruned automatically.
+  - All filesystem access is guarded: a read-only or missing home directory degrades to showing the current session's cost instead of breaking the status line.
+  - Caveats documented where users will see them: counts only sessions rendered after install (no backfill), counts only this machine (not claude.ai web/desktop), and is Claude Code's local estimate, which will not match the Anthropic console.
+- `/statusline-wizard` and `/statusline-edit` — rate limits and the new monthly spend budget now live in their own "Usage Limits" question (AskUserQuestion allows at most 4 options per question). Selecting the spend budget prompts for the monthly cap in USD and for when the cap resets (the wizard converts the console's local-time reset into UTC). The rate-limit option's description now explains that the segment is hidden on accounts without rolling windows.
+
+### Changed
+
+- **ai-statusline** script templates — the context percentage now prefers the host-provided `context_window.used_percentage` (newer Claude Code versions) and falls back to computing it from `current_usage` for older versions.
+- **ai-statusline** docs — the rate-limit segment's silent absence on Enterprise/API spend-cap seats is now called out in the wizard's Important Notes, the plugin README, and the wizard option description, pointing those users at `SHOW_SPEND_BUDGET`.
+
 ## [2.8.0] - 2026-09-05
 
 ### Changed
@@ -1196,7 +1214,8 @@ New plugin for Swift / iOS / macOS development whose primary job is to catch rel
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.8.0...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.8.1...HEAD
+[2.8.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.8.0...v2.8.1
 [2.8.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.7.1...v2.8.0
 [2.7.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.7.0...v2.7.1
 [2.7.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.6.0...v2.7.0

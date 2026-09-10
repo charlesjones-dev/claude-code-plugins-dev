@@ -40,7 +40,29 @@ Use AskUserQuestion with these grouped questions:
 - Current time - default selected
 - Claude Code version - default selected
 - Session cost - NOT selected by default
-- Rate limit usage (5h/7d) - default selected
+
+**Question 4 - Usage Limits** (multiSelect: true):
+- Rate limit usage (5h/7d) - default selected. Description: "Only shown on plans with rolling rate-limit windows (Pro/Max). Enterprise and API seats billed against a monthly spend cap have no rate limits, so the segment stays hidden — pick Monthly spend budget instead."
+- Monthly spend budget (mo:$47.20/$2000 2.4%) - NOT selected by default. Description: "Month-to-date spend across all Claude Code sessions on this machine, as estimated locally by Claude Code. Counts only sessions rendered after setup."
+
+AskUserQuestion allows at most 4 options per question, so rate limits and spend budget live in their own question rather than in Session Display.
+
+**Questions 5 and 6 - Spend cap and reset** (only ask if "Monthly spend budget" was selected; send both in one AskUserQuestion call, single select each):
+
+Question 5 - Monthly spend cap (USD):
+- "No cap - show bare total" (Recommended if the user has no known cap) → `SPEND_LIMIT_USD=0`
+- "$500" → `SPEND_LIMIT_USD=500`
+- "$1000" → `SPEND_LIMIT_USD=1000`
+- "$2000" → `SPEND_LIMIT_USD=2000`
+
+The user can pick "Other" and type any amount; write the numeric value (digits and optional decimal point only, no currency symbol or thousands separators) into `SPEND_LIMIT_USD`. The cap is the seat's monthly spend limit shown on the Anthropic console usage page (e.g., "$0.96 of $2,000.00 spent").
+
+Question 6 - When does the spend cap reset?
+- "1st of the month at 00:00 UTC" (Recommended - what the Anthropic console uses) → `SPEND_RESET_DAY=1`, `SPEND_RESET_TIME=00:00`
+- "1st of the month at midnight in my local time zone" → `SPEND_RESET_DAY=1` and `SPEND_RESET_TIME` set to local midnight converted to UTC using the machine's current offset (e.g., EDT is UTC-4, so `04:00`). Warn that daylight-saving changes shift this by an hour twice a year. If the local offset is ahead of UTC (e.g., UTC+2), local midnight on the 1st falls on the last day of the previous month in UTC, which `SPEND_RESET_DAY` (1-28) cannot express - explain this and use the UTC option instead.
+- "A different day or time" → the user picks "Other" and types what the console shows, e.g. "Resets Wed, Sep 30, 8:00 PM EDT"
+
+For "Other", convert the user's day and time to UTC before writing the variables. Example: "Sep 30, 8:00 PM EDT" is Oct 1 00:00 UTC, so write `SPEND_RESET_DAY=1` and `SPEND_RESET_TIME=00:00`. `SPEND_RESET_DAY` must be 1-28 (days 29-31 do not exist in every month) and `SPEND_RESET_TIME` must be `HH:MM` in 24-hour UTC. The script falls back to the 1st at 00:00 UTC if either value is invalid. Tell the user the UTC values you wrote so they can confirm.
 
 ### Success Message
 
@@ -55,6 +77,14 @@ Settings: ~/.claude/settings.json
 You should see your new status line below!
 
 To customize later, run /statusline-edit or edit the SHOW_* variables at the top of the script file.
+```
+
+If the user enabled the monthly spend budget, append:
+
+```
+Monthly spend note: the "mo:" segment is Claude Code's local cost estimate for sessions
+on this machine rendered from now on. It will not match the Anthropic console exactly;
+use the console usage page for the authoritative figure.
 ```
 
 ---
@@ -104,7 +134,14 @@ Use the AskUserQuestion tool to gather user preferences. Group questions logical
 - Show session duration (default: yes)
 - Show current time (default: yes)
 - Show Claude Code version (default: yes)
-- Show rate limit usage - 5h and 7d windows (default: yes)
+
+**Question 4: Usage Limits**
+- Show rate limit usage - 5h and 7d windows (default: yes; hidden automatically on accounts without rolling windows)
+- Show monthly spend budget - month-to-date spend across all sessions on this machine (default: no)
+
+**Questions 5-6: Monthly spend cap and reset** (only when monthly spend budget was selected)
+- Ask for the monthly cap in USD and write it to `SPEND_LIMIT_USD`; `0` means no cap (bare total)
+- Ask when the cap resets and write the day of month (1-28, UTC) to `SPEND_RESET_DAY` and the time (HH:MM, 24h, UTC) to `SPEND_RESET_TIME`; convert whatever the user pastes from the console into UTC first
 
 ### Phase 3: Create Script File
 
@@ -168,7 +205,11 @@ SHOW_COST=false           # Show session cost (useful for API/Pro users)
 SHOW_DURATION=true        # Show session duration
 SHOW_TIME=true            # Show current time
 SHOW_VERSION=true         # Show Claude Code version
-SHOW_RATE_LIMITS=true     # Show rate limit usage (5h/7d windows)
+SHOW_RATE_LIMITS=true     # Show rate limit usage (5h/7d windows; absent on Enterprise/API spend-cap seats)
+SHOW_SPEND_BUDGET=false   # Show month-to-date spend across all sessions on this machine (e.g., "mo:$47.20/$2000 2.4%")
+SPEND_LIMIT_USD=0         # Monthly spend cap in USD for the spend segment (0 = no cap, show bare total)
+SPEND_RESET_DAY=1         # Day of the month (1-28) the spend cap resets, in UTC
+SPEND_RESET_TIME=00:00    # Time of day (HH:MM, 24h, UTC) the spend cap resets
 
 # =============================================================================
 
@@ -179,6 +220,7 @@ transcript_path=$(echo "$input" | jq -r '.transcript_path // empty')
 current_dir=$(basename "$(echo "$input" | jq -r '.workspace.current_dir')")
 version=$(echo "$input" | jq -r '.version')
 usage=$(echo "$input" | jq '.context_window.current_usage')
+host_pct=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
 cost=$(echo "$input" | jq -r '.cost.total_cost_usd')
 duration_ms=$(echo "$input" | jq -r '.cost.total_duration_ms')
 current_time=$(date +"%I:%M%p" | tr '[:upper:]' '[:lower:]')
@@ -288,7 +330,12 @@ fi
 size=$(echo "$input" | jq '.context_window.context_window_size // 0')
 if [ "$usage" != "null" ] && [ "$size" -gt 0 ]; then
   current=$(echo "$usage" | jq '(.input_tokens // 0) + (.cache_creation_input_tokens // 0) + (.cache_read_input_tokens // 0)')
-  pct=$((current * 100 / size))
+  # Prefer the host-provided percentage (newer Claude Code); fall back to computing it
+  if [ -n "$host_pct" ]; then
+    pct=${host_pct%%.*}
+  else
+    pct=$((current * 100 / size))
+  fi
   [ $pct -gt 100 ] && pct=100
   current_k=$((current / 1000))
   size_k=$((size / 1000))
@@ -358,6 +405,74 @@ if [ "$SHOW_RATE_LIMITS" = true ]; then
   fi
 fi
 
+# Monthly spend budget (period-to-date across all sessions on this machine)
+# The host only reports the current session's cost, so each render records it to
+# ~/.claude/statusline-spend/<period-start>/<session_id> (one file per session avoids
+# write contention) and the segment sums every file for the current billing period.
+# The period starts at the most recent SPEND_RESET_DAY/SPEND_RESET_TIME (UTC).
+# Any filesystem failure degrades to the current session's cost only.
+if [ "$SHOW_SPEND_BUDGET" = true ]; then
+  num_re='^[0-9]+(\.[0-9]+)?$'
+  int_re='^[0-9]+$'
+  hm_re='^([01][0-9]|2[0-3]):[0-5][0-9]$'
+  period_re='^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+  session_id=$(echo "$input" | jq -r '.session_id // empty' | tr -cd 'A-Za-z0-9._-')
+
+  # Resolve the current period start from the configured reset day/time (UTC);
+  # invalid values fall back to the 1st of the month at 00:00 UTC
+  reset_day=$SPEND_RESET_DAY
+  { [[ "$reset_day" =~ $int_re ]] && [ "$reset_day" -ge 1 ] && [ "$reset_day" -le 28 ]; } || reset_day=1
+  reset_hm=$SPEND_RESET_TIME
+  [[ "$reset_hm" =~ $hm_re ]] || reset_hm="00:00"
+  read -r now_y now_m now_d now_hm <<< "$(date -u '+%Y %m %d %H:%M')"
+  p_y=$((10#$now_y)); p_m=$((10#$now_m)); now_d=$((10#$now_d))
+  if [ "$now_d" -lt "$reset_day" ] || { [ "$now_d" -eq "$reset_day" ] && [[ "$now_hm" < "$reset_hm" ]]; }; then
+    p_m=$((p_m - 1))
+    [ "$p_m" -eq 0 ] && { p_m=12; p_y=$((p_y - 1)); }
+  fi
+  spend_period=$(printf '%04d-%02d-%02d' "$p_y" "$p_m" "$reset_day")
+
+  spend_root="${HOME:-}/.claude/statusline-spend"
+  period_dir="$spend_root/$spend_period"
+  period_total=""
+
+  if [ -n "$HOME" ] && [ -n "$session_id" ] && [[ "$cost" =~ $num_re ]]; then
+    if mkdir -p "$period_dir" 2>/dev/null \
+      && printf '%s\n' "$cost" > "$period_dir/.$session_id.tmp" 2>/dev/null \
+      && mv -f "$period_dir/.$session_id.tmp" "$period_dir/$session_id" 2>/dev/null; then
+      period_total=$(awk '$1 ~ /^[0-9]+(\.[0-9]+)?$/ { s += $1 } END { printf "%.2f", s }' "$period_dir"/* 2>/dev/null)
+      # Prune previous periods
+      for d in "$spend_root"/*/; do
+        d=${d%/}
+        d_name=${d##*/}
+        if [[ "$d_name" =~ $period_re ]] && [[ "$d_name" < "$spend_period" ]]; then
+          rm -rf "$d" 2>/dev/null
+        fi
+      done
+    fi
+  fi
+
+  if [ -z "$period_total" ]; then
+    if [[ "$cost" =~ $num_re ]]; then period_total=$cost; else period_total=0; fi
+  fi
+
+  spend_fmt=$(printf '$%.2f' "$period_total")
+  if awk -v c="$SPEND_LIMIT_USD" 'BEGIN { exit !(c + 0 > 0) }' 2>/dev/null; then
+    spend_pct=$(awk -v t="$period_total" -v c="$SPEND_LIMIT_USD" 'BEGIN { printf "%.1f", t * 100 / c }')
+    cap_fmt=$(awk -v c="$SPEND_LIMIT_USD" 'BEGIN { if (c == int(c)) printf "%d", c; else printf "%.2f", c }')
+    spend_int=${spend_pct%%.*}
+    if [ "$spend_int" -lt 50 ]; then spend_color='32'
+    elif [ "$spend_int" -lt 80 ]; then spend_color='33'
+    else spend_color='31'; fi
+    spend_segment="\033[${spend_color}mmo:${spend_fmt}/\$${cap_fmt} ${spend_pct}%\033[0m"
+  else
+    spend_segment="${yellow}mo:${spend_fmt}${reset}"
+  fi
+
+  [ -n "$output" ] && output="$output · "
+  output="$output${spend_segment}"
+fi
+
 # Directory
 if [ "$SHOW_DIRECTORY" = true ]; then
   [ -n "$output" ] && output="$output · "
@@ -416,7 +531,11 @@ $SHOW_COST = $false           # Show session cost (useful for API/Pro users)
 $SHOW_DURATION = $true        # Show session duration
 $SHOW_TIME = $true            # Show current time
 $SHOW_VERSION = $true         # Show Claude Code version
-$SHOW_RATE_LIMITS = $true     # Show rate limit usage (5h/7d windows)
+$SHOW_RATE_LIMITS = $true     # Show rate limit usage (5h/7d windows; absent on Enterprise/API spend-cap seats)
+$SHOW_SPEND_BUDGET = $false   # Show month-to-date spend across all sessions on this machine (e.g., "mo:$47.20/$2000 2.4%")
+$SPEND_LIMIT_USD = 0          # Monthly spend cap in USD for the spend segment (0 = no cap, show bare total)
+$SPEND_RESET_DAY = 1          # Day of the month (1-28) the spend cap resets, in UTC
+$SPEND_RESET_TIME = '00:00'   # Time of day (HH:MM, 24h, UTC) the spend cap resets
 
 # =============================================================================
 
@@ -432,6 +551,7 @@ $transcript_path = $data.transcript_path
 $current_dir = Split-Path -Leaf "$($data.workspace.current_dir)"
 $version = $data.version
 $usage = $data.context_window.current_usage
+$host_pct = $data.context_window.used_percentage
 $cost = $data.cost.total_cost_usd
 $duration_ms = $data.cost.total_duration_ms
 $current_time = (Get-Date -Format "h:mmtt").ToLower()
@@ -546,7 +666,12 @@ if ($SHOW_EFFORT -and $effort_level) {
 $size = [long]$data.context_window.context_window_size
 if ($null -ne $usage -and $size -gt 0) {
     $current = [long]$usage.input_tokens + [long]$usage.cache_creation_input_tokens + [long]$usage.cache_read_input_tokens
-    $pct = [math]::Min(100, [math]::Floor($current * 100 / $size))
+    # Prefer the host-provided percentage (newer Claude Code); fall back to computing it
+    if ($null -ne $host_pct) {
+        $pct = [math]::Min(100, [math]::Floor([double]$host_pct))
+    } else {
+        $pct = [math]::Min(100, [math]::Floor($current * 100 / $size))
+    }
     $current_k = [math]::Floor($current / 1000)
     $size_k = [math]::Floor($size / 1000)
 
@@ -619,6 +744,81 @@ if ($SHOW_RATE_LIMITS) {
     }
 }
 
+# Monthly spend budget (period-to-date across all sessions on this machine)
+# The host only reports the current session's cost, so each render records it to
+# ~/.claude/statusline-spend/<period-start>/<session_id> (one file per session avoids
+# write contention) and the segment sums every file for the current billing period.
+# The period starts at the most recent SPEND_RESET_DAY/SPEND_RESET_TIME (UTC).
+# Any filesystem failure degrades to the current session's cost only.
+if ($SHOW_SPEND_BUDGET) {
+    $inv = [System.Globalization.CultureInfo]::InvariantCulture
+    $session_id = ([string]$data.session_id) -replace '[^A-Za-z0-9._-]', ''
+
+    # Resolve the current period start from the configured reset day/time (UTC);
+    # invalid values fall back to the 1st of the month at 00:00 UTC
+    $reset_day = 1
+    $parsed_day = 0
+    if ([int]::TryParse([string]$SPEND_RESET_DAY, [ref]$parsed_day) -and $parsed_day -ge 1 -and $parsed_day -le 28) { $reset_day = $parsed_day }
+    $reset_h = 0
+    $reset_min = 0
+    if ([string]$SPEND_RESET_TIME -match '^([01][0-9]|2[0-3]):([0-5][0-9])$') { $reset_h = [int]$Matches[1]; $reset_min = [int]$Matches[2] }
+    $now_utc = [DateTime]::UtcNow
+    $period_start = New-Object DateTime ($now_utc.Year, $now_utc.Month, $reset_day, $reset_h, $reset_min, 0, [DateTimeKind]::Utc)
+    if ($period_start -gt $now_utc) { $period_start = $period_start.AddMonths(-1) }
+    $spend_period = $period_start.ToString('yyyy-MM-dd', $inv)
+
+    $home_dir = if ($HOME) { $HOME } else { $env:USERPROFILE }
+    $period_total = $null
+
+    if ($home_dir -and $session_id -and $null -ne $cost) {
+        try {
+            $spend_root = Join-Path (Join-Path $home_dir '.claude') 'statusline-spend'
+            $period_dir = Join-Path $spend_root $spend_period
+            New-Item -ItemType Directory -Path $period_dir -Force -ErrorAction Stop | Out-Null
+            $tmp_file = Join-Path $period_dir ".$session_id.tmp"
+            [System.IO.File]::WriteAllText($tmp_file, ([double]$cost).ToString('R', $inv) + "`n")
+            Move-Item -LiteralPath $tmp_file -Destination (Join-Path $period_dir $session_id) -Force -ErrorAction Stop
+
+            $sum = 0.0
+            foreach ($f in Get-ChildItem -LiteralPath $period_dir -File -ErrorAction Stop | Where-Object { $_.Name -notlike '*.tmp' }) {
+                try {
+                    $v = 0.0
+                    $txt = [System.IO.File]::ReadAllText($f.FullName).Trim()
+                    if ([double]::TryParse($txt, [System.Globalization.NumberStyles]::Float, $inv, [ref]$v)) { $sum += $v }
+                } catch { }
+            }
+            $period_total = $sum
+
+            # Prune previous periods
+            foreach ($d in Get-ChildItem -LiteralPath $spend_root -Directory -ErrorAction SilentlyContinue) {
+                if ($d.Name -match '^\d{4}-\d{2}-\d{2}$' -and [string]::CompareOrdinal($d.Name, $spend_period) -lt 0) {
+                    try { Remove-Item -LiteralPath $d.FullName -Recurse -Force -ErrorAction SilentlyContinue } catch { }
+                }
+            }
+        } catch {
+            $period_total = $null
+        }
+    }
+
+    if ($null -eq $period_total) {
+        $period_total = if ($null -ne $cost) { [double]$cost } else { 0.0 }
+    }
+
+    $spend_fmt = '$' + ('{0:F2}' -f $period_total)
+    $cap = 0.0
+    if ([double]::TryParse([string]$SPEND_LIMIT_USD, [System.Globalization.NumberStyles]::Float, $inv, [ref]$cap) -and $cap -gt 0) {
+        $spend_pct = $period_total * 100 / $cap
+        $spend_pct_fmt = '{0:F1}' -f $spend_pct
+        $cap_fmt = if ($cap -eq [math]::Floor($cap)) { '{0:F0}' -f $cap } else { '{0:F2}' -f $cap }
+        if ($spend_pct -lt 50) { $spend_color = $green }
+        elseif ($spend_pct -lt 80) { $spend_color = $yellow }
+        else { $spend_color = $red }
+        $segments += "${spend_color}mo:${spend_fmt}/`$${cap_fmt} ${spend_pct_fmt}%$reset"
+    } else {
+        $segments += "${yellow}mo:${spend_fmt}$reset"
+    }
+}
+
 # Directory
 if ($SHOW_DIRECTORY) {
     $segments += "$blue$current_dir$reset"
@@ -667,7 +867,21 @@ Write-Host -NoNewline ($segments -join $sep)
 | SHOW_DURATION | true | Display session duration |
 | SHOW_TIME | true | Display current time |
 | SHOW_VERSION | true | Display Claude Code version |
-| SHOW_RATE_LIMITS | true | Display rate limit usage (5h/7d windows) |
+| SHOW_RATE_LIMITS | true | Display rate limit usage (5h/7d windows); hidden when the payload has no `rate_limits` |
+| SHOW_SPEND_BUDGET | false | Display month-to-date spend across all sessions on this machine (e.g., "mo:$47.20/$2000 2.4%") |
+| SPEND_LIMIT_USD | 0 | Monthly spend cap in USD for the spend segment; `0` = no cap, show the bare total |
+| SPEND_RESET_DAY | 1 | Day of the month (1-28) the spend cap resets, in UTC; invalid values fall back to 1 |
+| SPEND_RESET_TIME | 00:00 | Time of day (HH:MM, 24-hour, UTC) the spend cap resets; invalid values fall back to 00:00 |
+
+### Monthly spend budget caveats
+
+The spend segment exists for accounts that have no rolling rate limits (Enterprise seats and API-billed usage with a monthly spend cap). Make sure the user sees these caveats when they enable it:
+
+- **Local estimate only.** The figure is Claude Code's own `cost.total_cost_usd` estimate and will NOT match the Anthropic console (in one observed case the console showed $0.96 spent while a single live session already reported $1.11). The authoritative sources are the console usage page or the Admin API cost report, which requires an org admin key most seat users do not have.
+- **No historical backfill.** Only sessions rendered after the segment was enabled are counted.
+- **This machine only.** Counts Claude Code sessions on this machine, not claude.ai web/desktop usage or other machines.
+- **How it works.** Each render writes the current session's cost to `~/.claude/statusline-spend/<period-start>/<session_id>` (one file per session so concurrent sessions never contend). The period starts at the most recent `SPEND_RESET_DAY` / `SPEND_RESET_TIME` in UTC, so the directory is named for that date (e.g., `2026-09-01`). The segment sums every file in the current period's directory and prunes older period directories. If the directory cannot be created or written (read-only home, missing `HOME`), the segment silently falls back to showing the current session's cost.
+- **Reset timing.** The reset is not in the status line payload for accounts without `rate_limits`, so the user supplies it. The default (1st of the month, 00:00 UTC) matches the Anthropic console, which displays the same instant in local time (e.g., "Resets Wed, Sep 30, 8:00 PM EDT" is Oct 1 00:00 UTC). The total rolls over at that moment; sessions that span the reset count toward the new period in full, since only their latest cumulative cost is recorded.
 
 ## Important Notes
 
@@ -679,3 +893,5 @@ Write-Host -NoNewline ($segments -join $sep)
 - The effort segment reads `.effort.level` from the status line payload and is hidden entirely when the current model doesn't support the effort parameter (the field is absent)
 - Effort colors match the `/effort` picker: yellow (low), green (medium), light purple (high), dark purple (xhigh), per-character rainbow (max), and a purple-explosion `✦ultracode✦` treatment
 - Ultracode reports as plain `xhigh` in the payload, so the scripts detect it by grepping the session transcript (`.transcript_path`) for the most recent `/effort` command output ("Set effort level to …"); if a session starts in ultracode without `/effort` ever being run, it displays as `xhigh`
+- The rate-limit segment reads `.rate_limits.five_hour` / `.rate_limits.seven_day`, which the host only sends for plans with rolling usage windows (Pro/Max). Enterprise seats and API-billed accounts on a monthly spend cap receive no `rate_limits` key at all, so with `SHOW_RATE_LIMITS=true` the segment is hidden rather than showing zeros. Those users should enable `SHOW_SPEND_BUDGET` (and set `SPEND_LIMIT_USD` to their cap) to get a comparable month-to-date view
+- The context percentage prefers the host-provided `.context_window.used_percentage` (newer Claude Code versions) and falls back to computing it from `current_usage` for older versions
