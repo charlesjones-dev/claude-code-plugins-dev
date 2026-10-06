@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Claude Code plugins for code audits, release checks and day-to-day git and project workflows.",
-    "version": "2.9.0",
+    "version": "2.10.0",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -303,23 +303,53 @@
     {
       "name": "ai-geo",
       "source": "./plugins/ai-geo",
-      "description": "Audits how AI answer engines like ChatGPT, Perplexity, Claude and Google AI Overviews can crawl and cite a site, generates llms.txt with discovery links in the head, sitemap and robots.txt, and fixes crawler rules and structured data",
-      "version": "1.1.1",
+      "description": "Audits how likely AI answer engines like ChatGPT, Perplexity, Claude, Copilot and Google AI Overviews are to cite and mention a site: crawler rules for training, search and user-triggered bots, topical authority, original research, expert authorship, third-party validation and entity markup. Applies fixes, generates llms.txt, and can check the live site and search for brand mentions",
+      "version": "1.2.0",
       "keywords": [
         "geo",
         "ai-seo",
-        "llms-txt",
         "generative-engine-optimization",
         "ai-crawlers",
         "citation-optimization",
         "answer-engines",
-        "content-optimization",
+        "topical-authority",
+        "original-research",
+        "brand-mentions",
+        "llms-txt",
         "chatgpt",
         "perplexity",
         "claude",
         "gemini",
+        "copilot",
         "schema-org",
         "structured-data",
+        "skills"
+      ],
+      "author": {
+        "name": "Charles Jones",
+        "url": "https://charlesjones.dev"
+      },
+      "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev"
+    },
+    {
+      "name": "ai-aeo",
+      "source": "./plugins/ai-aeo",
+      "description": "Audits how ready a site's pages are to be picked as the single direct answer in featured snippets, voice assistants and answer boxes: answer-first paragraphs, question headings, definitions, real lists and tables, snippet controls and FAQ sections. Maps target questions to pages, builds FAQ sections and applies fixes",
+      "version": "1.0.0",
+      "keywords": [
+        "ai",
+        "aeo",
+        "answer-engine-optimization",
+        "featured-snippets",
+        "voice-search",
+        "answer-engines",
+        "faq",
+        "faqpage",
+        "qapage",
+        "schema-org",
+        "structured-data",
+        "snippet-controls",
+        "question-mapping",
         "skills"
       ],
       "author": {

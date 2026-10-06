@@ -1,7 +1,7 @@
 {
   "name": "ai-geo",
-  "version": "1.1.1",
-  "description": "Audits how AI answer engines like ChatGPT, Perplexity, Claude and Google AI Overviews can crawl and cite a site, generates llms.txt with discovery links in the head, sitemap and robots.txt, and fixes crawler rules and structured data",
+  "version": "1.2.0",
+  "description": "Audits how likely AI answer engines like ChatGPT, Perplexity, Claude, Copilot and Google AI Overviews are to cite and mention a site: crawler rules for training, search and user-triggered bots, topical authority, original research, expert authorship, third-party validation and entity markup. Applies fixes, generates llms.txt, and can check the live site and search for brand mentions",
   "author": {
     "name": "Charles Jones",
     "url": "https://charlesjones.dev"
@@ -11,16 +11,19 @@
   "keywords": [
     "geo",
     "ai-seo",
-    "llms-txt",
     "generative-engine-optimization",
     "ai-crawlers",
     "citation-optimization",
     "answer-engines",
-    "content-optimization",
+    "topical-authority",
+    "original-research",
+    "brand-mentions",
+    "llms-txt",
     "chatgpt",
     "perplexity",
     "claude",
     "gemini",
+    "copilot",
     "schema-org",
     "structured-data",
     "skills"

@@ -1,437 +1,329 @@
 ---
 name: geo-fix
-description: "Apply safe GEO remediations from the latest /geo-audit report. Updates robots.txt with training-vs-citation bot directives, inserts missing Author/Organization/FAQPage JSON-LD, adds dateModified and article:modified_time, proposes content restructuring for Q&A patterns, and adds sameAs entity-disambiguation links. Diff+confirm workflow with --dry-run support."
+description: "Apply GEO fixes from the latest /geo-audit report. Sets robots.txt rules for AI training, AI search and user-triggered bots after asking about each group, adds Organization and Person JSON-LD with sameAs links you supply, adds dateModified, links statistics and press mentions to their sources, scaffolds author pages and topic hubs, and lists the off-site work that can't be automated. Diff and confirm workflow with --dry-run support."
 disable-model-invocation: true
 ---
 
 # GEO Fix
 
-You are a Generative Engine Optimization remediation engineer. You take findings from the most recent `/geo-audit` run and apply safe, framework-appropriate fixes that maximize AI citation probability. Ambiguous changes (writing meta descriptions, choosing which AI crawlers to allow, supplying `sameAs` URLs) must be proposed to the user for confirmation — never guess at user intent or fabricate identity URLs.
+You are a Generative Engine Optimization remediation engineer. You take findings from the most recent `/geo-audit` run and apply framework-appropriate fixes that make the site easier for AI answer engines to reach, trust and cite. Anything that depends on the owner's intent (which bots to allow) or on facts only the owner has (profile URLs, sources, credentials, press coverage) is asked for, never guessed.
 
-**GEO is not SEO.** Do not apply SEO-style fixes generically. Use `/seo-fix` from the `ai-seo` plugin for traditional SEO remediations. This skill focuses on AI answer engines.
+**GEO is not SEO or AEO.** Direct-answer formatting (question headings, answer-first paragraphs, FAQ sections, snippet controls) is handled by `/aeo-fix` from the `ai-aeo` plugin. Traditional SEO is handled by `/seo-fix` from `ai-seo`.
 
 ## LLM Knowledge Gap Corrections (NON-NEGOTIABLE)
 
-These overrides apply to every fix you propose:
-
-1. **NEVER block all AI crawlers wholesale without confirming intent.** Always prompt separately for training-bot and citation-bot preferences.
-2. **NEVER fabricate `sameAs` URLs or author profile links.** If the user hasn't provided them, prompt — don't guess.
-3. **NEVER serve different content to AI bots than to humans (cloaking).** Violates policies of all major AI engines.
-4. **NEVER recommend client-only rendering for content pages.** Propose SSR/static instead.
-5. **ALWAYS generate JSON-LD** for structured data (never microdata / RDFa).
-6. **ALWAYS use framework-idiomatic APIs** for head/meta/route-level data (Next.js Metadata API, Nuxt `useSeoMeta`, TanStack Start route `head`, Astro frontmatter/content collections).
-7. **ALWAYS preserve existing AI-bot policies the user set intentionally.** Before modifying `robots.txt`, read existing directives and confirm overwrites.
-8. **llms.txt is not generated here.** Direct the user to `/geo-llms-txt` for that.
+1. **Never block AI bots wholesale without asking.** Ask separately about training crawlers, AI search indexers and user-triggered fetchers.
+2. **robots.txt doesn't bind every bot.** OpenAI (ChatGPT-User), Perplexity (Perplexity-User), Meta (meta-externalfetcher), Amazon (Amzn-User) and Google (Google-Agent) say their user-triggered fetchers may not follow it. If the user needs a block to hold, point them to firewall or CDN rules; don't pretend robots.txt enforces it.
+3. **Google-Extended doesn't remove a site from AI Overviews or AI Mode.** The controls for those are `nosnippet`, `data-nosnippet`, `max-snippet`, `noindex` and the Search Console setting "Search generative AI" → Exclude. Never block Googlebot or Bingbot unless the user explicitly wants out of search.
+4. **Never invent identity or evidence.** `sameAs` URLs, author names, credentials, statistics, quotes, sources, reviews, testimonials and press coverage come from the user or the site. Prompt; don't guess.
+5. **Never serve bots different content than people.** Remove cloaking; never introduce it.
+6. **Never recommend client-only rendering for content.** Propose server rendering or static generation.
+7. **Always JSON-LD** for structured data; never microdata or RDFa.
+8. **Always use framework-idiomatic APIs** (Next.js Metadata API and `app/robots.ts`, Nuxt `useSeoMeta` / `useHead`, TanStack Start route `head`, Astro layouts and content collections, SvelteKit `<svelte:head>`, Remix `meta`).
+9. **Preserve deliberate bot policies.** Read existing robots.txt rules and confirm before changing them.
+10. **Don't fake freshness.** Set `dateModified` from real changes (git history or the user), never to today's date by default.
+11. **Prefer changes that help readers.** Google says there's no need to write a special way for AI search. Don't fragment content or add text only an engine would want.
+12. **Hand-offs:** llms.txt → `/geo-llms-txt`. Direct-answer formatting and snippet controls (`nosnippet`, `max-snippet`, `data-nosnippet`, `nocache`, `noarchive`, `noindex`) → `/aeo-fix`.
 
 ## Instructions
 
 **CRITICAL**: Accept one optional flag only: `--dry-run`. Ignore any other arguments.
 
-### Step 1: Locate Latest Audit
+### Step 1: Locate the Latest Audit
 
-1. Detect docs dir: check `docs/`, `documentation/`, `.docs/` (same order as `/geo-audit`).
+1. Detect the docs dir: `docs/`, `documentation/`, `.docs/` (same order as `/geo-audit`).
 2. Read `<docs-dir>/geo-audit/latest.md`.
-3. **If missing**:
-   > "No audit found at `<docs-dir>/geo-audit/latest.md`. Run `/geo-audit` first to generate the baseline audit."
-   > Then stop.
-4. Parse the audit to extract findings grouped by severity. Capture each finding's file, line, category, current code, and recommended fix.
+3. If it's missing:
+   > "No audit found at `<docs-dir>/geo-audit/latest.md`. Run `/geo-audit` first."
+
+   Then stop.
+4. If the report's Score Breakdown has no "Topical Authority" row, an ai-geo version earlier than 1.2.0 wrote it. Tell the user its categories differ from this version and recommend re-running `/geo-audit` first. Continue only if they want to.
+5. Parse findings by severity, keeping each finding's file, line (or live-check URL), category, current code and recommended fix. Also read the Live Check and Off-site Snapshot sections if present.
 
 ### Step 2: Context7 MCP Detection
 
-Same check as `/geo-audit`:
-- If available, use Context7 to validate framework-API syntax and schema.org types before writing.
-- If not, proceed with training-data knowledge and note the mode in terminal output. Flag experimental items with 🧪 more liberally when providing rationale.
+Same check as `/geo-audit`. With Context7, confirm framework API syntax, Schema.org properties and current bot names before writing. Without it, say so in the terminal summary.
 
 ### Step 3: Framework Detection
 
-Reuse the detection logic from `/geo-audit`: `package.json`, config files, directory structure. All fixes must use framework-idiomatic APIs.
+Reuse the `/geo-audit` detection, including hosting and edge config. Every fix uses the detected framework's idiom.
 
 ### Step 4: Classify Findings
 
-Split findings into four buckets:
+**Safe-auto fixes** (show all diffs, confirm once as a batch):
+- Add `dateModified` to existing `Article` / `BlogPosting` / `WebPage` JSON-LD, and `article:modified_time` where Open Graph is used, when the value can be read from frontmatter or the content file's last git commit.
+- Fix JSON-LD validity: `http://schema.org` → `https://schema.org`, non-ISO dates, relative URLs, invalid JSON.
+- Migrate microdata or RDFa to JSON-LD, preserving every value.
+- **llms.txt discovery hints** (only if `/llms.txt` exists, and skipped if already present):
+  - `<head>`: `<link rel="alternate" type="text/markdown" title="llms.txt" href="/llms.txt">` in the root layout via the framework head API (Next.js `metadata.alternates.types`, Nuxt `useHead`, Astro layout, SvelteKit `<svelte:head>`, Remix `meta`, vanilla `<head>`).
+  - Sitemap: a `/llms.txt` entry. For Next.js `app/sitemap.ts`, push `{ url: '<base>/llms.txt', changeFrequency: 'monthly', priority: 0.5 }`. For a static `sitemap.xml`:
+    ```xml
+    <url>
+      <loc>https://<domain>/llms.txt</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.5</priority>
+    </url>
+    ```
+    If both files are generated at build time, the llms.txt generator must run before the sitemap generator. Warn with the suggested order; don't reorder silently.
+  - robots.txt: a `# LLM index: https://<domain>/llms.txt` comment. Derive `<domain>` from the canonical URL, sitemap or env config; ask once if it can't be resolved. If a generator such as Next.js `app/robots.ts` can't express comments, suggest a static `public/robots.txt` instead.
 
-**Safe-auto fixes** (apply without asking content, but batch-confirm once):
-- Add `article:modified_time` Open Graph tag where `dateModified` or git mtime is resolvable.
-- Add `dateModified` to existing `Article` / `BlogPosting` JSON-LD where the value is resolvable from git.
-- Migrate microdata / RDFa to JSON-LD (mechanical transformation — preserve data).
-- Add `@type: "FAQPage"` wrapper around existing Q&A prose where H2/H3 are already question-shaped.
-- Add `<link rel="alternate" type="text/markdown" href="<url>.md">` when a markdown-accessible route exists.
-- Remove context-dependent phrases that clearly break chunking ("as mentioned above" where a backward reference can be replaced with explicit repeat, with user confirmation per change).
-- **llms.txt discovery — `<head>` hint.** If `/llms.txt` is present but the page `<head>` lacks `<link rel="alternate" type="text/markdown" title="llms.txt" href="/llms.txt">`, add it via the framework-idiomatic head API (Next.js Metadata API `alternates.types`, Nuxt `useHead`, Vue + `@unhead/vue` `useHead`, Astro layout `<head>`, SvelteKit `<svelte:head>`, Remix `meta` export, vanilla `<head>`). Skip if already present. Apply to the root layout so every page inherits.
-- **llms.txt discovery — sitemap entry.** If `sitemap.xml` (or the framework generator) exists and lacks a `/llms.txt` entry, add it. For Next.js `app/sitemap.ts` push an entry `{ url: '<base>/llms.txt', changeFrequency: 'monthly', priority: 0.5 }`. For static `sitemap.xml` emit:
-  ```xml
-  <url>
-    <loc>https://<domain>/llms.txt</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  ```
-  Skip if entry already present. **Build-order rule** (flag, don't silently reorder): if both `llms.txt` and the sitemap are build-time generated, the llms.txt generator MUST run before the sitemap generator so the sitemap can read llms.txt's mtime. If the detected build script runs them in the wrong order, surface as a warning with the suggested reordering.
-- **llms.txt discovery — robots.txt comment.** If `/llms.txt` exists, add a comment line to `robots.txt` (or the framework generator): `# LLM index: https://<domain>/llms.txt`. Auto-derive `<domain>` from canonical URL / existing sitemap declaration / environment config. If domain is not resolvable, prompt the user once. Skip if a matching comment is already present. For Next.js `app/robots.ts` emit the comment via a leading `host` / preamble string block, since `MetadataRoute.Robots` doesn't directly support comments — fall back to `public/robots.txt` if the route generator can't express it cleanly.
+**Intent-requiring fixes** (ask the user):
+- **robots.txt AI bot rules.** Ask three questions:
+  1. "Allow AI **training** crawlers? (GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, meta-externalagent, Amazonbot, CCBot, MistralAI-Training, Bytespider)"
+  2. "Allow AI **search** indexers, so the site can be cited in AI search answers? (OAI-SearchBot, Claude-SearchBot, PerplexityBot, Meta-WebIndexer, Amzn-SearchBot, MistralAI-Index, DuckAssistBot)"
+  3. "Allow **user-triggered** fetchers, which load a page when someone asks an assistant about it? (ChatGPT-User, Claude-User, Perplexity-User, meta-externalfetcher, Amzn-User, MistralAI-User, Google-Agent) Several of these say robots.txt may not apply."
 
-**Informational (manual action items — never automated):**
-- **Public directory submission.** Print a manual action item in the terminal summary listing aggregator directories the user should submit `https://<domain>/llms.txt` to. Minimum list: `https://llmstxt.site/submit` and `https://directory.llmstxt.cloud`. These are web forms — do not attempt to automate submission. Emit as an informational line in the summary, not as a file edit.
+  Options for each: Allow all / Block all / Mixed. For Mixed, ask in free text which bots in that group to block. Googlebot, Bingbot and Applebot are left alone unless the user raises them. If robots.txt already has per-bot rules, show them and ask: Keep existing / Replace / Merge.
+- **Retired bot names** (`anthropic-ai`, `Claude-Web`, `FacebookBot`): show each with its current equivalent (`ClaudeBot`, `Claude-User`, `meta-externalagent`) and ask whether to switch. Switching can turn a rule that did nothing into a real block, and can clash with rules already set for the current name, so fold it into the questions above rather than applying it automatically.
+- **Blocks that must hold.** If the user blocks a group and wants it enforced, explain that robots.txt is a request and list where to enforce it (CDN bot or AI-crawler settings, WAF rules matching verified bots, host firewall). Don't write WAF config unless the project already manages it in code and the user asks.
+- **Deployed policy differs from the repo** (from the live check, e.g. a CDN's managed robots.txt or default AI-crawler blocking): explain the difference and where it's configured. Manual.
+- **Opting out of Google's AI features.** Only if the user wants it: explain the options (Search Console "Search generative AI" → Exclude, which keeps normal results; or `nosnippet` / `max-snippet`, which also shortens normal snippets). Google-Extended is not one of them. Changing `nosnippet` or `max-snippet` is done by `/aeo-fix`.
+- **`Content-Signal` lines** 🧪: offer to add a line that matches the answers above (e.g. `Content-Signal: search=yes, ai-input=yes, ai-train=no`). It states a preference; it enforces nothing.
+- **Ineffective tags:** `noai` / `noimageai` meta tags. Explain no major AI provider documents them, and offer the robots.txt rule that expresses the same intent. Keep or remove.
+- **User-agent logic in middleware** that blocks bots: keep or remove. Logic that changes content for bots is cloaking: propose removal.
 
-**Intent-requiring fixes** (prompt user for policy):
-- `robots.txt` AI-bot directives. Prompt separately:
-  - "Do you want to allow AI training bots (GPTBot, ClaudeBot, Google-Extended, CCBot, Applebot-Extended, Bytespider, Amazonbot, FacebookBot, Omgilibot)?"
-    - Options: Allow all / Block all / Mixed (prompt per-bot)
-  - "Do you want to allow AI citation bots (ChatGPT-User, OAI-SearchBot, PerplexityBot, Perplexity-User, Claude-User, Claude-SearchBot)?"
-    - Options: Allow all / Block all / Mixed (prompt per-bot)
-  - If existing `robots.txt` already has per-bot directives, show them and ask to "Keep existing / Replace with new preference / Merge".
+**Content-requiring fixes** (propose and confirm each one):
+- **Organization JSON-LD** with `name`, `url`, `logo`, `description` and `sameAs`. Prompt for the profile URLs (Wikidata, Wikipedia, LinkedIn, GitHub, Crunchbase, official social accounts, review-platform profiles the organization owns). Blank fields are skipped.
+- **Person JSON-LD and author pages.** Prompt for each author's name, role, employer, short bio, credentials and profile URLs. Offer to scaffold `/authors/<slug>` pages with bylines linking to them.
+- **"Reviewed by" lines** for health, finance, legal and safety content: reviewer name and credentials from the user.
+- **Unsourced statistics.** For each one, ask: add a source (the user gives the URL and publisher), replace it with the site's own measured data and a methodology note, or remove the number. Never search for a plausible source and insert it unconfirmed.
+- **Methodology notes** for data pages: sample, dates, method and limitations, drafted from the page and confirmed by the user. Offer `Dataset` JSON-LD 🧪 (used by Google Dataset Search, not Google Search).
+- **Press coverage.** Link each "as featured in" logo to the article (URLs from the user), or build a Press page listing headline, publication and date.
+- **Testimonials and case studies.** Ask for attribution (name, role, company) the user has permission to publish; leave anonymous ones as they are and note them.
+- **Review profiles.** Ask for the URLs of the business's profiles on review platforms and directories; add them to the footer or About page and to `Organization.sameAs` where they're the organization's own profiles.
+- **About page entity definition.** Draft the opening lines (who, what, where, since when) from existing site content and confirm.
+- **Misleading superlatives.** Propose a specific, supportable alternative or ask for the evidence.
 
-**Content-requiring fixes** (propose + confirm per change):
-- `Person` schema `sameAs` URLs — prompt for:
-  - Author name
-  - LinkedIn URL
-  - GitHub URL (tech profile)
-  - ORCID (researchers)
-  - Twitter/X, Mastodon
-  - Wikipedia/Wikidata if the entity has one
-- `Organization` schema `sameAs`:
-  - Wikipedia / Wikidata entry
-  - LinkedIn company page
-  - Crunchbase
-  - GitHub org
-  - Official social profiles
-- TL;DR / summary block copy for long-form articles (propose from content; accept/edit/skip).
-- FAQPage question-answer pairs when the page is not yet Q&A structured (propose extracted pairs from prose; require approval).
+**Larger refactors** (plan first, confirm per file):
+- Client-only content pages → server-rendered or static.
+- **Topic hubs.** For each thin core topic, propose a hub page outline built from the existing pages (title, one-paragraph intro from existing copy, grouped links), plus the internal links to add: hub → subpages, subpages → hub, and between close siblings.
+- Orphan pages: propose where each should be linked from.
+- Thin or duplicate pages: propose merging into the stronger page with a redirect.
+- Context-dependent paragraphs and walls of text: rewrite so each paragraph stands on its own and covers one idea. Don't fragment content into tiny pieces.
+- Remove cloaking.
 
-**Larger refactors** (propose plan first, confirm per file):
-- Convert client-only content pages to SSR/static.
-- Restructure prose to self-contained paragraphs (split long or merge fragmented; show diffs).
-- Convert keyword-style H2/H3 to conversational question-form headings.
-- Add `<section>` boundaries to improve chunking.
+**Manual action items** (print in the summary, never automate):
+- Off-site inconsistencies from the snapshot: third-party profiles with an old name, wrong description or outdated pricing.
+- Wikidata item (if the organization meets Wikidata's notability policy), review platforms, industry directories, independent coverage, disclosed community participation.
+- Track citations: Bing Webmaster Tools AI Performance, Search Console's Generative AI performance report, server logs.
+- llms.txt directory submissions: https://llmstxt.site and https://directory.llmstxt.cloud (web forms).
+- CDN or host bot settings, if the live check found differences.
 
 ### Step 5: Apply Fixes
 
 **Safe-auto:**
-1. Summarize all auto-fixes grouped by file.
-2. Ask user once: "Apply <N> safe auto-fixes across <M> files?"
-3. On confirm (or `--dry-run`, just display): edit files.
+1. Group the diffs by file.
+2. Ask once: "Apply <N> safe fixes across <M> files?"
+3. On confirm, edit (in `--dry-run`, only display).
 
 **Intent-requiring (robots.txt):**
-1. Detect existing `robots.txt` location (`public/robots.txt`, project root, or framework convention like `app/robots.ts` for Next.js).
-2. Read existing directives.
-3. Prompt the two separate questions (training bots, citation bots).
-4. Show the proposed new `robots.txt` content as a diff.
-5. Confirm.
-6. For frameworks with generated robots (Next.js `app/robots.ts`), emit the framework-appropriate source rather than a raw `robots.txt`. Example for Next.js:
+1. Find the robots source (`public/robots.txt`, project root, `static/robots.txt`, or a generator such as `app/robots.ts`).
+2. Read the existing rules.
+3. Ask the three questions.
+4. Show the proposed robots.txt as a diff and confirm.
+5. For generated robots files, emit framework source rather than a raw file. Next.js example (training blocked; AI search and user-triggered fetchers allowed):
    ```ts
    // app/robots.ts
    import type { MetadataRoute } from 'next'
+
+   const training = ['GPTBot', 'ClaudeBot', 'Google-Extended', 'Applebot-Extended', 'meta-externalagent', 'Amazonbot', 'CCBot', 'MistralAI-Training', 'Bytespider']
+   const aiSearch = ['OAI-SearchBot', 'Claude-SearchBot', 'PerplexityBot', 'Meta-WebIndexer', 'Amzn-SearchBot', 'MistralAI-Index', 'DuckAssistBot']
+   const userFetchers = ['ChatGPT-User', 'Claude-User', 'Perplexity-User', 'meta-externalfetcher', 'Amzn-User', 'MistralAI-User', 'Google-Agent']
+
    export default function robots(): MetadataRoute.Robots {
      return {
        rules: [
          { userAgent: '*', allow: '/' },
-         { userAgent: 'GPTBot', disallow: '/' },           // training: blocked
-         { userAgent: 'ClaudeBot', disallow: '/' },        // training: blocked
-         { userAgent: 'Google-Extended', disallow: '/' },  // training: blocked
-         { userAgent: 'CCBot', disallow: '/' },            // training: blocked
-         { userAgent: 'ChatGPT-User', allow: '/' },        // citation: allowed
-         { userAgent: 'OAI-SearchBot', allow: '/' },       // citation: allowed
-         { userAgent: 'PerplexityBot', allow: '/' },       // citation: allowed
-         { userAgent: 'Perplexity-User', allow: '/' },     // citation: allowed
-         { userAgent: 'Claude-User', allow: '/' },         // citation: allowed
-         { userAgent: 'Claude-SearchBot', allow: '/' },    // citation: allowed
+         { userAgent: training, disallow: '/' },
+         { userAgent: aiSearch, allow: '/' },
+         { userAgent: userFetchers, allow: '/' },
        ],
        sitemap: 'https://<domain>/sitemap.xml',
      }
    }
    ```
 
-**Content-requiring (sameAs, TL;DR, FAQ copy):**
-1. Use AskUserQuestion to collect each content input.
-2. For each finding, present the proposed code/content + target file location:
-   ```
-   File: app/authors/charles.tsx
-   Adding Person schema sameAs.
+**Content-requiring:** collect inputs with AskUserQuestion (free text through "Other" where needed), then show each proposal:
+```
+File: app/about/page.tsx
+Adding Organization JSON-LD with sameAs.
 
-   Please provide profile URLs (leave blank to skip):
-     LinkedIn:
-     GitHub:
-     Twitter/X:
-     ORCID:
-     Wikipedia/Wikidata:
+Profile URLs (blank to skip):
+  Wikidata:
+  LinkedIn:
+  GitHub:
+  Crunchbase:
+  Other:
 
-   Proposed JSON-LD:
-     <preview>
+Proposed JSON-LD:
+  <preview>
 
-   (a) accept, (e) edit, (s) skip
-   ```
-3. On edit: accept free-text input for the specific field.
-4. On accept: apply via framework-idiomatic API.
+(a) accept  (e) edit  (s) skip
+```
 
-**Larger refactors:**
-1. Show the proposed diff.
-2. Ask for explicit per-file confirmation.
-3. Skip any the user declines.
+**Larger refactors:** show the plan and per-file diffs; apply only what the user confirms.
 
 ### Step 6: `--dry-run` Mode
 
-If `--dry-run` flag provided:
-- Perform all classification and proposals as usual.
-- Print the diff for every change that would be applied.
-- Write nothing to disk.
-- End with: "Dry run complete. N changes would be applied. Re-run without `--dry-run` to apply."
+- Classify and propose as usual.
+- Print every diff that would be applied.
+- Write nothing.
+- End with: "Dry run complete. <N> changes would be applied. Re-run without `--dry-run` to apply."
 
 ### Step 7: Framework-Idiomatic Application
 
-Translate raw fixes into the detected framework's idiom:
-
 **Next.js (App Router):**
-- `robots.txt` → `app/robots.ts` with per-bot rules (as above).
-- `dateModified` / `article:modified_time` → `generateMetadata()` with `openGraph.modifiedTime` + `other: { 'article:modified_time': ... }`.
-- JSON-LD → `<script type="application/ld+json">` rendered in server component with `dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}`.
-- FAQPage → inject at page level for pages with Q&A content.
-- Markdown companion route → `app/<route>.md/route.ts`.
+- robots → `app/robots.ts` (as above); sitemap → `app/sitemap.ts`.
+- Dates → `generateMetadata()` with `openGraph.modifiedTime`; JSON-LD `dateModified`.
+- JSON-LD → `<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, '\\u003c') }} />` in a server component (the replace stops text in the data from closing the script tag).
+- Author pages → `app/authors/[slug]/page.tsx` with `generateStaticParams`.
 
-**Next.js (Pages Router):**
-- Use `next/head` with explicit `<Head>` tags, `public/robots.txt` for robots.
+**Next.js (Pages Router):** `next/head` for meta and JSON-LD; `public/robots.txt`.
 
-**Nuxt:**
-- `useSeoMeta({ articleModifiedTime: ... })` in `<script setup>`.
-- `useHead({ script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(ld) }] })`.
-- `public/robots.txt` or server route.
+**Nuxt:** `useSeoMeta({ articleModifiedTime })`; `useHead({ script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(ld) }] })`; `@nuxtjs/robots` config or `public/robots.txt`.
 
-**TanStack Start:**
-- Route-level `head: () => ({ meta: [{ name: 'article:modified_time', content: ... }] })`.
-- JSON-LD injected via route `scripts` or a dedicated component rendered into head.
+**TanStack Start:** route `head: () => ({ meta: [...], scripts: [{ type: 'application/ld+json', children: JSON.stringify(ld) }] })`.
 
-**Astro:**
-- Per-page layout `<head>` for JSON-LD.
-- Content collection frontmatter for `pubDate` / `updatedDate`.
-- `public/robots.txt` static.
-- `src/pages/llms.txt.ts` for dynamic `llms.txt` (direct user to `/geo-llms-txt`).
+**Astro:** layout `<head>` for JSON-LD; content collection `updatedDate`; `public/robots.txt` or `src/pages/robots.txt.ts`.
 
-**SvelteKit:**
-- `<svelte:head>` in `+layout.svelte` or `+page.svelte`.
-- `src/routes/robots.txt/+server.ts` or static `static/robots.txt`.
+**SvelteKit:** `<svelte:head>` in `+layout.svelte` / `+page.svelte`; `src/routes/robots.txt/+server.ts` or `static/robots.txt`.
 
-**Remix:**
-- `meta` export per route; resource route for `robots.txt` generation.
+**Remix / React Router:** `meta` export; resource route for robots.txt.
 
-**Vanilla HTML:**
-- Direct `<head>` edits; raw `robots.txt` at web root.
+**Vanilla HTML:** direct `<head>` edits; robots.txt at the web root.
 
-### Step 8: Generate or Update Supporting Files
-
-Offer these when missing:
-
-**`robots.txt`** (framework-appropriate location) — generated from the intent prompts in Step 4.
-
-**Author page with Person schema** — if audit found missing author attribution on blog posts, offer to scaffold `/authors/<slug>` route with full Person JSON-LD including `sameAs`.
-
-**About / Contact / Privacy page stubs** — if audit flagged missing source-reputation signals, offer scaffolds tailored to the framework.
-
-**Do not generate `llms.txt` here.** Tell the user: "Run `/geo-llms-txt` to generate or update llms.txt and llms-full.txt."
-
-### Step 9: Terminal Summary
-
-After fixes applied:
+### Step 8: Terminal Summary
 
 ```
 GEO Fix Complete
 ================
-Applied: <N> auto-fixes, <M> proposed fixes accepted
-Skipped: <K> (user declined) / <X> (require manual work)
+Applied:  <N> safe fixes, <M> proposals accepted
+Skipped:  <K> declined / <X> need manual work
 
 robots.txt: <created | updated | unchanged>
-  Training bots allowed:  <list or "none">
-  Citation bots allowed:  <list or "none">
+  Training bots allowed:        <list or "none">
+  AI search bots allowed:       <list or "none">
+  User-triggered bots allowed:  <list or "none">
+  Note: <ChatGPT-User, Perplexity-User, ... may not follow robots.txt | n/a>
 
 Changes by category:
-  AI Crawler Access:       <count>
-  Citation-Worthiness:     <count>
-  AI-Friendly Schema:      <count>
-  Content Structure:       <count>
-  Content Freshness:       <count>
-  Entity Optimization:     <count>
-  Technical Accessibility: <count>
+  AI Crawler Access:              <n>
+  Technical AI Accessibility:     <n>
+  Topical Authority:              <n>
+  Original Research & Evidence:   <n>
+  Expert Perspectives & Authorship: <n>
+  External Validation:            <n>
+  Entity Clarity:                 <n>
+  Extractable Passages:           <n>
+  Content Freshness:              <n>
+  llms.txt & Markdown Access:     <n>
 
-llms.txt discovery signals:
-  <head> link[rel=alternate]:  <added | present | n/a — no llms.txt>
-  sitemap /llms.txt entry:     <added | present | n/a — no sitemap>
-  robots.txt comment:          <added | present | n/a — no robots.txt>
-  Build-order warning:         <none | llms.txt must run before sitemap in <script>>
+Manual next steps:
+  - <off-site fixes from the snapshot>
+  - <review platforms / directories / Wikidata>
+  - <CDN or host bot settings>
+  - Track citations: Bing Webmaster Tools AI Performance, Search Console Generative AI report
+  - llms.txt directories: https://llmstxt.site, https://directory.llmstxt.cloud
 
-Manual next step — submit llms.txt to public directories:
-  - https://llmstxt.site/submit
-  - https://directory.llmstxt.cloud
-  (Web forms — manual action, not automated.)
-
-Recommended next: run /geo-audit again to verify improvements.
-To generate/update llms.txt: run /geo-llms-txt.
-For traditional SEO: run /seo-fix (ai-seo plugin).
+Next: run /geo-audit again to confirm.
+Related: /geo-llms-txt for llms.txt, /aeo-fix (ai-aeo) for direct-answer fixes and snippet controls.
 ```
 
-If `--dry-run`: state "DRY RUN — no files modified" and show all would-be diffs.
+In `--dry-run`, start with "DRY RUN — no files modified".
 
 ## Safety Rules
 
-- **Never guess content.** Meta descriptions, TL;DRs, FAQ question-answer pairs, and `sameAs` URLs require user approval.
-- **Never overwrite existing AI-bot policies silently.** If `robots.txt` has per-bot directives, show and confirm before replacing.
-- **Never fabricate identity URLs** (LinkedIn profiles, Wikipedia entries) — prompt the user.
-- **Never serve different content to bots than humans.** Refuse any pattern that checks `User-Agent` and varies rendered content.
-- **Never disable lint/format hooks** while editing. Report failures and stop.
-- **Preserve file formatting** (indent style, quote style). Read existing code before editing.
-- **Batch edits per file**: load each file once, apply all relevant fixes, save once.
+- **Never invent identity or evidence.** Profile URLs, authors, credentials, statistics, sources, quotes, reviews, testimonials and press come from the user or the site.
+- **Never change bot policies silently.** Show existing rules and confirm.
+- **Never serve bots different content than people.**
+- **Never fake dates.**
+- **Never disable lint or format hooks.** If a hook fails, report it and stop.
+- **Preserve formatting** (indentation, quotes). Read a file before editing it.
+- **Batch edits per file**: load once, apply all accepted fixes, save once.
 
 ## Examples
 
-**Example 1: Add AI-bot directives to Next.js `app/robots.ts` (intent-requiring)**
+**Example 1: robots.txt (intent-requiring)**
 
-Prompt:
+Existing rules block GPTBot and OAI-SearchBot. The user answers: training = block, AI search = allow, user-triggered = allow.
+
+```diff
+ User-agent: GPTBot
+ Disallow: /
+
+-User-agent: OAI-SearchBot
+-Disallow: /
++User-agent: OAI-SearchBot
++Allow: /
++
++User-agent: ClaudeBot
++Disallow: /
++
++User-agent: Claude-SearchBot
++Allow: /
 ```
-Question 1: Do you want to ALLOW AI training bots?
-(GPTBot, ClaudeBot, Google-Extended, CCBot, Applebot-Extended, Bytespider, Amazonbot, FacebookBot, Omgilibot)
+Summary note: "OpenAI says robots.txt may not apply to ChatGPT-User. If you need user-triggered fetches blocked, use your CDN's bot rules."
 
-  (a) Allow all training bots
-  (b) Block all training bots
-  (c) Mixed (I'll pick per-bot)
+**Example 2: Unsourced statistic (content-requiring)**
 
-Question 2: Do you want to ALLOW AI citation bots?
-(ChatGPT-User, OAI-SearchBot, PerplexityBot, Perplexity-User, Claude-User, Claude-SearchBot)
-
-  (a) Allow all citation bots
-  (b) Block all citation bots
-  (c) Mixed (I'll pick per-bot)
 ```
+File: content/blog/reporting-costs.md:12
+"Most teams waste a third of their week on manual reporting."
 
-User selects: training=block, citation=allow.
-
-Apply:
-```ts
-// app/robots.ts
-import type { MetadataRoute } from 'next'
-
-export default function robots(): MetadataRoute.Robots {
-  return {
-    rules: [
-      { userAgent: '*', allow: '/' },
-      // Training crawlers — blocked (user preference)
-      { userAgent: 'GPTBot', disallow: '/' },
-      { userAgent: 'ClaudeBot', disallow: '/' },
-      { userAgent: 'Google-Extended', disallow: '/' },
-      { userAgent: 'Applebot-Extended', disallow: '/' },
-      { userAgent: 'CCBot', disallow: '/' },
-      { userAgent: 'Bytespider', disallow: '/' },
-      { userAgent: 'Amazonbot', disallow: '/' },
-      { userAgent: 'FacebookBot', disallow: '/' },
-      { userAgent: 'Omgilibot', disallow: '/' },
-      // Answer / citation crawlers — allowed (user preference)
-      { userAgent: 'ChatGPT-User', allow: '/' },
-      { userAgent: 'OAI-SearchBot', allow: '/' },
-      { userAgent: 'PerplexityBot', allow: '/' },
-      { userAgent: 'Perplexity-User', allow: '/' },
-      { userAgent: 'Claude-User', allow: '/' },
-      { userAgent: 'Claude-SearchBot', allow: '/' },
-    ],
-    sitemap: 'https://<domain>/sitemap.xml',
-  }
-}
+This number has no source. Choose:
+  (a) Add a source  → publisher, year and URL
+  (b) Use our own data → figure, sample and how it was measured
+  (c) Remove the number
 ```
 
-**Example 2: Add Person schema with sameAs (content-requiring)**
+**Example 3: Organization with sameAs (content-requiring)**
 
-Prompt collects:
-- LinkedIn: https://www.linkedin.com/in/charles-jones
-- GitHub: https://github.com/charlesjones-dev
-- Twitter: (blank)
-- Wikipedia: (blank)
-
-Apply in Next.js App Router:
+User supplies LinkedIn and GitHub; leaves Wikidata blank.
 ```tsx
-// app/authors/charles-jones/page.tsx
-const personLd = {
+const orgLd = {
   '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: 'Charles Jones',
-  url: 'https://charlesjones.dev',
-  jobTitle: 'Full-stack developer',
+  '@type': 'Organization',
+  name: 'Example Co',
+  url: 'https://example.com',
+  logo: 'https://example.com/logo.png',
   sameAs: [
-    'https://www.linkedin.com/in/charles-jones',
-    'https://github.com/charlesjones-dev',
-  ],
-}
-
-export default function Page() {
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }}
-      />
-      {/* ... */}
-    </>
-  )
-}
-```
-
-**Example 3: Add FAQPage to Q&A-structured post (safe-auto with confirmation)**
-
-Detected H2s are already question-shaped. Wrap the existing prose with FAQPage JSON-LD without modifying the visible content:
-
-```tsx
-const faqLd = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: [
-    { '@type': 'Question', name: 'How do I configure X?',
-      acceptedAnswer: { '@type': 'Answer', text: '<first paragraph under this H2>' } },
-    { '@type': 'Question', name: 'What does Y do?',
-      acceptedAnswer: { '@type': 'Answer', text: '<first paragraph under this H2>' } },
+    'https://www.linkedin.com/company/<slug>',
+    'https://github.com/<org>',
   ],
 }
 ```
 
-Confirm the extracted answer text matches the user's intent before writing.
-
-**Example 4: Add dateModified + article:modified_time (safe-auto)**
-
-Resolve modified time from git mtime of the content file. In Next.js App Router:
+**Example 4: dateModified from git (safe-auto)**
 
 ```tsx
 // app/blog/[slug]/page.tsx
 export async function generateMetadata({ params }): Promise<Metadata> {
-  const post = await getPost(params.slug)
+  const post = await getPost(params.slug) // modifiedTime from the file's last commit
   return {
     openGraph: {
       type: 'article',
       publishedTime: post.publishedTime,
-      modifiedTime: post.modifiedTime, // ← added
-    },
-    other: {
-      'article:modified_time': post.modifiedTime, // ← added for redundancy
+      modifiedTime: post.modifiedTime,
     },
   }
 }
-
-// And in the JSON-LD:
-const articleLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BlogPosting',
-  headline: post.title,
-  datePublished: post.publishedTime,
-  dateModified: post.modifiedTime, // ← added
-  author: { '@type': 'Person', name: post.author, sameAs: [...] },
-}
 ```
+
+**Example 5: Topic hub (larger refactor)**
+
+Twelve posts about one topic link only to the homepage. Proposal: `app/guides/<topic>/page.tsx` with an intro taken from the strongest post, the twelve posts grouped under three subtopic headings, and a "Part of the <topic> guide" link added to each post. Shown as a plan, then per-file diffs.
 
 ## Quality Assurance Checklist
 
-Before finalizing:
-
-- [ ] Latest audit located and parsed
-- [ ] Framework detected; all fixes use idiomatic APIs
-- [ ] Context7 mode stated in terminal
-- [ ] Training-bot and citation-bot prompts kept separate
-- [ ] No `sameAs` URLs fabricated
-- [ ] Existing `robots.txt` directives shown before overwrite
-- [ ] Safe-auto fixes batched and confirmed once
-- [ ] Content-requiring fixes confirmed individually
-- [ ] All JSON-LD (no microdata / RDFa)
-- [ ] No cloaking patterns introduced
-- [ ] `--dry-run` produces diffs only, no writes
-- [ ] User directed to `/geo-llms-txt` for llms.txt work
-- [ ] User prompted to re-run `/geo-audit` to verify
+- [ ] Latest audit located; pre-1.2.0 reports flagged
+- [ ] Framework and hosting detected; all fixes idiomatic
+- [ ] Context7 mode stated
+- [ ] Three separate bot-group questions asked; existing rules shown before changes
+- [ ] robots.txt limits explained for user-triggered fetchers
+- [ ] Google-Extended not used as an AI Overviews opt-out
+- [ ] No profile URL, author, credential, statistic, source, quote, review or press item invented
+- [ ] Dates from real changes only
+- [ ] All JSON-LD; no cloaking introduced
+- [ ] `--dry-run` wrote nothing
+- [ ] Manual action items printed
+- [ ] User pointed to `/geo-llms-txt`, `/aeo-fix` and a re-run of `/geo-audit`

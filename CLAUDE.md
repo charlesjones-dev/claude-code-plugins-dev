@@ -157,7 +157,7 @@ When adding new features or fixing bugs in a plugin, follow this workflow:
 These rules came from an AI slop audit (October 2026). They apply to READMEs, manifest descriptions, and skill and agent descriptions:
 
 - Open plugin descriptions and README taglines with what the plugin does. Don't write "AI-powered" (every plugin name already starts with `ai-`) or use the "Noun phrase - Clause" shape.
-- No emoji in headings. Functional markers are fine: 🧪 experimental flags in ai-geo, 🗑️ status in the Deprecated & Removed table, and icons that appear in real program output.
+- No emoji in headings. Functional markers are fine: 🧪 experimental flags in ai-geo and ai-aeo, 🗑️ status in the Deprecated & Removed table, and icons that appear in real program output.
 - No unmeasured figures: no "Time Savings" sections, estimated hours saved, or percentages nobody measured.
 - No roadmaps of skills that don't exist.
 - No slogan closers such as "Built with ❤️ for the Claude Code community". A plugin README's Contributing section is one line: "Bug reports and fixes are welcome. See [CONTRIBUTING.md](../../CONTRIBUTING.md)."

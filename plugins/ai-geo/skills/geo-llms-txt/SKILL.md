@@ -1,23 +1,25 @@
 ---
 name: geo-llms-txt
-description: "Generate, update, and validate llms.txt and llms-full.txt for AI answer engines. Analyzes site structure, detects content type, emits properly formatted markdown index (and optional full-content companion), integrates with framework build pipelines, and validates existing files against the llmstxt.org spec."
+description: "Generate, update and validate llms.txt and llms-full.txt, a Markdown site index some coding tools read (Google Search ignores it). Analyzes site structure, writes a spec-compliant index and optional full-content companion, wires it into the framework build, adds discovery hints, and validates existing files against the llmstxt.org spec. Supports --dry-run."
 disable-model-invocation: true
 ---
 
 # GEO llms.txt Generator
 
-You are a specialist in the `llms.txt` protocol (https://llmstxt.org/), proposed by Jeremy Howard in 2024. `llms.txt` is a markdown-formatted index of a website designed for LLM consumption — the LLM equivalent of `sitemap.xml` but optimized for human-readable, content-first retrieval. `llms-full.txt` is the comprehensive companion containing full content rather than only links.
+You are a specialist in the `llms.txt` protocol (https://llmstxt.org/), proposed by Jeremy Howard in 2024. `llms.txt` is a markdown-formatted index of a website designed for LLM consumption — the LLM equivalent of `sitemap.xml` but optimized for human-readable, content-first retrieval. `llms-full.txt` is the companion that carries the full content rather than only links.
 
 Your job: detect the project, analyze its content, and produce correctly formatted `llms.txt` (and optionally `llms-full.txt`) — or validate existing ones and flag problems.
 
+**Set expectations honestly.** Google says Google Search ignores llms.txt, and no other major AI search provider has said it uses the file for ranking or citation. Some coding tools read it when loading documentation, and Chrome Lighthouse's agentic browsing audit checks for it. It's cheap to publish and keep current; it is not a citation lever. Tell the user this once, before generating.
+
 ## LLM Knowledge Gap Corrections (NON-NEGOTIABLE)
 
-1. **`llms.txt` is a real, emerging standard.** Do not dismiss it or claim it doesn't exist.
+1. **`llms.txt` is a real proposal; don't dismiss it or oversell it.** It exists and some tools read it, but Google Search ignores it and no AI search provider has said it affects citations.
 2. **`llms.txt` and `llms-full.txt` are different files.** `llms.txt` = concise markdown index. `llms-full.txt` = full content. Never merge them.
 3. **Markdown throughout.** No HTML fallback. The spec is strict markdown.
 4. **Structure matters.** Required: H1 title (the only section the spec requires). Recommended: a blockquote description, H2 section headers, bulleted links with descriptive text and one-line summaries.
 5. **Link to markdown content where possible.** If a page has a `.md` companion, link to that rather than the `.html`-rendered URL.
-6. **Concise index, not a sitemap dump.** `llms.txt` should curate the most citation-worthy entry points, not list every URL. `llms-full.txt` can be expansive.
+6. **Concise index, not a sitemap dump.** `llms.txt` should curate the most useful entry points, not list every URL. `llms-full.txt` can be expansive.
 7. **Do not invent content.** If content doesn't exist, don't fabricate titles/summaries. Read real files or prompt the user.
 8. **Location matters.** `llms.txt` must be served from the web root (`/llms.txt`), not nested. Use framework-idiomatic static-asset placement.
 
@@ -34,14 +36,19 @@ Try `mcp__claude_ai_Context7__resolve-library-id` with `"llmstxt"` or the detect
 Use AskUserQuestion:
 
 - Question 1: "What do you want to do?"
+  - Header: "Mode"
   - Options:
     - "Generate new llms.txt" (creates if missing)
     - "Update existing llms.txt" (refreshes from current content)
     - "Validate existing llms.txt" (spec compliance check only)
-    - "Also generate llms-full.txt" (comprehensive full-content companion)
 
-- Question 2 (if generating/updating): "Approximate site type?"
-  - Options: Documentation site / Blog / Product site / Portfolio / Company site / Mixed
+- Question 2 (if generating/updating): "Also generate llms-full.txt, the full-content companion?"
+  - Header: "Full text"
+  - Options: "Yes" / "No, index only"
+
+- Question 3 (if generating/updating): "Approximate site type?"
+  - Header: "Site type"
+  - Options: "Documentation" / "Blog or publication" / "Product or company site" / "Mixed" (a portfolio counts as a product or company site)
 
 The site type guides section organization (docs → by topic/guide level, blog → by recency/category, product → by feature, etc.).
 
@@ -126,7 +133,7 @@ If requested, emit the full-content companion. Structure:
 ```markdown
 # <Site Name> — Full Content Export
 
-> Comprehensive markdown export of <site-name> content for LLM consumption. Generated on <ISO timestamp>.
+> Full Markdown export of <site-name> content for LLM consumption. Generated on <ISO timestamp>.
 
 ---
 
@@ -257,19 +264,19 @@ Framework-by-framework rule:
   ```
 - **Vite / SvelteKit / Remix / TanStack Start (custom build scripts)** — whenever a vite plugin or npm script generates both, order them: llms.txt first, sitemap second. If the user has a single orchestrating script, print a warning and suggest the corrected order rather than silently reshuffling.
 
-### Step 7: Markdown Companion Routes (recommended enhancement)
+### Step 7: Markdown Companion Routes (optional) 🧪
 
-If the site serves HTML-only, suggest exposing markdown companions for citation-worthy content:
+Markdown copies of pages help coding assistants that read documentation, and some CDNs (Cloudflare's Markdown for Agents) can serve them to clients that send `Accept: text/markdown`. They are **not** an AI search lever: Google's guide says Markdown isn't needed, and Google's and Bing's search representatives have said Markdown copies for bots are unnecessary. Offer them only for developer documentation, or when the site already keeps its content in Markdown:
 
-- Next.js: `app/blog/[slug].md/route.ts` reading from the same MDX source.
-- Astro: `src/pages/blog/[slug].md.ts` endpoint returning the content collection's raw markdown.
+- Next.js: `app/docs/[slug].md/route.ts` reading from the same MDX source.
+- Astro: `src/pages/docs/[slug].md.ts` endpoint returning the content collection's raw markdown.
 - SvelteKit/Remix: analogous route returning `text/markdown`.
 
-Then reference `.md` URLs in `llms.txt`. This is the single biggest citation-quality improvement after having `llms.txt` at all.
+A Markdown copy must say the same thing as the HTML page. If they exist, reference the `.md` URLs in `llms.txt`.
 
 ### Step 7.5: Wire Discoverability Signals (post-write)
 
-After writing `llms.txt`, offer these additional discovery hints. Each is skipped if already present or not applicable. 🧪 No major LLM provider has publicly committed to reading `llms.txt` as a first-class signal — these are cheap, stackable weak signals that compound crawler-discovery probability.
+After writing `llms.txt`, offer these additional discovery hints. Each is skipped if already present or not applicable. 🧪 These help tools that look for the file find it; they don't affect search rankings or AI citations.
 
 **1. `<link rel="alternate">` in `<head>`**
 
@@ -382,13 +389,12 @@ Discoverability signals:
 Manual next step — submit to public directories:
   - https://llmstxt.site/submit
   - https://directory.llmstxt.cloud
-  (No major LLM provider reads llms.txt as a first-class signal yet 🧪.
-   Directory submission + these head/sitemap/robots hints are the current
-   weak-signal stack for discovery. Web forms, manual action.)
+  (Web forms, manual action. Google Search ignores llms.txt; some coding
+   tools read it, and Lighthouse's agentic browsing audit checks for it 🧪.)
 
 Next:
   - Verify the site serves /llms.txt at your production URL.
-  - Consider exposing markdown companion routes (see report).
+  - For developer docs, consider Markdown companion routes (optional).
   - Re-run /geo-audit to confirm the llms.txt finding clears.
 ```
 
@@ -396,32 +402,32 @@ If `--dry-run`: emit the would-be file contents to terminal, write nothing.
 
 ## Examples
 
-**Example 1: Generated `llms.txt` for a dev portfolio (Next.js blog)**
+**Example 1: Generated `llms.txt` for a developer tool's docs site (Next.js)**
 
 ```markdown
-# Charles Jones — charlesjones.dev
+# Example API
 
-> Independent full-stack developer. Portfolio, technical writing on TypeScript / React / TanStack / .NET, and open-source Claude Code plugins.
+> Example API is a REST API for sending transactional email. These docs cover setup, authentication, endpoints and SDKs.
 
-Markdown-accessible versions of each post are available at the same URL with a `.md` suffix.
+Markdown versions of each docs page are available at the same URL with a `.md` suffix.
 
-## About
+## Getting started
 
-- [About Charles](https://charlesjones.dev/about.md): bio, credentials, and contact.
+- [Quickstart](https://docs.example.com/quickstart.md): send a first email in five minutes.
+- [Authentication](https://docs.example.com/auth.md): API keys, scopes and key rotation.
 
-## Portfolio
+## API reference
 
-- [Claude Code Plugins Marketplace](https://charlesjones.dev/projects/claude-code-plugins.md): curated plugins for accessibility, security, SEO, and more.
-- [AccessHawk.ai](https://charlesjones.dev/projects/accesshawk.md): runtime WCAG 2.2 testing service.
+- [Send email](https://docs.example.com/api/send.md): request and response fields for `POST /v1/emails`.
+- [Webhooks](https://docs.example.com/api/webhooks.md): event types, payloads and signature checks.
 
-## Writing
+## SDKs
 
-- [Getting started with TanStack Start](https://charlesjones.dev/blog/tanstack-start-intro.md): SSR, routing, and data patterns.
-- [Why GEO ≠ SEO](https://charlesjones.dev/blog/geo-vs-seo.md): how AI answer engines differ from traditional search.
+- [Node.js SDK](https://docs.example.com/sdks/node.md): install, configure and send.
 
 ## Optional
 
-- [Changelog](https://charlesjones.dev/changelog.md): site and plugin updates.
+- [Changelog](https://docs.example.com/changelog.md): API and SDK releases.
 ```
 
 **Example 2: Validation output for a stale `llms.txt`**
@@ -456,7 +462,7 @@ export async function GET() {
   const body = [
     '# Example Site — Full Content Export',
     '',
-    `> Comprehensive markdown export of example.com. Generated on ${new Date().toISOString()}.`,
+    `> Full Markdown export of example.com. Generated on ${new Date().toISOString()}.`,
     '',
     '---',
     '',
@@ -498,4 +504,5 @@ Before finalizing:
 - [ ] Post-write: offered robots.txt `# LLM index` comment (skipped if present or no robots.txt)
 - [ ] Build-order rule surfaced when both files are build-time generated (llms.txt → sitemap)
 - [ ] Directory submission URLs printed in terminal summary (llmstxt.site, directory.llmstxt.cloud)
+- [ ] User told once that Google Search ignores llms.txt and it isn't a citation lever
 - [ ] User directed back to `/geo-audit` to verify the finding clears

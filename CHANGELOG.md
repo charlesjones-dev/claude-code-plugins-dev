@@ -7,6 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.10.0] - 2026-10-06
+
+AEO and GEO are now separate plugins. AEO (Answer Engine Optimization) is about being *the* direct answer in a featured snippet, voice reply or answer box. GEO (Generative Engine Optimization) is about being cited and mentioned inside AI answers that draw on many sources. ai-geo's direct-answer checks moved to the new ai-aeo plugin, and both plugins were checked against vendor documentation current as of October 2026.
+
+### Added
+
+#### AI-AEO Plugin (new — v1.0.0)
+
+- `/aeo-audit` — scores how ready answer pages are to be lifted as the direct answer, across nine weighted categories: answer-first formatting, question headings, concise definitions, real lists and tables, snippet eligibility controls, FAQ sections and structured data, voice and assistant readiness, answer trust signals, and technical accessibility. Writes timestamped reports to `docs/aeo-audit/` with a `README.md` index (trend indicators 📈 📉 ➡️), `latest.md` and an optional `.gitignore` entry, the same way `/geo-audit` does.
+  - Searches every source of `noindex`, `nosnippet`, `max-snippet`, `data-nosnippet` and Bing `nocache` / `noarchive`: meta tags, framework metadata APIs, header config, middleware and robots.txt. Lists the Search Console "Search generative AI" setting as a manual check.
+  - Flags accordions that render answers only after a click (`{open && …}`, `v-if`, `{#if}`), main answers collapsed by default, and lists or tables drawn with divs.
+  - Optional live URL check: fetches up to ten deployed pages to confirm answers are in the served HTML and to read the robots directives actually sent.
+- `/aeo-fix` — applies fixes from the latest audit: safe fixes as one batch, a keep/remove/narrow question for every snippet control, answer-first rewrites and question headings drawn only from the page's own text, and refactors for click-to-load accordions and CSS-grid tables. Supports `--dry-run`.
+- `/aeo-questions` — builds a question map from the site's own headings plus typed questions, a Search Console or Bing Webmaster Tools export, or web search suggestions (each linked to its source). Merges duplicates, assigns one owner page per question, and marks each answered first, buried, partial, missing or competing. `/aeo-audit` scores question coverage against the latest map.
+- `/aeo-faq` — builds, updates or validates visible FAQ sections, with optional FAQPage or QAPage JSON-LD rendered from the same data. Drafts answers only from site content or the user, and keeps the main answers open.
+- Marketplace metadata version bumped `2.9.0` → `2.10.0` (new plugin).
+
+### Changed
+
+#### AI-GEO Plugin (v1.1.1 → v1.2.0)
+
+- **`/geo-audit` categories rebuilt around GEO** — AI Crawler Access, Technical AI Accessibility, Topical Authority (new), Original Research & Evidence (new), Expert Perspectives & Authorship, External Validation (new), Entity Clarity, Extractable Passages, Content Freshness, and llms.txt & Markdown Access. FAQPage, speakable, question headings, definitional openings and conversational heading checks moved to `/aeo-audit`. Scores aren't comparable with earlier audits; the index marks the first 1.2.0 run with 🔄 instead of a trend.
+- **Three bot groups instead of two** — training crawlers, AI search indexers and user-triggered fetchers, plus Googlebot, Bingbot and Applebot. Adds AI search indexers from more vendors (Meta-WebIndexer, Amzn-SearchBot, MistralAI-Index, DuckAssistBot) and more user fetchers (meta-externalfetcher, Amzn-User, MistralAI-User, Google-Agent), and notes which fetchers say robots.txt may not apply to them.
+- **Optional live URL check and web search** — `/geo-audit` can compare the deployed robots.txt with the repo (CDNs such as Cloudflare can add rules), confirm content is in the served HTML, and test responses to AI user agents. With web search it adds a dated off-site snapshot of brand mentions and reviews, which isn't scored.
+- **Measuring citations** section in the report: Bing Webmaster Tools AI Performance, Search Console's Generative AI performance report, server logs and a fixed question panel.
+- `/geo-fix` asks three separate robots.txt questions, offers to swap retired bot names for current ones, hands snippet controls to `/aeo-fix`, asks for sources behind unsourced statistics, scaffolds author pages and topic hubs, and prints off-site work as manual steps.
+- `/geo-llms-txt` and the README now state that Google Search ignores `llms.txt`, that some coding tools read it, and that Lighthouse's agentic browsing audit checks for it. Markdown companion routes are optional and recommended only for developer docs.
+
+### Fixed
+
+- **ai-geo** — `/geo-audit` listed Google-Extended in its citation crawler table. It's a robots.txt token, not a crawler, and covers Gemini training and grounding in Gemini Apps and Vertex AI only. It doesn't affect Google Search, so it can't remove a site from AI Overviews or AI Mode; those follow `nosnippet`, `max-snippet`, `data-nosnippet`, `noindex` and the Search Console "Search generative AI" setting.
+- **ai-geo** — a missing `llms.txt` could be rated Critical and the category carried 15% of the score. It's now Low (Medium for developer docs) at 5%, since Google says Google Search ignores the file and no AI search provider has said it uses it.
+- **ai-geo** — removed claims that FAQPage and HowTo "are disproportionately cited by AI engines", that AI engines "prefer markdown", and that Markdown companions are "the single biggest citation-quality improvement". None has a primary source. Google stopped showing HowTo rich results in 2023 and FAQ rich results in May 2026.
+- **ai-geo** — `Dataset` markup is described as used by Google Dataset Search rather than Search, and ClaimReview as being phased out of Google Search.
+- **ai-geo** — FacebookBot and Omgilibot were dropped from the bot tables (Meta no longer documents FacebookBot; Omgilibot has no vendor documentation), and bot documentation links point to current pages (OpenAI's moved to developers.openai.com, Anthropic's to support.claude.com).
+- **ai-geo** — skill examples quoted the owner's own sites and name; they now use generic examples.
+- **ai-geo** — `/geo-llms-txt` asked a site-type question with six options (AskUserQuestion allows four) and offered `llms-full.txt` as an alternative to generating `llms.txt`. It now asks mode, full-text companion and site type as separate questions.
+- **ai-geo** — JSON-LD examples escape `<` so text in the data can't close the script tag.
+
 ## [2.9.0] - 2026-10-06
 
 ### Added
@@ -1258,7 +1297,8 @@ New plugin for Swift / iOS / macOS development whose primary job is to catch rel
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.9.0...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.10.0...HEAD
+[2.10.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.9.0...v2.10.0
 [2.9.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.8.1...v2.9.0
 [2.8.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.8.0...v2.8.1
 [2.8.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.7.1...v2.8.0
