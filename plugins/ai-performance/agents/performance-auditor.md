@@ -1,6 +1,6 @@
 ---
 name: performance-auditor
-description: Analyzes and improves application performance through automated audits in a fresh context using the Performance Audit skill. Use for unattended or scheduled performance reviews.
+description: Audits application performance in a fresh context using the Performance Audit skill. Use for unattended or scheduled performance reviews.
 model: inherit
 color: red
 ---

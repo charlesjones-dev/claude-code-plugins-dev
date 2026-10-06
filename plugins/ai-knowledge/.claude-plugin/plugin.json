@@ -1,7 +1,7 @@
 {
   "name": "ai-knowledge",
-  "version": "1.5.1",
-  "description": "Curated, git-versioned team knowledge base that complements Claude Code's native auto memory - Capture conversation learnings, maintain topic-specific KB files, Obsidian-compatible knowledge graph, structured dynamic context loading, and institutional knowledge in CLAUDE.md",
+  "version": "1.5.2",
+  "description": "Keeps a git-versioned team knowledge base in docs/kb/ next to Claude Code's per-machine auto memory: capture learnings, import and search articles, load them by task, and browse the base in Obsidian",
   "author": {
     "name": "Charles Jones",
     "url": "https://charlesjones.dev"
@@ -9,6 +9,7 @@
   "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev",
   "license": "MIT",
   "keywords": [
+    "ai",
     "knowledge-base",
     "learnings",
     "institutional-knowledge",

@@ -87,4 +87,4 @@ Source edits do not update an installed plugin. Once a new version is available 
 - [Claude Code file-access setup](skills/security-init/SKILL.md)
 - [pnpm supply-chain setup](skills/security-supply-chain/SKILL.md)
 
-**Version:** 2.0.0 · **Author:** Charles Jones · **License:** [MIT](../../LICENSE)
+**Version:** 2.0.1 · **Author:** Charles Jones · **License:** [MIT](../../LICENSE)

@@ -1,6 +1,6 @@
 ---
 name: accessibility-auditor
-description: Conducts comprehensive automated accessibility audits in a fresh context using the Accessibility Audit skill. Use for unattended or scheduled accessibility reviews.
+description: Conducts automated accessibility audits in a fresh context using the Accessibility Audit skill. Use for unattended or scheduled accessibility reviews.
 model: inherit
 color: red
 ---

@@ -1,6 +1,6 @@
 ---
 name: geo-audit
-description: "Comprehensive Generative Engine Optimization (GEO) audit - Validates llms.txt protocol compliance, AI crawler access (training vs citation bots), citation-worthiness signals, AI-friendly structured data, semantic chunking, content freshness, and entity optimization. Generates a timestamped report in /docs/geo-audit/ with framework-specific remediation and emerging-practice flags."
+description: "Audit a site's Generative Engine Optimization (GEO). Validates llms.txt protocol compliance, AI crawler access (training vs citation bots), citation-worthiness signals, AI-friendly structured data, semantic chunking, content freshness, and entity optimization. Generates a timestamped report in /docs/geo-audit/ with framework-specific remediation and emerging-practice flags."
 disable-model-invocation: true
 ---
 
@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 You are a Generative Engine Optimization (GEO) auditor. GEO is the practice of optimizing web content for AI answer engines (ChatGPT, Perplexity, Claude, Gemini, Google AI Overviews, Bing Copilot) rather than traditional search engine rankings. Your goal is to maximize citation probability and factual extraction by LLMs — not SERP position.
 
-**GEO is not SEO.** The disciplines overlap ~40% (technical fundamentals, structured data, authoritativeness signals). The other 60% is unique: `llms.txt` protocol, AI-specific bot management, content chunking for embedding retrieval, citation-worthiness heuristics, and conversational-query alignment. Use the companion `ai-seo` plugin's `/seo-audit` for traditional search-engine coverage.
+**GEO is not SEO.** The disciplines share technical fundamentals, structured data and authoritativeness signals. GEO adds the `llms.txt` protocol, AI-specific bot management, content chunking for embedding retrieval, citation-worthiness heuristics, and conversational-query alignment. Use the companion `ai-seo` plugin's `/seo-audit` for traditional search-engine coverage.
 
 ## LLM Knowledge Gap Corrections (NON-NEGOTIABLE)
 
@@ -128,7 +128,7 @@ Parse `robots.txt` from project root or `public/`. Detect per-user-agent `Allow`
 | Bot | Operator | Purpose |
 |-----|----------|---------|
 | GPTBot | OpenAI | training |
-| ClaudeBot / anthropic-ai | Anthropic | training |
+| ClaudeBot | Anthropic | training |
 | Google-Extended | Google | Gemini training (also affects citations) |
 | Applebot-Extended | Apple | Apple Intelligence training |
 | CCBot | Common Crawl | training corpus used by many |
@@ -141,10 +141,11 @@ Parse `robots.txt` from project root or `public/`. Detect per-user-agent `Allow`
 | Bot | Operator | Purpose |
 |-----|----------|---------|
 | ChatGPT-User | OpenAI | ChatGPT browsing/citations |
-| OAI-SearchBot | OpenAI | SearchGPT index |
+| OAI-SearchBot | OpenAI | ChatGPT search index |
 | PerplexityBot | Perplexity | Perplexity index |
 | Perplexity-User | Perplexity | live citation fetch |
-| Claude-Web / Claude-User | Anthropic | Claude browsing |
+| Claude-User | Anthropic | user-initiated fetch |
+| Claude-SearchBot | Anthropic | Claude search index |
 | Google-Extended | Google | also used for Gemini citations |
 
 For each, report `✅ Allowed` / `❌ Blocked` / `⚠️ Partially blocked (specific paths)` / `❓ Not specified (defaults to generic User-agent: * rule)`.
@@ -458,10 +459,11 @@ Each is cheap; stacking them compounds the probability of any given crawler disc
 | Bot | Operator | Purpose | Status | Notes |
 |-----|----------|---------|--------|-------|
 | ChatGPT-User | OpenAI | ChatGPT browsing | ✅ Allowed / ❌ Blocked / ❓ Unspecified | |
-| OAI-SearchBot | OpenAI | SearchGPT | | |
+| OAI-SearchBot | OpenAI | ChatGPT search | | |
 | PerplexityBot | Perplexity | Index | | |
 | Perplexity-User | Perplexity | Live fetch | | |
-| Claude-Web | Anthropic | Claude browsing | | |
+| Claude-User | Anthropic | User-initiated fetch | | |
+| Claude-SearchBot | Anthropic | Claude search | | |
 
 **Analysis:** <plain-English commentary on whether the access pattern matches likely intent. Example: "You're blocking all training crawlers but allowing citation crawlers — a valid configuration to be cited without contributing training data.">
 

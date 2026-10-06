@@ -76,7 +76,7 @@ Split findings into four buckets:
 - `robots.txt` AI-bot directives. Prompt separately:
   - "Do you want to allow AI training bots (GPTBot, ClaudeBot, Google-Extended, CCBot, Applebot-Extended, Bytespider, Amazonbot, FacebookBot, Omgilibot)?"
     - Options: Allow all / Block all / Mixed (prompt per-bot)
-  - "Do you want to allow AI citation bots (ChatGPT-User, OAI-SearchBot, PerplexityBot, Perplexity-User, Claude-Web)?"
+  - "Do you want to allow AI citation bots (ChatGPT-User, OAI-SearchBot, PerplexityBot, Perplexity-User, Claude-User, Claude-SearchBot)?"
     - Options: Allow all / Block all / Mixed (prompt per-bot)
   - If existing `robots.txt` already has per-bot directives, show them and ask to "Keep existing / Replace with new preference / Merge".
 
@@ -132,7 +132,8 @@ Split findings into four buckets:
          { userAgent: 'OAI-SearchBot', allow: '/' },       // citation: allowed
          { userAgent: 'PerplexityBot', allow: '/' },       // citation: allowed
          { userAgent: 'Perplexity-User', allow: '/' },     // citation: allowed
-         { userAgent: 'Claude-Web', allow: '/' },          // citation: allowed
+         { userAgent: 'Claude-User', allow: '/' },         // citation: allowed
+         { userAgent: 'Claude-SearchBot', allow: '/' },    // citation: allowed
        ],
        sitemap: 'https://<domain>/sitemap.xml',
      }
@@ -290,7 +291,7 @@ Question 1: Do you want to ALLOW AI training bots?
   (c) Mixed (I'll pick per-bot)
 
 Question 2: Do you want to ALLOW AI citation bots?
-(ChatGPT-User, OAI-SearchBot, PerplexityBot, Perplexity-User, Claude-Web)
+(ChatGPT-User, OAI-SearchBot, PerplexityBot, Perplexity-User, Claude-User, Claude-SearchBot)
 
   (a) Allow all citation bots
   (b) Block all citation bots
@@ -323,7 +324,8 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: 'OAI-SearchBot', allow: '/' },
       { userAgent: 'PerplexityBot', allow: '/' },
       { userAgent: 'Perplexity-User', allow: '/' },
-      { userAgent: 'Claude-Web', allow: '/' },
+      { userAgent: 'Claude-User', allow: '/' },
+      { userAgent: 'Claude-SearchBot', allow: '/' },
     ],
     sitemap: 'https://<domain>/sitemap.xml',
   }

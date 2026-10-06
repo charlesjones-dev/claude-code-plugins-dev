@@ -1,6 +1,6 @@
 ---
 name: performance-audit
-description: "Comprehensive performance analysis to identify bottlenecks, optimization opportunities, and scalability issues."
+description: "Audit a codebase for performance bottlenecks and save a report with an impact score for each finding."
 disable-model-invocation: true
 ---
 

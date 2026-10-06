@@ -1,6 +1,6 @@
 ---
 name: kb-harvest
-description: "Harvest knowledge from external sources — sibling repos, local directories, individual files, or web URLs — and distill them into the KB system with provenance tracking."
+description: "Harvest knowledge from external sources (sibling repos, local directories, individual files, or web URLs) and distill them into the KB system with provenance tracking."
 disable-model-invocation: true
 ---
 

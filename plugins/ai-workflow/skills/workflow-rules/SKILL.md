@@ -1,6 +1,6 @@
 ---
 name: workflow-rules
-description: "Add, remove, or list curated behavior rules in CLAUDE.md that correct common Claude Code annoyances (PR padding, fabricated test plans, chatty narration, boilerplate footers). Cross-project library, syncs via /plugin update."
+description: "Add, remove, or list curated behavior rules in CLAUDE.md that correct common Claude Code annoyances (PR padding, fabricated test plans, chatty narration, boilerplate footers)."
 disable-model-invocation: true
 ---
 

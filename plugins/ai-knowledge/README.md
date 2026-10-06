@@ -1,35 +1,29 @@
 # AI Knowledge Plugin
 
-AI-powered knowledge base management for Claude Code. Capture conversation learnings, maintain topic-specific KB files, and dynamically reference institutional knowledge in CLAUDE.md.
+Knowledge base management for Claude Code. Capture conversation learnings, maintain topic-specific KB files, and list them in CLAUDE.md so Claude knows when to read them.
 
 ## Overview
 
-Claude Code now remembers things on its own: auto memory writes learnings to a per-project MEMORY.md that loads at the start of each session. That covers personal, per-machine recall. This plugin builds on top of it — a deliberate, curated knowledge base for the project itself: things that didn't work, best practices, client requirements, and codebase gotchas, organized into structured topic files that live in git and travel with the repository so your whole team (and every machine) benefits.
+Claude Code's auto memory saves learnings to a per-project memory folder on your machine. That covers personal recall. This plugin adds a curated knowledge base for the project itself: things that didn't work, best practices, client requirements, and codebase gotchas, organized into topic files that live in git and travel with the repository so your whole team (and every machine) gets them.
 
-The knowledge base is a persistent, compounding wiki maintained by the LLM. It has three layers:
+The knowledge base has three layers:
 - **KB articles** (`docs/kb/{category}/*.md`): Topic-specific knowledge organized in category folders, loaded contextually
 - **Global Learnings** (`docs/kb/_global-learnings.md`): Cross-cutting rules that apply everywhere (pinned, always loaded)
 - **Index & Log** (`docs/kb/_index.md`, `docs/kb/_log.md`): Auto-generated catalog and chronological activity record
 
-The knowledge base is fully **Obsidian-compatible** — open `docs/kb/` as an Obsidian vault to browse your knowledge graph, navigate between related topics, and visualize connections.
-
-Inspired by Karpathy's [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) pattern — the LLM does all the summarizing, cross-referencing, filing, and bookkeeping that makes a knowledge base useful over time.
+Inspired by Karpathy's [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) pattern, where the LLM does the filing and cross-referencing.
 
 ## How This Differs from Claude Code's Auto Memory
 
-Claude Code's built-in auto memory and this knowledge base solve different problems and work well together:
-
-| | Auto memory (MEMORY.md) | AI Knowledge KB (`docs/kb/`) |
+| | Auto memory | AI Knowledge KB (`docs/kb/`) |
 |---|---|---|
-| **Curation** | Automatic — Claude decides what to write | Deliberate — you review and file learnings intentionally |
+| **Curation** | Automatic: Claude decides what to write | Deliberate: you review and file learnings |
 | **Location** | Per-machine, outside the repo | Checked into git, versioned with the code |
 | **Sharing** | Personal, single machine | Shared with your whole team via the repository |
-| **Structure** | Single flat file | Categorized topic files with frontmatter, tags, and cross-references |
-| **Loading** | Loaded wholesale at session start | Dynamic — loaded by scope globs, tags, and pinning based on task context |
-| **Tooling** | None | Query, search, synthesis, pruning, and import/harvest commands |
+| **Structure** | A `MEMORY.md` index plus topic files | Categorized topic files with frontmatter, tags, and cross-references |
+| **Loading** | First 200 lines (or 25KB) of `MEMORY.md` at session start; topic files on demand | Pinned files at session start; others when scope globs or keywords match the task |
+| **Tooling** | `/memory` to browse, edit, or turn it off | Query, search, synthesis, pruning, and import/harvest commands |
 | **Browsing** | Plain markdown | Obsidian-compatible knowledge graph with wiki-links |
-
-In short: auto memory is Claude's personal notebook; this KB is your team's institutional knowledge, reviewed, versioned, and queryable.
 
 ## Commands
 
@@ -51,7 +45,7 @@ In short: auto memory is Claude's personal notebook; this KB is your team's inst
 | `/kb-query` | Query the KB and synthesize answers (optionally filed back as articles) |
 | `/kb-auto` | Toggle automatic knowledge capture at end of conversations |
 | `/kb-organize` | Reorganize flat KB files into category folders |
-| `/kb-upgrade` | Upgrade KB to latest practices: Obsidian compat, structured loading, preamble, index |
+| `/kb-upgrade` | Upgrade the KB to the current plugin format: Obsidian compat, structured loading, preamble, index |
 
 ## Getting Started
 
@@ -59,7 +53,7 @@ In short: auto memory is Claude's personal notebook; this KB is your team's inst
 
 2. If you have existing documentation in CLAUDE.md or `docs/`, run `/kb-absorb` to organize it into the KB.
 
-3. Optionally run `/kb-auto` to enable automatic learning capture -- Claude will offer to save learnings when conversations wrap up.
+3. Optionally run `/kb-auto` to enable automatic learning capture. Claude will offer to save learnings when conversations wrap up.
 
 4. At the end of productive conversations, run `/kb-learn` to capture learnings (or let auto-capture prompt you).
 
@@ -67,7 +61,7 @@ In short: auto memory is Claude's personal notebook; this KB is your team's inst
 
 6. Periodically run `/kb-prune` to keep the knowledge base organized.
 
-7. Run `/kb-upgrade` to bring your KB up to latest practices (Obsidian compatibility, structured loading, etc.).
+7. Run `/kb-upgrade` to bring your KB up to the current plugin format (Obsidian compatibility, structured loading, etc.).
 
 ## How It Works
 
@@ -78,12 +72,12 @@ The Knowledge Base table in CLAUDE.md tells Claude Code which KB files to read b
 
 | Topic | File | When to Load |
 |-------|------|--------------|
-| API Conventions | docs/kb/api-conventions.md | `packages/api/**`, `*.controller.ts` — api, rest |
-| Auth Rules | docs/kb/auth.md | Always (pinned) |
+| API Conventions | docs/kb/conventions/api-conventions.md | `packages/api/**`, `*.controller.ts` — api, rest |
+| Auth Rules | docs/kb/security/auth.md | Always (pinned) |
 | React Patterns | docs/kb/frontend/react-patterns.md | `packages/web/**` — react, frontend, components |
 ```
 
-When Claude Code starts a conversation and reads CLAUDE.md, it knows to load the relevant KB files based on the task context. Pinned files are always loaded.
+`/kb-init` adds instructions above the table telling Claude to read pinned files at the start of each conversation and other files when the files you're editing match their scope globs or the task matches their keywords. They're instructions, not enforced rules, so if Claude misses a file you need, load it with `/kb-load`.
 
 ## KB File Frontmatter
 
@@ -102,11 +96,11 @@ scope:                               # Optional glob pattern(s) for auto-matchin
 ---
 ```
 
-Cross-references (`related`) create a knowledge graph -- when Claude loads one KB file and sees related references, it knows to also consult the linked files for full context.
+Cross-references (`related`) link KB files into a graph. When Claude loads one file, it may also read the files it links to.
 
 ### Obsidian Compatibility
 
-KB files also include a `## Related` section at the bottom of the file body with `[[wiki-links]]` mirroring the frontmatter:
+Open `docs/kb/` as an Obsidian vault to browse it. KB files also include a `## Related` section at the bottom of the file body with `[[wiki-links]]` mirroring the frontmatter:
 
 ```markdown
 ## Related
@@ -115,10 +109,14 @@ KB files also include a `## Related` section at the bottom of the file body with
 - [[auth-patterns]]
 ```
 
-This is required because Obsidian does not parse frontmatter values as navigable links. The body `[[wiki-links]]` enable Obsidian's graph view edges and click-to-navigate between related topics. All `/kb-*` commands maintain this section automatically.
+This is required because Obsidian doesn't parse frontmatter values as navigable links. The body `[[wiki-links]]` enable Obsidian's graph view edges and click-to-navigate between related topics. All `/kb-*` commands maintain this section automatically.
 
 ## Plugin Details
 
-- **Version**: 1.5.1
+- **Version**: 1.5.2
 - **Author**: [Charles Jones](https://charlesjones.dev)
 - **License**: MIT
+
+## Contributing
+
+Bug reports and fixes are welcome. See [CONTRIBUTING.md](../../CONTRIBUTING.md).

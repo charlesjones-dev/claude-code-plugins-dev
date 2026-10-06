@@ -1,7 +1,7 @@
 {
   "name": "ai-workflow",
-  "version": "2.0.0",
-  "description": "AI-powered development workflow automation - Preflight code quality checks with security scanning, ship-it workflow, development principles generator, and curated CLAUDE.md behavior rules manager",
+  "version": "2.0.1",
+  "description": "Runs typecheck, lint, format, security and test checks before you commit, ships a change as commit, push and PR, writes a Development Principles section, and manages a library of CLAUDE.md behavior rules",
   "author": {
     "name": "Charles Jones",
     "url": "https://charlesjones.dev"
@@ -9,6 +9,7 @@
   "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev",
   "license": "MIT",
   "keywords": [
+    "ai",
     "workflow",
     "preflight",
     "code-quality",

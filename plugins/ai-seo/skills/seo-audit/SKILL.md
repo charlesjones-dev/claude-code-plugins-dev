@@ -1,6 +1,6 @@
 ---
 name: seo-audit
-description: "Comprehensive modern SEO audit - Detects deprecated patterns (keywords meta tags, IE-era code), validates current best practices (Core Web Vitals, structured data, semantic HTML, Open Graph), and generates timestamped reports with framework-specific remediation."
+description: "Audit a site's code for deprecated SEO patterns (keywords meta tags, IE-era code), validate current best practices (Core Web Vitals, structured data, semantic HTML, Open Graph), and generate timestamped reports with framework-specific remediation."
 disable-model-invocation: true
 ---
 
@@ -65,7 +65,7 @@ Auto-detect the project framework. Use the Glob and Read tools:
 
 1. Check `package.json` for dependencies:
    - `next` → Next.js (detect App Router via `app/` dir vs Pages Router via `pages/`)
-   - `nuxt` → Nuxt 3 (detect version from package.json)
+   - `nuxt` → Nuxt (detect version from package.json)
    - `@tanstack/start` or `@tanstack/react-start` → TanStack Start
    - `astro` → Astro
    - `@sveltejs/kit` → SvelteKit
@@ -194,11 +194,10 @@ Based on detected framework:
 **Nuxt:**
 - `useHead()` / `useSeoMeta()` composable usage
 - `@nuxtjs/seo` module installed
-- `nuxt-simple-sitemap` or equivalent
+- `@nuxtjs/sitemap` or equivalent
 - `definePageMeta` for route metadata
 
 **TanStack Start:**
-- `<Meta>` components in route definitions
 - Route-level meta via `createRootRoute({ head: () => ({ meta: [...], links: [...] }) })`
 - `<HeadContent />` rendered in root layout
 - `<Scripts />` rendered before closing body
@@ -397,7 +396,7 @@ Issues that actively harm SEO. Address immediately.
 
 ### Detected Framework: <Framework Name>
 
-<Framework-idiomatic guidance with code examples. For Next.js use App Router Metadata API, for TanStack Start use <Meta> components, etc.>
+<Framework-idiomatic guidance with code examples. For Next.js use App Router Metadata API, for TanStack Start use route `head` with <HeadContent />, etc.>
 
 ---
 

@@ -2,7 +2,7 @@
 name: workflow-ship
 version: 1.0.0
 description: |
-  Ship it. Runs preflight checks (typecheck, lint, tests), auto-fixes issues,
+  Runs preflight checks (typecheck, lint, tests), auto-fixes issues,
   then commits, pushes, and creates a PR. Bails early if preflight fixes were
   needed so you can review before shipping. Prompts for branch and PR target
   using quick multi-choice questions.

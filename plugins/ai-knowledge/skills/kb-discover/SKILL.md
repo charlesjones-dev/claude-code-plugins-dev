@@ -1,6 +1,6 @@
 ---
 name: kb-discover
-description: "Analyze source code to discover and extract implicit knowledge — architecture patterns, conventions, API contracts, config structures, and codebase rules — into KB articles."
+description: "Analyze source code to discover and extract implicit knowledge (architecture patterns, conventions, API contracts, config structures, and codebase rules) into KB articles."
 disable-model-invocation: true
 ---
 

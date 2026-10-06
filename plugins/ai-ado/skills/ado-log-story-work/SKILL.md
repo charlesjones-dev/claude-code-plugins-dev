@@ -1,6 +1,6 @@
 ---
 name: ado-log-story-work
-description: "Rapidly log completed work to a User Story by creating a Task with completed hours already set."
+description: "Log completed work to a User Story by creating a Task with completed hours already set."
 disable-model-invocation: true
 ---
 

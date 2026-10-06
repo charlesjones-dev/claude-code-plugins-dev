@@ -1,19 +1,15 @@
 # AI-Statusline Plugin
 
-**AI-powered status line customization for Claude Code.** Interactive setup and edit wizards for configuring a custom status line with progress bars and customizable display options.
+**Status line customization for Claude Code.** Interactive setup and edit wizards for configuring a custom status line with progress bars and customizable display options.
 
 > **How this relates to the native `/statusline` command:** Claude Code ships a built-in `/statusline` command that covers baseline setup (describe what you want, or auto-configure from your shell prompt). This plugin goes further with richer, opinionated widgets: a Unicode progress bar with color thresholds, 5-hour/7-day rate-limit percentages with color coding, a month-to-date spend budget for Enterprise/API seats that have no rate limits, a reasoning-effort indicator with `/effort`-matched colors (including ultracode detection), session cost and duration segments, granular per-segment toggles, and a matching `/statusline-edit` flow for reconfiguring later without regenerating the script.
 
 ---
 
-## What This Plugin Does
-
-Provides interactive commands to configure Claude Code's status line with visual elements like progress bars, token counts, git branch info, and more. The plugin generates cross-platform scripts (Bash for Mac/Linux, PowerShell for Windows) that dynamically display real-time session information.
-
-### Example Status Line
+## Example Status Line
 
 ```
-Claude Opus 4.8 · high · 42k/100k ▓▓▓▓░░░░░░ 42% · 5h:12% 7d:4% · my-project · main · 5m 23s · 2:45pm · v2.1.80
+Opus 5 (1M context) · high · 420k/1000k ▓▓▓▓░░░░░░ 42% · 5h:12% 7d:4% · my-project · main · 5m 23s · 2:45pm · v2.1.80
 ```
 
 On an Enterprise or API seat with a monthly spend cap (no 5h/7d rate limits), with the optional spend budget enabled:
@@ -47,12 +43,12 @@ Interactive setup wizard for configuring Claude Code's custom status line from s
 
 **Wizard Questions:**
 
-The wizard asks about three categories of display options:
+The wizard asks about four categories of display options:
 
 1. **Context Display** (what to show about your Claude session)
-   - Token count (e.g., "50k/100k")
+   - Token count (e.g., "420k/1000k")
    - Progress bar (visual percentage indicator)
-   - Model name (e.g., "Claude Opus 4.8")
+   - Model name (e.g., "Opus 5 (1M context)")
    - Effort level (e.g., "high", with `/effort`-matched colors)
 
 2. **Project Display** (what to show about your project)
@@ -77,7 +73,7 @@ Edit your existing status line configuration.
 
 - Detects your OS and locates the existing script file
 - Reads current configuration values from the script
-- Presents the same questions as wizard command
+- Asks the same questions as the wizard
 - Updates only the configuration variables (preserves the rest of the script)
 
 **Usage:**
@@ -107,7 +103,7 @@ Edit your existing status line configuration.
 # Step 2: Answer the interactive questions
 # Select which elements you want displayed
 
-# Step 3: Your new status line appears immediately!
+# Step 3: The new status line appears right away
 
 # Later: Edit your configuration
 /statusline-edit
@@ -119,9 +115,9 @@ Edit your existing status line configuration.
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| Model name | On | Display model name (e.g., "Claude Opus 4.8") |
+| Model name | On | Display model name (e.g., "Opus 5 (1M context)") |
 | Effort level | On | Display reasoning effort level with `/effort`-matched colors |
-| Token count | On | Display token usage (e.g., "50k/100k") |
+| Token count | On | Display token usage (e.g., "420k/1000k") |
 | Progress bar | On | Display visual progress bar with percentage |
 | Current directory | On | Display current working directory name |
 | Git branch | On | Display current git branch |
@@ -148,8 +144,6 @@ The progress bar uses Unicode block characters to show context usage:
 ▓▓▓▓▓▓▓▓░░ 85%  (Red - 80%+)
 ```
 
-Color changes automatically based on usage level to help you monitor context consumption.
-
 ### Rate Limit Display
 
 Shows your 5-hour and 7-day rate limit usage with color coding:
@@ -159,8 +153,6 @@ Shows your 5-hour and 7-day rate limit usage with color coding:
 5h:65% 7d:42%   (Yellow - 50-79%)
 5h:92% 7d:85%   (Red - 80%+)
 ```
-
-Color changes automatically so you can see at a glance how close you are to either rate-limit window.
 
 **Not on every plan:** Claude Code only sends `rate_limits` for plans with rolling usage windows (Pro/Max). Enterprise seats and API-billed accounts on a monthly spend cap receive no rate-limit data at all, so this segment stays hidden even when enabled. Use the Monthly Spend Budget segment below instead.
 
@@ -183,7 +175,7 @@ Enable it with `SHOW_SPEND_BUDGET=true` and set `SPEND_LIMIT_USD` to your seat's
 
 **Caveats to know before relying on it:**
 
-- **It is a local estimate, not your bill.** The figure is Claude Code's own `cost.total_cost_usd` estimate and will not match the Anthropic console (in one observed case the console showed $0.96 spent while a single live session already reported $1.11). The authoritative sources are the console usage page and the Admin API cost report, which needs an org admin key most seat users don't have.
+- **It's a local estimate and won't match your bill.** The figure is Claude Code's own `cost.total_cost_usd` estimate and won't match the Anthropic console (in one observed case the console showed $0.96 spent while a single live session already reported $1.11). The authoritative sources are the console usage page and the Admin API cost report, which needs an org admin key most seat users don't have.
 - **No historical backfill.** Only sessions rendered after you enable the segment are counted.
 - **This machine only.** It doesn't include claude.ai web/desktop usage or sessions on other machines.
 
@@ -204,34 +196,11 @@ The segment reflects live `/effort` changes and is hidden entirely when the curr
 
 **Ultracode detection:** Claude Code reports ultracode as plain `xhigh` in the status line payload, so the scripts scan the session transcript for the most recent `/effort` command output to tell them apart. If a session never ran `/effort`, the payload value is shown as-is.
 
-### Cross-Platform Support
-
-- **Mac/Linux**: Generates `~/.claude/statusline.sh` (Bash script)
-- **Windows**: Generates `~/.claude/statusline.ps1` (PowerShell script)
-
-Both scripts are automatically configured in your `~/.claude/settings.json`.
-
-### Smart Configuration
-
-- **Backup existing configs**: Automatically backs up existing scripts before overwriting
-- **Pre-selected defaults**: Edit command shows your current configuration
-- **Minimal updates**: Edit command only modifies configuration variables, preserving any customizations
-
-### Real-Time Information
-
-The status line displays live data from Claude Code including:
-
-- Current context window usage (input tokens + cache tokens)
-- Context window size
-- Session cost tracking
-- Session duration in human-readable format (5s, 3m 45s, 1h 23m)
-- Current git branch (with fallback to '-' if not in a repo)
-
 ---
 
 ## How It Works
 
-1. **Script Generation**: The wizard creates a shell script that reads JSON input from stdin (provided by Claude Code)
+1. **Script Generation**: The wizard writes one script for your OS (Bash on Mac/Linux, PowerShell on Windows) and adds it to your `settings.json` (paths below). The script reads JSON input from stdin (provided by Claude Code)
 
 2. **JSON Parsing**:
    - Mac/Linux: Uses `jq` to parse the JSON data
@@ -303,7 +272,7 @@ SPEND_RESET_DAY=1         # Day of the month (1-28) the cap resets, UTC
 SPEND_RESET_TIME=00:00    # Time (HH:MM, 24h, UTC) the cap resets
 ```
 
-**PowerShell (`~/.claude/statusline.ps1`):**
+**PowerShell (`C:/Users/USERNAME/.claude/statusline.ps1`):**
 ```powershell
 $SHOW_MODEL = $true
 $SHOW_EFFORT = $true
@@ -330,7 +299,7 @@ $SPEND_RESET_TIME = '00:00'
 
 1. Verify the script exists at the expected location
 2. Check that `~/.claude/settings.json` contains the `statusLine` configuration
-3. Restart Claude Code after making changes
+3. Restart Claude Code if it still doesn't appear
 
 ### Colors not displaying
 
@@ -359,7 +328,7 @@ The script couldn't write to `~/.claude/statusline-spend/` (read-only home direc
 ## Plugin Details
 
 - **Name:** AI-Statusline
-- **Version:** 1.4.0
+- **Version:** 1.4.1
 - **Type:** UI Customization
 - **Features:**
   - Skills: `/statusline-wizard`, `/statusline-edit`
@@ -370,14 +339,10 @@ The script couldn't write to `~/.claude/statusline-spend/` (read-only home direc
 
 ## Contributing
 
-Found a bug or have a suggestion? [Open an issue](https://github.com/charlesjones-dev/claude-code-plugins-dev/issues) or submit a pull request!
+Bug reports and fixes are welcome. See [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 ---
 
 ## License
 
 MIT License - See [LICENSE](LICENSE) file for details.
-
----
-
-**Built for the Claude Code community**

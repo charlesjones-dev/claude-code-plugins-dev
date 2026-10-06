@@ -1,19 +1,19 @@
 # AI-Swift Plugin
 
-**AI-powered Swift / iOS / macOS release-readiness and quality toolkit for Claude Code.** Catches the failures that pass a green local build but blow up later on Xcode Cloud, during App Store processing, or as an ITMS rejection email after a TestFlight upload.
+**Swift / iOS / macOS release-readiness and quality toolkit for Claude Code.** Catches the failures that pass a green local build but blow up later on Xcode Cloud, during App Store processing, or as an ITMS rejection email after a TestFlight upload.
 
 ---
 
 ## Why this exists
 
-A normal local build can be completely green and still fail the moment it reaches CI or the App Store. These failures arrive late and expensive:
+Failures like these pass a local build and only show up once the build reaches CI or the App Store:
 
-- A red Xcode Cloud run after a 10-minute archive, because the generated `.xcodeproj` drifted from `project.yml` or was never regenerated.
+- A red Xcode Cloud run, because the generated `.xcodeproj` drifted from `project.yml` or was never regenerated.
 - A duplicate-build-number rejection on the second TestFlight upload, because `CURRENT_PROJECT_VERSION` was hardcoded.
-- An ITMS rejection **email** hours after upload, because the Mac App Store build was missing App Sandbox or an app category - neither of which fails the build.
-- 18 unit tests going red on the first CI Test action with `errSecAuthFailed`, because a headless runner has no unlocked login keychain and keychain writes fail there but not on a dev Mac.
+- An ITMS rejection **email** hours after upload, because the Mac App Store build was missing App Sandbox or an app category, and neither fails the build.
+- Unit tests going red on the first CI Test action with `errSecAuthFailed`, because a headless runner has no unlocked login keychain and keychain writes fail there but not on a dev Mac.
 
-This plugin encodes those lessons as reusable checks so future projects never re-learn them the hard way. It is portable: it probes the target project's shape (XcodeGen vs plain `.xcodeproj` vs SwiftPM vs Tuist; iOS / macOS / both; Xcode Cloud or not) and only runs the checks that apply.
+This plugin turns those failures into reusable checks. It's portable: it probes the target project's shape (XcodeGen vs plain `.xcodeproj` vs SwiftPM vs Tuist; iOS / macOS / both; Xcode Cloud or not) and only runs the checks that apply.
 
 ---
 
@@ -23,13 +23,13 @@ This plugin encodes those lessons as reusable checks so future projects never re
 - **Failure diagnosis** (`/swift-diagnose`): paste a red CI log or an ITMS email and get the root cause + exact fix.
 - **CI scaffolding** (`/swift-ci-scaffold`): generate the Xcode Cloud repo-side wiring and an opt-in pre-push hook.
 - **Local gate** (`/swift-verify`): run the right regenerate / format / lint / test pipeline for the project's build system.
-- **Swift 6 review** (`/swift-concurrency-review`): catch strict-concurrency and SwiftUI idiom issues before the compiler (or `swift-frontend`) does.
+- **Swift 6 review** (`/swift-concurrency-review`): catch strict-concurrency and SwiftUI idiom issues before the compiler does.
 
 ---
 
 ## Available Skills
 
-### `/swift-preflight`  (flagship, report-only)
+### `/swift-preflight`  (report-only unless you pass `--fix`)
 
 Audit the repo for Xcode Cloud / TestFlight release blockers. Probes the project shape, then runs every applicable check and prints a categorized **PASS / WARN / FAIL** report with `file:line`, the concrete remedy, and a one-line why.
 
@@ -56,7 +56,7 @@ Audit the repo for Xcode Cloud / TestFlight release blockers. Probes the project
 
 ### `/swift-diagnose`  (report-only)
 
-Reactive triage. Give it a red Xcode Cloud build log, an ITMS rejection email, or a bare code (`ITMS-90296`, `-25293`) and it maps the symptom to root cause and prescribes the fix, grounded in your actual repo files when available.
+Reactive triage. Give it a red Xcode Cloud build log, an ITMS rejection email, or a bare code (`ITMS-90296`, `-25293`) and it maps the symptom to root cause and prescribes the fix, grounded in your repo files when available.
 
 ```
 /swift-diagnose ITMS-90296
@@ -99,15 +99,15 @@ Swift 6 strict-concurrency + SwiftUI idiom review of the changed files (or a giv
 
 ### `swift-release-auditor`
 
-Runs `/swift-preflight` in a fresh context for a clean, automated release-readiness review before a TestFlight upload. Use for unattended or scheduled reviews. Read-only.
+Runs `/swift-preflight` in a fresh context for an automated release-readiness review before a TestFlight upload. Use for unattended or scheduled reviews. Read-only.
 
 ---
 
 ## Failure-to-check map
 
-Every check traces back to a real, avoidable incident:
+Each check targets a failure like these:
 
-| Real incident | Surfaced as | Caught by |
+| Failure | Surfaced as | Caught by |
 |---|---|---|
 | Hand-edited bundle id / team in Xcode would be reverted by CI regen | broken signing / App Store record | `/swift-preflight` 1 |
 | `CURRENT_PROJECT_VERSION` hardcoded `"1"` | duplicate-build-number rejection | `/swift-preflight` 2, `/swift-ci-scaffold` |
@@ -121,10 +121,10 @@ Every check traces back to a real, avoidable incident:
 
 ---
 
-## 📦 Plugin Details
+## Plugin Details
 
 - **Name:** AI-Swift
-- **Version:** 1.0.1
+- **Version:** 1.0.2
 - **Type:** Swift / iOS / macOS Release-Readiness & Quality Toolkit
 - **Features:**
   - Skills: `/swift-preflight`, `/swift-diagnose`, `/swift-ci-scaffold`, `/swift-verify`, `/swift-concurrency-review`
@@ -136,7 +136,7 @@ Every check traces back to a real, avoidable incident:
 
 ## Installation
 
-```bash
+```
 /plugin marketplace add charlesjones-dev/claude-code-plugins-dev
 /plugin install ai-swift@claude-code-plugins-dev
 ```
@@ -145,39 +145,27 @@ Optional tooling the skills use when present (install with Homebrew): `xcodegen`
 
 ---
 
-## ⚠️ Important Notes
-
-### What this plugin does
-
-- ✅ Static analysis of project config, entitlements, Info.plist, CI scripts, schemes, and tests
-- ✅ Maps known ITMS / errSec / signing failures to fixes
-- ✅ Scaffolds Xcode Cloud repo-side wiring (diff + confirm)
-- ✅ Runs the local build/lint/test gate
-- ✅ Swift 6 / SwiftUI idiom review
+## Important Notes
 
 ### What this plugin doesn't do
 
-- ❌ Create or edit Xcode Cloud workflows (those live in App Store Connect, not the repo - the plugin preps the repo and tells you the UI steps)
-- ❌ Upload to TestFlight or submit to the App Store
-- ❌ Replace a real archive + upload + processing cycle
-- ❌ Manage code-signing certificates or provisioning profiles
+- Create or edit Xcode Cloud workflows, which live in App Store Connect (the plugin preps the repo and tells you the UI steps)
+- Upload to TestFlight or submit to the App Store
+- Replace an archive + upload + processing cycle
+- Manage code-signing certificates or provisioning profiles
 
-### Conventions it assumes (and stays portable about)
+### Conventions it assumes
 
-The checks encode lessons from a real Swift 6 / SwiftUI / XcodeGen project but never hardcode any single project's identifiers. They degrade gracefully: SwiftPM-only repos skip the Xcode Cloud and entitlements checks, iOS-only repos skip the macOS App Store linter, and non-generator projects skip the drift and regen checks.
-
----
-
-## 🤝 Contributing
-
-Found a bug or have a suggestion? [Open an issue](https://github.com/charlesjones-dev/claude-code-plugins-dev/issues) or submit a pull request!
+The checks target Swift 6 / SwiftUI / XcodeGen projects and don't hardcode any project's identifiers. SwiftPM-only repos skip the Xcode Cloud and entitlements checks, iOS-only repos skip the macOS App Store linter, and non-generator projects skip the drift and regen checks.
 
 ---
 
-## 📄 License
+## Contributing
+
+Bug reports and fixes are welcome. See [CONTRIBUTING.md](../../CONTRIBUTING.md).
+
+---
+
+## License
 
 MIT License - See [LICENSE](LICENSE) file for details.
-
----
-
-**Built with ❤️ for the Claude Code community**

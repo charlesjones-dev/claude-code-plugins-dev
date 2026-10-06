@@ -1,35 +1,41 @@
 # AI Compliance Plugin
 
-AI-powered software compliance auditing for open-source license detection, risk assessment, and attribution file generation.
+Software compliance auditing for open-source license detection, risk assessment, and attribution file generation.
 
 ## Overview
 
-Open-source license compliance is a legal obligation that many projects overlook. Using a GPL-licensed dependency in a proprietary project could require disclosing your source code. A dependency with no license at all is legally "all rights reserved" and can't be used without explicit permission. This plugin scans your dependency tree, identifies every license, flags incompatibilities with your project's license, and generates the attribution files required by licenses like MIT, BSD, and Apache 2.0.
+Open-source license compliance is a legal obligation. Using a GPL-licensed dependency in a proprietary project could require disclosing your source code. A dependency with no license at all is legally "all rights reserved" and can't be used without explicit permission. This plugin scans your dependency tree, identifies licenses, flags incompatibilities with your project's license, and generates a file carrying the copyright and license notices that licenses like MIT, BSD, and Apache 2.0 require you to keep.
+
+## Quick Start
+
+```
+/plugin install ai-compliance@claude-code-plugins-dev
+```
 
 ## Skills
 
 ### `/compliance-license-audit` - License Compliance Audit
 
-Interactive, comprehensive audit of all open-source licenses in your dependency tree.
+Interactive audit of the open-source licenses in your dependency tree.
 
 **Features:**
 - Auto-detects your project's license with confirmation
-- Scans all dependency manifests (package.json, requirements.txt, .csproj, go.mod, Cargo.toml, etc.)
+- Scans dependency manifests (package.json, requirements.txt, .csproj, go.mod, Cargo.toml, etc.)
 - Identifies direct and transitive dependency licenses
 - Scans source code for license headers and vendored/copied code
-- Classifies licenses: Permissive, Weak Copyleft, Strong Copyleft, Unknown
+- Classifies licenses: Permissive, Weak Copyleft, Strong Copyleft, Unknown / No License
 - Flags incompatibilities with your project's license
 - Identifies dependencies with no license (highest legal risk)
 - Produces a License Compliance Score (0-100)
-- Lists all unfulfilled license obligations (missing NOTICE files, attribution, etc.)
+- Lists unfulfilled license obligations (missing NOTICE files, attribution, etc.)
 - Provides specific alternatives for problematic dependencies
 
 **Usage:**
-```bash
+```
 /compliance-license-audit
 ```
 
-The skill will interactively ask about:
+The skill asks about:
 1. Your project's license (auto-detected with confirmation)
 2. Audit scope (full, dependencies only, or source code only)
 3. Risk tolerance (strict, moderate, permissive only, or informational)
@@ -39,38 +45,38 @@ The skill will interactively ask about:
 
 ### `/compliance-notice-generate` - Generate NOTICE / Attribution File
 
-Generates legally compliant NOTICE, ATTRIBUTION, or THIRD-PARTY-NOTICES files from your dependency tree.
+Generates NOTICE, ATTRIBUTION, or THIRD-PARTY-NOTICES files from your dependency tree.
 
 **Features:**
 - Four output formats: NOTICE, THIRD-PARTY-NOTICES.md, ATTRIBUTION.md, licenses.json
 - Configurable scope (production only, all, or custom dependency groups)
 - Optional full license text inclusion
-- Extracts actual copyright notices from LICENSE files
+- Extracts copyright notices from LICENSE files
 - Handles dual-licensed packages
-- Supports all major package ecosystems
+- Supports the package ecosystems listed below
 - Detects and handles existing attribution files
 
 **Usage:**
-```bash
+```
 /compliance-notice-generate
 ```
 
-The skill will interactively ask about:
+The skill asks about:
 1. Output format (NOTICE, THIRD-PARTY-NOTICES.md, ATTRIBUTION.md, or licenses.json)
 2. Content scope (production only, all, or custom)
 3. Whether to include full license texts
 4. How to handle existing attribution files (if any)
 
-**Output:** Generated file saved to project root directory.
+**Output:** Saved to the project root.
 
 ## License Classifications
 
 | Classification | Examples | Risk Level |
 |---------------|----------|------------|
-| Permissive | MIT, Apache-2.0, BSD-2, BSD-3, ISC, Unlicense | Low |
+| Permissive | MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, Unlicense | Low |
 | Weak Copyleft | LGPL-2.1, LGPL-3.0, MPL-2.0, EPL-2.0 | Moderate |
 | Strong Copyleft | GPL-2.0, GPL-3.0, AGPL-3.0, SSPL-1.0 | High-Critical |
-| No License | All rights reserved by default | Critical |
+| Unknown / No License | Unidentified license, or all rights reserved by default | Critical |
 
 ## Supported Package Ecosystems
 
@@ -88,16 +94,13 @@ The skill will interactively ask about:
 ## Why This Matters
 
 - **MIT License** requires: "The above copyright notice and this permission notice shall be included in all copies"
-- **Apache 2.0** requires: Reproducing the NOTICE file in any distribution
+- **Apache 2.0** requires: Reproducing the NOTICE file in any distribution, if the project ships one
 - **BSD 3-Clause** requires: "Redistributions in binary form must reproduce the above copyright notice"
-- **No license** means: "All rights reserved" - you legally cannot use the code
-- **GPL in proprietary code** means: You may be obligated to release your source code
-
-A single overlooked AGPL dependency in a SaaS application could theoretically require you to open-source your entire application.
+- **AGPL in a SaaS application** can require releasing your source, since network use triggers its copyleft
 
 ## Recommended Workflow
 
-1. Run `/compliance-license-audit` to get a full picture of your license landscape
+1. Run `/compliance-license-audit` to see which licenses your dependencies use
 2. Address any critical findings (incompatible licenses, missing licenses)
 3. Run `/compliance-notice-generate` to create attribution files fulfilling your obligations
 4. Add attribution file maintenance to your release checklist
@@ -106,7 +109,11 @@ A single overlooked AGPL dependency in a SaaS application could theoretically re
 
 | Field | Value |
 |-------|-------|
-| Version | 1.0.0 |
+| Version | 1.0.1 |
 | Author | [Charles Jones](https://charlesjones.dev) |
 | License | MIT |
 | Repository | [claude-code-plugins-dev](https://github.com/charlesjones-dev/claude-code-plugins-dev) |
+
+## Contributing
+
+Bug reports and fixes are welcome. See [CONTRIBUTING.md](../../CONTRIBUTING.md).

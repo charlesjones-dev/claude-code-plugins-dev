@@ -1,6 +1,6 @@
 ---
 name: git-init
-description: "Initialize .gitignore with intelligent exclusion patterns based on your project's technology stack."
+description: "Initialize .gitignore with exclusion patterns based on your project's technology stack."
 disable-model-invocation: true
 ---
 

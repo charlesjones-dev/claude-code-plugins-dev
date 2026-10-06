@@ -1,27 +1,14 @@
 # AI Modernize Plugin
 
-AI-powered codebase modernization assessment for identifying technical debt, anti-patterns, and quality issues from older AI-generated or legacy code.
+Codebase modernization assessment that finds technical debt, anti-patterns and quality issues in older AI-generated or legacy code.
 
 ## Overview
 
-Codebases built with older AI models (Claude Sonnet 2/3, early Cursor, GPT-4 2024) or through "vibe coding" sessions often contain patterns that newer frontier models handle correctly. This plugin provides comprehensive assessment tools to identify these issues and produce prioritized remediation roadmaps with AI-assisted time estimates.
+Codebases built with older AI tools (Claude 3-era models, early Cursor, GPT-4 in 2024) or through "vibe coding" sessions can contain patterns that newer models avoid. This plugin finds those issues and produces a prioritized remediation roadmap with time estimates that assume AI-assisted work.
 
 ## Skills
 
-### `/modernize-audit` - Full Interactive Assessment
-
-Comprehensive, interactive modernization audit with configurable scope and categories.
-
-**Features:**
-- Interactive configuration via guided questions
-- AI tool history awareness (adjusts assessment based on which tools generated the code)
-- Auto-detects technology stack with user confirmation
-- 12 assessment categories (selectable or run all)
-- Configurable scan scope (entire solution or specific directory)
-- Severity threshold filtering
-- Detailed report with Modernization Score (0-100)
-- AI-assisted remediation time estimates
-- Phased modernization roadmap
+### `/modernize-audit`: Full Interactive Assessment
 
 **Usage:**
 ```bash
@@ -31,12 +18,12 @@ Comprehensive, interactive modernization audit with configurable scope and categ
 The skill will interactively ask about:
 1. AI tools and models used to build the codebase
 2. When the codebase was written
-3. Technology stack confirmation
-4. Which assessment categories to run
-5. Audit scope
+3. Technology stack confirmation (auto-detected first)
+4. Which of the 12 assessment categories to run
+5. Audit scope (entire solution or a specific directory)
 6. Severity threshold for the report
 
-### `/modernize-scan` - Quick Scan
+### `/modernize-scan`: Quick Scan
 
 Fast, non-interactive scan that accepts a file or directory path. Runs all categories with default settings and produces a concise report.
 
@@ -47,13 +34,13 @@ Fast, non-interactive scan that accepts a file or directory path. Runs all categ
 /modernize-scan ./packages/api
 ```
 
-If no path is provided, it will ask for one.
+If you don't give a path, it asks for one.
 
 ## Agents
 
 ### `modernize-auditor`
 
-Specialized agent that conducts automated codebase modernization audits in fresh context using the modernize-audit skill's methodology (12-category assessment, Modernization Score, phased roadmap). Automatically invoked by the `/modernize-audit` and `/modernize-scan` commands.
+Both skills hand the assessment to this agent, which runs it in a fresh context. You can also use it for unattended or scheduled audits.
 
 ## Assessment Categories
 
@@ -85,25 +72,27 @@ Reports are saved to `/docs/modernize/` with timestamped filenames:
 - Findings grouped by severity (Critical, High, Medium, Low)
 - Exact file paths and line numbers for every finding
 - Before/after code examples for remediation
-- AI-assisted remediation time estimates (not manual effort)
+- Time estimates that assume AI-assisted work
 - Phased modernization roadmap with prioritized checklist
-- "Why Older AI Models Did This" context for educational value
+- A "Why Older AI Models Did This" note on each finding
 
 ## Supported Technology Stacks
 
-The plugin auto-detects and provides stack-specific analysis for:
+The plugin auto-detects the stack and adds language-specific checks for:
 
 - **JavaScript/TypeScript**: React, Vue, Nuxt, Next.js, Angular, Svelte, Express, Fastify, Node.js
-- **C#/.NET**: ASP.NET Core, Blazor, Entity Framework, minimal APIs
-- **Python**: Django, Flask, FastAPI, SQLAlchemy
-- **Go**: Standard library, Gin, Echo, GORM
-- **And more**: Analysis adapts to detected project configuration
+- **C#/.NET**: nullable reference types, async I/O, records, pattern matching, minimal APIs
+- **Python**: type hints, f-strings, context managers, match statements, dataclasses
 
 ## Plugin Details
 
 | Field | Value |
 |-------|-------|
-| Version | 1.1.0 |
+| Version | 1.1.1 |
 | Author | [Charles Jones](https://charlesjones.dev) |
 | License | MIT |
 | Repository | [claude-code-plugins-dev](https://github.com/charlesjones-dev/claude-code-plugins-dev) |
+
+## Contributing
+
+Bug reports and fixes are welcome. See [CONTRIBUTING.md](../../CONTRIBUTING.md).

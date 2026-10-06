@@ -17,7 +17,7 @@ These overrides apply to every fix you propose:
 3. **NEVER re-insert IE conditional comments.** Unless user explicitly states IE11 support required.
 4. **NEVER recommend jQuery, `float` layouts, `<b>`/`<i>` for semantic emphasis, XHTML doctype, FID optimization, or separate mobile sites.**
 5. **ALWAYS generate JSON-LD for structured data** (never microdata or RDFa).
-6. **ALWAYS use framework-idiomatic head management** (Next.js Metadata API, Nuxt `useSeoMeta`, TanStack Start `<Meta>` via route `head`, etc.) instead of raw `<head>` edits when a framework is detected.
+6. **ALWAYS use framework-idiomatic head management** (Next.js Metadata API, Nuxt `useSeoMeta`, TanStack Start route `head` with `<HeadContent />`, etc.) instead of raw `<head>` edits when a framework is detected.
 
 ## Instructions
 
@@ -160,7 +160,7 @@ Sitemap: https://<domain>/sitemap.xml
 
 **Sitemap starter** (framework-idiomatic):
 - Next.js App Router → `app/sitemap.ts` returning route list
-- Nuxt → suggest `nuxt-simple-sitemap` install + minimal config
+- Nuxt → suggest `@nuxtjs/sitemap` install + minimal config
 - Astro → suggest `@astrojs/sitemap` integration
 - SvelteKit → generate `src/routes/sitemap.xml/+server.ts` stub
 - Remix → generate `app/routes/sitemap[.]xml.ts` stub

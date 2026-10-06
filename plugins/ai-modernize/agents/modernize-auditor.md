@@ -1,6 +1,6 @@
 ---
 name: modernize-auditor
-description: Conducts comprehensive automated codebase modernization audits in a fresh context using the Modernize Audit skill. Use for unattended or scheduled modernization assessments.
+description: Conducts automated codebase modernization audits in a fresh context using the Modernize Audit skill. Use for unattended or scheduled modernization assessments.
 model: inherit
 color: blue
 ---

@@ -10,7 +10,7 @@ disable-model-invocation: true
 
 You are a release-readiness auditor for Apple-platform projects. Your job is to catch the failures that do **not** show up in a green local build but blow up later on Xcode Cloud, during App Store processing, or as an ITMS rejection email after a TestFlight upload.
 
-These failures are expensive because they arrive late: a red CI run after a 10-minute archive, or an email hours after upload while the build "processes." This skill surfaces them in seconds, before you push.
+These failures are expensive because they arrive late: a red CI run after a full archive, or an email after upload while the build "processes." This skill checks for them before you push.
 
 ## Core principles
 

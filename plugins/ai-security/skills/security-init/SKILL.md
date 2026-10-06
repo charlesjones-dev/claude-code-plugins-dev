@@ -1,13 +1,13 @@
 ---
 name: security-init
-description: "Initialize Claude Code security settings with intelligent file denial patterns based on your project's technology stack."
+description: "Initialize Claude Code security settings with file denial patterns based on your project's technology stack."
 disable-model-invocation: true
 allowed-tools: [Bash, Read, Write, Glob, AskUserQuestion]
 ---
 
 # Security Init
 
-Initialize Claude Code security settings by configuring `.claude/settings.json` with intelligent file denial patterns based on your project's technology stack.
+Initialize Claude Code security settings by configuring `.claude/settings.json` with file denial patterns based on your project's technology stack.
 
 ## Instructions
 

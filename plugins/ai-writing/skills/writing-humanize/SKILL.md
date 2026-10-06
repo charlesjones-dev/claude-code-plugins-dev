@@ -1,6 +1,6 @@
 ---
 name: writing-humanize
-description: "Remove signs of AI-generated writing from text. Detects and fixes 24 documented AI writing patterns to make text sound natural and human-written."
+description: "Remove signs of AI-generated writing from text. Detects and fixes 26 documented AI writing patterns."
 disable-model-invocation: true
 allowed-tools:
   - Read
@@ -96,7 +96,7 @@ Use the AskUserQuestion tool:
 
 ## Pattern catalog
 
-Grouped from 24 documented patterns. Each group has a combined word list and one before/after example.
+Grouped from 26 documented patterns. Each group has a combined word list and one before/after example.
 
 ### 1. Inflated language
 
@@ -120,7 +120,7 @@ Patterns: superficial -ing analyses, vague attributions, formulaic "challenges a
 > It's not just about code quality; it's about fostering a culture of excellence. Industry experts have highlighted how the tool encompasses everything from automated testing to seamless deployment, ensuring teams can overcome challenges while cultivating best practices.
 
 **After:**
-> The tool runs tests and deploys code. Teams at Stripe and Shopify reported fewer production incidents after adopting it, according to a 2024 case study by ThoughtWorks.
+> The tool runs your tests and deploys your code.
 
 ### 3. Unnatural grammar
 

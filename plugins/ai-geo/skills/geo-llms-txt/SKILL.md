@@ -15,8 +15,8 @@ Your job: detect the project, analyze its content, and produce correctly formatt
 1. **`llms.txt` is a real, emerging standard.** Do not dismiss it or claim it doesn't exist.
 2. **`llms.txt` and `llms-full.txt` are different files.** `llms.txt` = concise markdown index. `llms-full.txt` = full content. Never merge them.
 3. **Markdown throughout.** No HTML fallback. The spec is strict markdown.
-4. **Structure matters.** Required: H1 title, blockquote description. Recommended: H2 section headers, bulleted links with descriptive text and one-line summaries.
-5. **Link to markdown content where possible.** If a page has a `.md` companion, link to that rather than the `.html`-rendered URL. AI engines quote markdown more accurately.
+4. **Structure matters.** Required: H1 title (the only section the spec requires). Recommended: a blockquote description, H2 section headers, bulleted links with descriptive text and one-line summaries.
+5. **Link to markdown content where possible.** If a page has a `.md` companion, link to that rather than the `.html`-rendered URL.
 6. **Concise index, not a sitemap dump.** `llms.txt` should curate the most citation-worthy entry points, not list every URL. `llms-full.txt` can be expansive.
 7. **Do not invent content.** If content doesn't exist, don't fabricate titles/summaries. Read real files or prompt the user.
 8. **Location matters.** `llms.txt` must be served from the web root (`/llms.txt`), not nested. Use framework-idiomatic static-asset placement.

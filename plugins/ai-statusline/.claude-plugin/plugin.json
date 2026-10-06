@@ -1,7 +1,7 @@
 {
   "name": "ai-statusline",
-  "version": "1.4.0",
-  "description": "AI-powered status line customization - Enhances Claude Code's native /statusline command with visual progress bars, 5h/7d rate-limit display, a month-to-date spend budget for Enterprise/API seats without rate limits, reasoning-effort level with /effort-matched colors and ultracode detection, cost and duration segments, granular display toggles, and an interactive edit wizard",
+  "version": "1.4.1",
+  "description": "Builds on Claude Code's native /statusline with a context progress bar, 5h/7d rate limits, a month-to-date spend budget for Enterprise/API seats without rate limits, the reasoning-effort level, cost and duration, and a wizard to change any of it",
   "author": {
     "name": "Charles Jones",
     "url": "https://charlesjones.dev"
@@ -9,6 +9,7 @@
   "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev",
   "license": "MIT",
   "keywords": [
+    "ai",
     "statusline",
     "status",
     "customization",

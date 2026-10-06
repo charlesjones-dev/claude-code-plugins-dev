@@ -1,6 +1,6 @@
 ---
 name: kb-organize
-description: "Reorganize flat KB files into category folders based on tags and content. Updates CLAUDE.md paths and _index.md. Safe — previews all moves before executing."
+description: "Reorganize flat KB files into category folders based on tags and content. Updates CLAUDE.md paths and _index.md. Safe: previews all moves before executing."
 disable-model-invocation: true
 ---
 

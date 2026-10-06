@@ -1,7 +1,7 @@
 {
   "name": "ai-git",
-  "version": "1.3.1",
-  "description": "AI-powered git automation - Intelligent git skills that streamline version control workflows with .gitignore generation, commit-push-PR workflow, and a Codex Code Review loop that drives a PR to clean review",
+  "version": "1.3.2",
+  "description": "Generates .gitignore files, commits and pushes with a message in your repo's style, opens PRs, and loops a PR through Codex Code Review until it comes back clean",
   "author": {
     "name": "Charles Jones",
     "url": "https://charlesjones.dev"
@@ -9,10 +9,10 @@
   "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev",
   "license": "MIT",
   "keywords": [
+    "ai",
     "git",
     "commit",
     "commits",
-    "ai",
     "automation",
     "productivity",
     "devops",

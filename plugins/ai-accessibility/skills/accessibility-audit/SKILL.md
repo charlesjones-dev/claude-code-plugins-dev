@@ -1,6 +1,6 @@
 ---
 name: accessibility-audit
-description: "Comprehensive accessibility audit to identify WCAG compliance issues and barriers to inclusive design."
+description: "Audit code or a live URL for WCAG accessibility issues and save a report with fixes."
 disable-model-invocation: true
 ---
 
@@ -189,7 +189,7 @@ Validate ARIA usage by checking for:
 Verify keyboard accessibility:
 - All interactive elements reachable via keyboard (tab, enter, space, arrows)
 - Tab order follows logical/visual flow; no keyboard traps
-- Visible focus indicators with sufficient contrast (3:1 minimum)
+- Visible focus indicators with sufficient contrast (3:1 against adjacent colors, SC 1.4.11)
 - Skip navigation links for bypassing repetitive content
 - Focus management in modals/dialogs (trap focus, return on close)
 - ESC key closes modals and cancels operations
@@ -217,7 +217,7 @@ Evaluate color accessibility:
 - Never rely solely on color to convey information
 - All text must meet minimum contrast ratios (SC 1.4.3 AA, SC 1.4.6 AAA)
 - Interactive elements and their states must have sufficient contrast
-- Focus indicators must have 3:1 contrast against adjacent colors (SC 2.4.11)
+- Focus indicators must have 3:1 contrast against adjacent colors (SC 1.4.11 Non-text Contrast)
 
 ### 5. Forms & Input Accessibility
 
@@ -337,7 +337,7 @@ Developers need to FIND these elements. Generic descriptions waste their time.
 
 ## WCAG Conformance Levels
 
-### Level A (25 Criteria)
+### Level A (31 Criteria in WCAG 2.2; 30 in 2.1, 25 in 2.0)
 **Minimum accessibility** - Critical barriers that prevent access
 
 Key Level A criteria include:
@@ -348,8 +348,8 @@ Key Level A criteria include:
 - 3.1.1 Language of Page (lang attribute)
 - 4.1.2 Name, Role, Value (accessible names)
 
-### Level AA (38 Criteria Total)
-**Industry standard** - Recommended for most websites, often legally required
+### Level AA (55 Criteria Total in WCAG 2.2; 50 in 2.1, 38 in 2.0)
+**Industry standard** - Recommended for most websites
 
 Key additional Level AA criteria:
 - 1.4.3 Contrast (Minimum) - 4.5:1 normal text, 3:1 large text
@@ -359,7 +359,7 @@ Key additional Level AA criteria:
 - 3.3.3 Error Suggestion
 - 4.1.3 Status Messages
 
-### Level AAA (61 Criteria Total)
+### Level AAA (86 Criteria Total in WCAG 2.2; 78 in 2.1, 61 in 2.0)
 **Enhanced accessibility** - Highest level for specialized content
 
 Key additional Level AAA criteria:
@@ -428,7 +428,7 @@ When Playwright MCP tools are available, perform visual testing:
 4. Test keyboard navigation with Tab, Enter, Space, Escape (`mcp__playwright__browser_press_key`)
 5. Screenshot focus states for each major interactive element
 6. Test form inputs and trigger validation errors (`mcp__playwright__browser_type`, `mcp__playwright__browser_fill_form`)
-7. Measure touch target sizes from snapshot; verify 44x44px minimums
+7. Measure touch target sizes from snapshot; verify 24x24px minimums (AA, SC 2.5.8; 44x44px for AAA, SC 2.5.5)
 8. Check console for accessibility errors (`mcp__playwright__browser_console_messages`)
 
 **Playwright Limitations**: Cannot replace manual screen reader testing, voice control testing, or some dynamic behavior verification.
@@ -741,7 +741,7 @@ Good approach:
 
 ## Best Practices
 
-1. **Test with Actual Assistive Technologies**: Automated tools catch only ~30-40% of accessibility issues. Manual testing with screen readers (NVDA, JAWS, VoiceOver) is essential.
+1. **Test with Actual Assistive Technologies**: Automated tools miss many accessibility issues. Manual testing with screen readers (NVDA, JAWS, VoiceOver) is essential.
 
 2. **Include Users with Disabilities**: The most valuable accessibility testing comes from actual users with disabilities who reveal usability issues automated testing may miss.
 

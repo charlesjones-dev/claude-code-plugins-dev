@@ -21,7 +21,7 @@ Before starting the audit, gather the following configuration through interactiv
 Ask the user about the AI tools and models that were used to generate or assist with the codebase.
 
 - Question 1: "What AI coding tools were used to build or assist with this codebase?"
-  - Options: Claude (Sonnet 2/3/3.5), Claude (Sonnet 4/Opus 4), Cursor (2024 or earlier), Cursor (2025+), GitHub Copilot, ChatGPT / GPT-4, Windsurf / Codeium, Multiple tools / Not sure, No AI tools (legacy human code)
+  - Options: Claude 3-era models, Claude (Sonnet 4/Opus 4), Cursor (2024 or earlier), Cursor (2025+), GitHub Copilot, ChatGPT / GPT-4, Windsurf / Codeium, Multiple tools / Not sure, No AI tools (legacy human code)
   - Header: "AI Tool History"
   - multiSelect: true
 
@@ -126,7 +126,7 @@ This skill provides comprehensive expertise for identifying technical debt, anti
 ## When to Use This Skill
 
 Invoke this skill when:
-- Assessing a codebase built with older AI tools (Claude Sonnet 2/3, early Cursor, GPT-4 2024)
+- Assessing a codebase built with older AI tools (Claude 3-era models, early Cursor, GPT-4 2024)
 - Evaluating technical debt before a modernization effort
 - Reviewing a "vibe-coded" project for production readiness
 - Auditing code quality against SOLID, DRY, KISS, and YAGNI principles
@@ -139,7 +139,7 @@ AI code generation models have improved dramatically between 2024 and 2026. Code
 
 ### Evolution of AI Code Generation Quality
 
-**2024 Era (Claude Sonnet 2/3, early GPT-4, Cursor pre-2025):**
+**2024 Era (Claude 3-era models, early GPT-4, Cursor pre-2025):**
 - Models often produced code that "worked" but violated fundamental engineering principles
 - Limited understanding of project-wide architecture and cross-file consistency
 - Tendency to generate verbose, repetitive code rather than DRY abstractions
@@ -735,7 +735,7 @@ The Modernization Score (0-100) is calculated across the assessed categories. Ea
 | Phase 4: Polish | X findings | Xh | Within 2 months |
 | **Total** | **X findings** | **Xh** | |
 
-*All estimates assume AI-assisted development using current frontier models (e.g., Claude Opus 4.8 / Sonnet 5 or equivalent). Actual time may vary based on codebase complexity, testing requirements, and developer familiarity.*
+*All estimates assume AI-assisted development using current frontier models. Actual time may vary based on codebase complexity, testing requirements, and developer familiarity.*
 
 ---
 
@@ -770,7 +770,7 @@ When determining finding severity, apply these criteria:
 
 ## AI-Assisted Time Estimation Guidelines
 
-All time estimates MUST assume AI-assisted development (using current frontier models like Claude Opus 4.8 / Sonnet 5). Guidelines:
+All time estimates MUST assume AI-assisted development (using current frontier models). Guidelines:
 
 | Task Type | Manual Estimate | AI-Assisted Estimate | Speedup |
 |-----------|----------------|---------------------|---------|

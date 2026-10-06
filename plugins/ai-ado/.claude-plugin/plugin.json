@@ -1,7 +1,7 @@
 {
   "name": "ai-ado",
-  "version": "1.3.2",
-  "description": "AI-powered Azure DevOps integration with skills - Intelligent work item management, configuration, and automation for Azure DevOps workflows with MCP integration",
+  "version": "1.3.3",
+  "description": "Sets up an Azure DevOps project and its MCP server, creates Features, User Stories and Tasks, logs hours to stories, and builds weekly timesheet reports",
   "author": {
     "name": "Charles Jones",
     "url": "https://charlesjones.dev"
@@ -9,11 +9,11 @@
   "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev",
   "license": "MIT",
   "keywords": [
+    "ai",
     "azure-devops",
     "ado",
     "devops",
     "work-items",
-    "ai",
     "automation",
     "productivity",
     "mcp",

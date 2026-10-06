@@ -2,61 +2,32 @@
 
 ## Supported Versions
 
-We release patches for security vulnerabilities. Currently supported versions:
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.0.x + | :white_check_mark: |
-| < 1.0   | :x:                |
+Only the latest marketplace release gets security fixes. Update to it before you report a problem.
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability within this plugin marketplace or any of its plugins, please send an email at [https://charlesjones.dev/contact](https://charlesjones.dev/contact). All security vulnerabilities will be promptly addressed.
+Report it privately through the contact form at [charlesjones.dev/contact](https://charlesjones.dev/contact), not in a public issue. I reply within one business day.
 
-Please include the following information in your report:
+Please include:
 
-- Description of the vulnerability
-- Steps to reproduce the issue
-- Affected plugin(s) and version(s)
-- Potential impact
-- Any suggested fixes (optional)
+- What the problem is and how to reproduce it
+- The affected plugin and version
+- The impact you expect
+- A suggested fix, if you have one
 
-### What to Expect
-
-- **Initial Response**: You will receive a response within 48 hours acknowledging your report
-- **Updates**: We will keep you informed about the progress of addressing the vulnerability
-- **Resolution**: Once the vulnerability is fixed, we will notify you and credit you in the release notes (unless you prefer to remain anonymous)
-
-## Security Best Practices
-
-When using plugins from this marketplace:
-
-1. **Review Plugin Code**: All plugins are open source. Review the code before installation
-2. **Keep Updated**: Regularly update plugins to receive security patches
-3. **Use Security Plugin**: Install the `ai-security` plugin and run `/security-init` to configure secure defaults
-4. **Report Issues**: If you notice suspicious behavior, report it immediately
-5. **Sensitive Data**: Never commit sensitive data (API keys, passwords, etc.) when using git automation plugins
+Once it's fixed, the release notes credit you unless you'd rather stay anonymous.
 
 ## Scope
 
-This security policy covers:
+This policy covers the marketplace manifest, the plugins in `plugins/`, and the docs and examples in this repository.
 
-- Plugin marketplace infrastructure and configuration
-- Individual plugin commands and functionality
-- Dependencies and third-party integrations
-- Documentation and examples
+## Using These Plugins Safely
 
-## Security Features
-
-This marketplace includes the **ai-security** plugin which provides:
-
-- `/security-init`: Configure Claude Code to prevent reading sensitive files
-- `/security-audit`: Comprehensive security scanning and vulnerability detection
-- `security-auditor` agent: Automated security analysis
+1. **Read before you install.** Skills and agents are plain Markdown files, so you can see exactly what a plugin tells Claude to do.
+2. **Stay on the latest release.** Fixes only go into the newest version.
+3. **Block reads of secrets.** The ai-security plugin's `/security-init` adds Claude Code deny rules for credential and secret files. See the [ai-security README](plugins/ai-security/README.md) for its other skills.
+4. **Check what you commit.** The git skills skip common secret files, but review the staged files before you push.
 
 ## Contact
 
-For security-related questions or concerns:
-
-- Email: [https://charlesjones.dev/contact](https://charlesjones.dev/contact)
-- GitHub Issues: [Report a security concern](https://github.com/charlesjones-dev/claude-code-plugins-dev/issues) (for non-sensitive issues only)
+For questions that aren't sensitive, [open a GitHub issue](https://github.com/charlesjones-dev/claude-code-plugins-dev/issues).

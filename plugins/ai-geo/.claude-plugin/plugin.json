@@ -1,7 +1,7 @@
 {
   "name": "ai-geo",
-  "version": "1.1.0",
-  "description": "Generative Engine Optimization (GEO) auditing and remediation. Optimizes web content for AI answer engines like ChatGPT, Perplexity, Claude, and Google AI Overviews. Generates llms.txt files, wires head link[rel=alternate] + sitemap + robots.txt discoverability signals, audits AI crawler access, validates citation-worthiness signals, and structures content for LLM extraction.",
+  "version": "1.1.1",
+  "description": "Audits how AI answer engines like ChatGPT, Perplexity, Claude and Google AI Overviews can crawl and cite a site, generates llms.txt with discovery links in the head, sitemap and robots.txt, and fixes crawler rules and structured data",
   "author": {
     "name": "Charles Jones",
     "url": "https://charlesjones.dev"

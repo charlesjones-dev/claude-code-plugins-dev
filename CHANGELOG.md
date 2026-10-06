@@ -7,6 +7,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.9.0] - 2026-10-06
+
+### Added
+
+#### AI-Slop Plugin (new — v1.0.0)
+
+New plugin for auditing what a codebase shows its users: copy that reads as AI-written, layouts that read as templates, metadata built from boilerplate, and factual errors in all of them.
+
+- `/slop-audit` — report-only audit of every user-facing surface: pages and shared layout, data files that feed cards, forms, emails, visible error text, legal pages, meta and OG tags, JSON-LD, `llms.txt`, app strings and store metadata, README and `--help` text.
+  - Reads the project's voice rules, documented house style and earlier audit decisions first, so deliberate choices aren't flagged and settled questions aren't asked again.
+  - Counts habits that repeat across the site (em dashes, the main tagline, triplets, "X, not Y" slogans, a word the copy leans on) and how many files each appears in.
+  - Checks facts: legal pages against the third parties the code loads (and the live page's scripts when given a URL), figures and names that differ between pages, claims another page contradicts, and links or components that lead nowhere.
+  - Scores each area 0–100, quotes every finding with `file:line` and a concrete fix, then ends with a fix plan, its defaults and numbered questions. Edits start only after you answer; it then removes old wording from every metadata surface, runs the project's checks, and records your answers as project rules.
+  - Ships its checklist as `signals.md`: sentence, structure, claims, positioning, visual and metadata tells, plus a list of things not to flag.
+- Marketplace metadata version bumped `2.8.1` → `2.9.0` (new plugin).
+
+### Changed
+
+- **Docs rewrite after an AI slop audit (October 2026)** — root README, CONTRIBUTING.md, SECURITY.md, every plugin README, all 15 marketplace and `plugin.json` descriptions, and several skill and agent descriptions.
+  - Plugin descriptions now open with what the plugin does. "AI-powered" and the "Noun - Clause" shape are gone.
+  - Removed emoji headings, "Built with ❤️" closers, "Time Savings" sections with estimated hours, and unmeasured percentages.
+  - Cut repeated lists and IS / IS NOT blocks. Plugin READMEs are shorter, with a short "Limits" section where one is needed.
+  - The GitHub repository description now matches the README tagline.
+- **CONTRIBUTING.md** — covers bug reports and fix PRs only (new plugins and features start as an issue), and describes the current `skills/` and `agents/` layout instead of the removed `commands/` folder and `/plugins-scaffold`.
+- **SECURITY.md** — only the latest marketplace release gets security fixes. Reports go through the contact form, with a reply within one business day.
+- **CLAUDE.md** — new Documentation Style rules that record these decisions.
+- Patch releases for the docs and fixes below: ai-accessibility 1.4.2, ai-ado 1.3.3, ai-compliance 1.0.1, ai-geo 1.1.1, ai-git 1.3.2, ai-knowledge 1.5.2, ai-modernize 1.1.1, ai-performance 1.2.2, ai-security 2.0.1, ai-seo 1.0.1, ai-statusline 1.4.1, ai-swift 1.0.2, ai-workflow 2.0.1, ai-writing 1.0.1. Every `plugin.json` keyword list now matches its `marketplace.json` entry.
+
+### Fixed
+
+- **ai-accessibility** — WCAG criteria counts in the README and in `/accessibility-audit` reports were WCAG 2.0's numbers. They now give 78 criteria for 2.1 and 86 for 2.2, with per-level counts. The touch-target rule is 24×24px at AA (SC 2.5.8) and 44×44px at AAA (SC 2.5.5), and focus-indicator contrast cites SC 1.4.11. The README now lists the 508 / WCAG 2.0 AA option and has a Plugin Details section.
+- **ai-geo** — `/geo-fix` and the README used `anthropic-ai` and `Claude-Web`, which Anthropic doesn't document. They now use ClaudeBot, Claude-User and Claude-SearchBot. Google-Extended is described as a robots.txt control token, and "SearchGPT" is now ChatGPT search. `/geo-llms-txt` no longer calls the blockquote required (the llms.txt spec requires only the H1). The README documents `--dry-run` and the v1.1.0 discoverability checks.
+- **ai-knowledge** — the auto memory comparison now matches the Claude Code docs: a `MEMORY.md` index plus topic files, the first 200 lines loaded at session start, and `/memory` for browsing.
+- **ai-modernize** — removed "Claude Sonnet 2" (no such model) from the README and `/modernize-audit`, and dropped stale model names from its time estimates. The README's stack list names only stacks the skill checks.
+- **ai-seo** — `nuxt-simple-sitemap` is now `@nuxtjs/sitemap`, TanStack Start's head component is `<HeadContent />`, and a dead web.dev link is gone.
+- **ai-writing** — `/writing-humanize` counts 26 patterns, not 24, and its before/after example no longer invents a citation.
+- **ai-git** — the README no longer says the plugin has agents or that `/git-commit-push` stages all changes. It stages the changed files by name and skips secrets.
+- **ai-ado** — `/ado-init` had lost its README heading and was described as writing work item guidelines. The timesheet example totals now add up, and the roadmap of unbuilt skills is gone.
+- **ai-performance** — the README no longer promises custom analysis templates or CI/CD gates.
+- **ai-statusline** — "three categories" of display options is now four, and the examples use a current model label.
+- **ai-swift** — removed unverified figures from the README and `/swift-preflight`.
+- **ai-workflow** — added the missing `/workflow-ship` section and removed unbacked "syncs via /plugin update" claims. The README's check order matches what `/workflow-preflight` runs, and its `argument-hint` is quoted so YAML reads it as a string.
+- **ai-compliance** — Apache 2.0's NOTICE requirement applies only when the project ships a NOTICE file, and BSD licenses use their SPDX names.
+
 ## [2.8.1] - 2026-09-10
 
 ### Added
@@ -1214,7 +1258,8 @@ New plugin for Swift / iOS / macOS development whose primary job is to catch rel
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.8.1...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.9.0...HEAD
+[2.9.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.8.1...v2.9.0
 [2.8.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.8.0...v2.8.1
 [2.8.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.7.1...v2.8.0
 [2.7.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.7.0...v2.7.1
