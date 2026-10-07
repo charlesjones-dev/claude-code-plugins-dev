@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Claude Code plugins for code audits, release checks and day-to-day git and project workflows.",
-    "version": "2.11.0",
+    "version": "2.11.1",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -423,7 +423,7 @@
       "name": "ai-cvp",
       "source": "./plugins/ai-cvp",
       "description": "Reads a repo you own or are authorized to test and writes a tailored prompt for a sandboxed security audit on the strongest model you can use, with a launch checklist and a follow-up prompt for verifying and fixing what the audit proves",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "keywords": [
         "ai",
         "security",

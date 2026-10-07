@@ -22,6 +22,8 @@ Fill every `{PLACEHOLDER}`. Delete sections marked "optional" when they don't ap
 - `{TEST_PLACEMENT}`: where new tests go and how they're named, by the repo's convention, with the `cvp` marker. For example "named `*.cvp.test.ts` next to the code it targets" or "named `test_cvp_*.py` under tests/security/". When test environments differ, name the location for each.
 - `{TEST_SETUP}`: one to four sentences, or delete it. The existing test to copy and how it mocks the framework, database, or cache. "There's no database or cache in tests," when true. The libraries to mock because they call the network during verification (JWKS fetches, OCSP, license checks, telemetry). "No new dependencies." When tests bind ports or spawn servers: "Tests that bind localhost ports or start servers may fail in this sandbox; call handlers in-process where you can."
 - `{TEST_COMMAND}`: the exact single-file command. In a monorepo, give one per package or workspace with its project or workspace flags.
+- `{ARCHIVE_EXAMPLE}`: one archived test path from this repo: `docs/security/tests/`, then the test's repo-relative path, then `.disabled`. For example `docs/security/tests/src/auth/session.cvp.test.ts.disabled`.
+- `{REPORT_PATH}`: `docs/security/<date>-cvp-security-audit.md`, from step 4 of SKILL.md.
 - `{INFRA}`: the hosting, provider, and store dashboards to check. For a library, the package registry and repository settings.
 
 ## Example
@@ -32,6 +34,7 @@ An invented Express + Vue multi-tenant invoicing SaaS that stores each tenant's 
 - Goal: "Get another tenant's payment-processor or SMS API key in plaintext, or weaken the per-tenant encryption that protects them (key derivation, nonce reuse, plaintext fallbacks, the key-rotation script in server/scripts/rotate-keys.ts)."
 - Forbidden: "Do NOT run `npm run dev` or `npm run db:seed` (both wrap `op run`), `docker compose up`, or anything that loads real secrets."
 - Test setup: "Follow server/routes/invoices.test.ts, which stubs `req.tenant` and mocks server/db.ts. There's no database in tests. Mock the payment SDK and the JWKS fetch in server/auth/verify.ts. Component tests that need jsdom go in client/tests/. Run with `npx vitest run --project server <file>`, or `--project client` for client tests."
+- Archive example: "docs/security/tests/server/routes/tenant-keys.cvp.test.ts.disabled"
 
 ---
 
@@ -49,7 +52,9 @@ proves each one.
 - Make no network requests to production ({PROD_HOSTS}) or to {THIRD_PARTIES}.
   Mock every third-party service. If something truly needs network access, stop
   and ask me first.
-- Don't change {CODE_KIND} code. Only add test files and the report below.
+- Don't change {CODE_KIND} code. By the time you finish, the only files
+  you've added should be the report and the archived proof tests, all under
+  docs/security/, which git ignores.
 - No git commits, pushes, or branch changes.
 
 ## Read first
@@ -87,6 +92,12 @@ unreachable.
    Run it with `{TEST_COMMAND}`. A finding counts as Confirmed only if its test
    fails for the right reason. Otherwise mark it Unconfirmed and say what
    evidence is missing.
+   As soon as it has run, archive the test: move it to docs/security/tests/ at
+   the same repo-relative path, with `.disabled` appended, for example
+   {ARCHIVE_EXAMPLE}. Archive any helper or fixture files you added the same
+   way. Proof tests fail by design, so none may stay in the source tree, where
+   a commit would turn CI red. To run one again, move it back, run it, and
+   archive it again.
 4. Before reporting, try to disprove each Confirmed finding: look for upstream
    checks, {ORDERING: middleware ordering / call-site validation}, or deploy
    config that blocks it.
@@ -94,11 +105,14 @@ unreachable.
 ## Report
 Write {REPORT_PATH} with:
 - A summary table: ID (CVP-01, ...), severity, Confirmed or Unconfirmed,
-  one-line problem, file:line.
+  one-line problem, file:line, and the archived test's path.
 - For each finding: attacker and access needed, step-by-step exploit path,
   impact, the test that proves it, and a specific fix.
 {IF_RETEST: "- Retest results for the previous audit's items."}
 {IF_ALERTS: "- A reachable or unreachable verdict for each dependency alert."}
 - What you couldn't determine from code, and what I should check in {INFRA}.
 Don't fix anything yet. I'll choose what to fix after reading the report.
+
+Before you finish, run `git status --porcelain`. It should list nothing.
+Archive any test or helper it lists, and undo any other change you made.
 ```

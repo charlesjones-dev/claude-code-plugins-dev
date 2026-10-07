@@ -1,6 +1,6 @@
 # Claude Code Plugins for Developers
 
-[![Version](https://img.shields.io/badge/version-2.11.0-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
+[![Version](https://img.shields.io/badge/version-2.11.1-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/charlesjones-dev/claude-code-plugins-dev.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/stargazers)
 

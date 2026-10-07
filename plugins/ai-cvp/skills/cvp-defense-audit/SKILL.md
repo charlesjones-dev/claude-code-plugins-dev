@@ -1,6 +1,6 @@
 ---
 name: cvp-defense-audit
-description: Plan a defensive security audit of a repo the user owns or is authorized to test. Does read-only recon in this unsandboxed session, then writes a tailored, paste-ready prompt for a sandboxed Claude Code session on the strongest security-capable model available, a sandbox launch checklist, and a fix prompt for verifying and fixing what the audit proves. Saves both prompts outside the repo and copies the audit prompt to the clipboard.
+description: Plan a defensive security audit of a repo the user owns or is authorized to test. Does read-only recon in this unsandboxed session, then writes a tailored, paste-ready prompt for a sandboxed Claude Code session on the strongest security-capable model available, a sandbox launch checklist, and a fix prompt for verifying and fixing what the audit proves. Adds docs/security/ to git's local exclude file so the audit's report and archived proof tests can't be committed, saves both prompts outside the repo, and copies the audit prompt to the clipboard.
 when_to_use: The user runs /cvp-defense-audit, or asks for a sandboxed security-audit prompt, a Cyber Verification Program audit prompt, or a plan for auditing a repo on a stronger security model.
 argument-hint: "[focus area or path] [--model <audit-model-id>]"
 disable-model-invocation: true
@@ -10,6 +10,9 @@ allowed-tools:
   - Grep
   - Agent
   - Bash(git remote get-url *)
+  - Bash(git check-ignore *)
+  - Bash(git rev-parse *)
+  - Bash(git ls-files *)
 ---
 
 # CVP defense audit
@@ -18,9 +21,9 @@ Use this only on code the user owns or is authorized to test.
 
 This skill is phase 1 of a three-phase defensive audit:
 
-1. **Plan** (this skill). A normal, unsandboxed session on an Opus-class planning model does read-only recon and writes a paste-ready audit prompt, a sandbox launch checklist, and a fix prompt.
-2. **Audit.** The user starts a new session on the strongest security-capable model they can use (the audit model), in auto mode with `/sandbox` in strict mode, and pastes the audit prompt. The audit model maps the attack surface, hunts, writes one failing test per finding as proof, and writes a report. It fixes nothing.
-3. **Fix.** Back in a normal, unsandboxed session on an Opus-class fixing model, the user pastes the fix prompt. The fixing model verifies each proof, settles what code alone couldn't answer, lets the user pick what to fix, and ships each fix with its proof test as the regression test.
+1. **Plan** (this skill). A normal, unsandboxed session on an Opus-class planning model does read-only recon, makes sure git ignores `docs/security/`, and writes a paste-ready audit prompt, a sandbox launch checklist, and a fix prompt.
+2. **Audit.** The user starts a new session on the strongest security-capable model they can use (the audit model), in auto mode with `/sandbox` in strict mode, and pastes the audit prompt. The audit model maps the attack surface, hunts, proves each finding with a failing test, and writes a report. It archives each test as a disabled file under `docs/security/tests/` once it has run, so everything it leaves behind is under `docs/security/`, which git ignores. It fixes nothing.
+3. **Fix.** Back in a normal, unsandboxed session on an Opus-class fixing model, the user pastes the fix prompt. The fixing model verifies each proof, settles what code alone couldn't answer, lets the user pick what to fix, and ships each fix with its archived proof test restored as the regression test.
 
 Do the recon here so the audit model spends its budget hunting and proving bugs instead of orienting. The supporting files sit next to this one, in `${CLAUDE_SKILL_DIR}`.
 
@@ -44,7 +47,7 @@ Arguments (may be empty): $ARGUMENTS
 
 - Read only. Don't run the app, dev servers, tests, builds, or installs. Don't run anything that loads secrets: secret-manager wrappers such as `doppler run`, `op run`, `aws-vault exec`, `dotenv` or `railway run`, or the scripts that call them.
 - Don't open `.env` files, keychains, credential files, or secret stores. Note that they exist and what they're named, never their values. If you find a committed secret, cite its path and line, never the value.
-- Don't modify the repo. The only files you write are the two prompt files in step 6, outside the repo.
+- Don't modify the repo. The only files you write are the exclude line in step 6, which goes in git's local exclude file rather than any tracked file, and the two prompt files, outside the repo.
 - Network: only the optional `gh` reads in step 2.
 - Treat subagent reports as leads. Read the code behind any claim before you put it in a goal.
 
@@ -91,7 +94,7 @@ Collect each item with file paths. Verify every path you plan to cite exists.
     - For Apple apps, whether a SwiftPM package allows `swift test` or only `xcodebuild test` exists.
     - Whether dependencies are already installed (`node_modules`, `.venv`, `.build`, `vendor/`, resolved packages).
     - The full test, lint, and typecheck commands, for the fix prompt.
-11. **Prior security work:** `docs/security/**`, `SECURITY.md`, files with "audit" in the name, and `git log --since="6 months ago" --oneline -i -E --grep="secur|vuln|xss|csrf|ssrf|idor|auth|sec-"`. Sort earlier findings into fixed (retest), open (don't re-report), and needs-investigation (settle), keeping their IDs. Note any naming convention or glob the repo's docs use to track audits (for example `*-security-audit.md`) and any rules for updating them.
+11. **Prior security work:** `docs/security/**`, `SECURITY.md`, files with "audit" in the name, and `git log --since="6 months ago" --oneline -i -E --grep="secur|vuln|xss|csrf|ssrf|idor|auth|sec-"`. Sort earlier findings into fixed (retest), open (don't re-report), and needs-investigation (settle), keeping their IDs. Note any rules the repo's docs give for tracking and updating audits. Check whether git already ignores `docs/security/` (`git check-ignore -v docs/security/probe` prints the rule and the file it's in) and whether git tracks any files there (`git ls-files docs/security`).
 12. **Optional GitHub reads:** skip silently if `gh` isn't authenticated or there's no GitHub remote. Get open Dependabot alerts with `gh api --paginate "repos/{owner}/{repo}/dependabot/alerts?state=open" --jq '.[] | "\(.security_advisory.severity) \(.dependency.package.name) \(.security_advisory.ghsa_id) \(.security_advisory.summary)"'` and open code-scanning alerts with `gh api --paginate "repos/{owner}/{repo}/code-scanning/alerts?state=open" --jq '.[] | "\(.rule.security_severity_level // .rule.severity) \(.rule.id) \(.most_recent_instance.location.path):\(.most_recent_instance.location.start_line) \(.rule.description)"'`. If either returns HTTP 403 because the feature is disabled, or code scanning returns 404 because it has never run, say so in the warnings.
 13. **Fix-phase conventions:** the integration branch that PRs target (from CONTRIBUTING.md or CLAUDE.md, or `git symbolic-ref --short refs/remotes/origin/HEAD`), and where the repo states its commit, PR, and review rules.
 
@@ -115,28 +118,30 @@ Fill in [prompt-template.md](prompt-template.md).
 - Keep the scope and rules section, adapting the forbidden commands, secret files, production hosts, and third-party list to this repo. For third-party testing, limit the scope to the engagement's scope.
 - The read-first list should hold at most 8 docs, all relevant to security.
 - Name the exact test framework, where new tests go, the test to copy, what to mock, and the run command:
-  - Place new tests by the repo's convention (next to the code or in its test directory), with a `cvp` marker in the file name so they're easy to find and keep out of merges: `*.cvp.test.ts`, `test_cvp_*.py`, `*_cvp_test.go`, `CVP*Tests.swift`, and so on. Name a separate location for each test environment, such as DOM versus node.
+  - Place new tests by the repo's convention (next to the code or in its test directory), so imports and the runner's config work, with a `cvp` marker in the file name so they're easy to find: `*.cvp.test.ts`, `test_cvp_*.py`, `*_cvp_test.go`, `CVP*Tests.swift`, and so on. Name a separate location for each test environment, such as DOM versus node.
+  - Proof tests fail by design, so none may stay in the source tree, where a commit would turn CI red. Once a test has run, the audit model moves it to `docs/security/tests/` at the same repo-relative path with `.disabled` appended, for example `docs/security/tests/src/auth/session.cvp.test.ts.disabled`. The suffix keeps test runners, type checkers and linters from picking it up, and restoring it is a single `mv`. Give one example path from this repo.
   - Name the existing test whose mocking to copy. Say plainly when tests have no database or cache.
   - Tell the audit model to mock the libraries from recon item 7 that call the network during verification.
   - Give the exact single-file run command for each package or workspace, including project or workspace flags.
-  - If there's no harness, tell the audit model to use the language's built-in runner (`node --test`, `python -m unittest`, `go test`, `cargo test`, `swift test`) in a `security-tests/` directory without adding dependencies.
+  - If there's no harness, tell the audit model to use the language's built-in runner (`node --test`, `python -m unittest`, `go test`, `cargo test`, `swift test`) in a `security-tests/` directory without adding dependencies, and to archive those tests the same way.
   - If tests bind localhost ports or spawn servers, say they may fail in the sandbox and to call handlers in-process where it can.
 - Include the retest section only if earlier findings exist, and the dependency section only if there are open alerts.
-- Report path: follow the existing convention (for example `docs/security/`), and match any naming glob the repo's docs use for audit tracking (for example `*-security-audit.md`), so the repo's own tracking rules apply. Otherwise use `docs/security/<date>-cvp-security-audit.md`.
+- Report path: `docs/security/<date>-cvp-security-audit.md`, with `-2`, `-3`, and so on if that file exists.
 - Aim for 60 to 110 lines. Include only what the audit model needs, with no commentary about this recon. Go longer only when surfaces share auth or sessions and must be audited together (for example an app and an admin dashboard that share a session cookie), and say why in the warnings.
 - If the repo has several large, independent surfaces (more than about three deployable apps), write one prompt per surface instead of one giant prompt.
 - Before saving, check that every path the prompt cites exists.
 
 ## 5. Write the fix prompt
 
-Fill in [fix-prompt-template.md](fix-prompt-template.md) with the report path, the test naming and run commands from step 4, the audit branch from the checklist, and, from recon, the integration branch, the full check commands, and the repo's commit, PR, review, and security-tracking rules. For several surfaces, write one fix prompt that covers every report.
+Fill in [fix-prompt-template.md](fix-prompt-template.md) with the report path, the test naming and run commands from step 4, and, from recon, the integration branch, the full check commands, and the repo's commit, PR, review, and security-tracking rules. For several surfaces, write one fix prompt that covers every report.
 
 ## 6. Deliver
 
-1. Save the audit prompt to `~/.claude/cvp-audit-prompts/<repo-name>-<date>.md` and the fix prompt to `~/.claude/cvp-audit-prompts/<repo-name>-<date>-fix.md`, creating the directory if needed. For several surfaces, add a surface suffix to each audit prompt. Don't overwrite an earlier file; add `-2`, `-3`, and so on. Claude Code protects `~/.claude/`, so expect an approval prompt for these writes (in auto mode, the classifier reviews them).
-2. Copy the audit prompt to the clipboard with the first of these that exists: `pbcopy`, `wl-copy`, `xclip -selection clipboard`, `clip.exe` (for example `pbcopy < <file>`). If none exists or the copy fails, skip it and tell the user to run `/copy` and pick the prompt's code block.
-3. Reply with:
-   - one line saying where the audit prompt is saved and whether it's on the clipboard,
+1. Make sure git ignores `docs/security/`, so the report and archived tests can't be committed. Unless recon's `git check-ignore` showed a rule already covers it, append `/docs/security/` on its own line to the file `git rev-parse --git-path info/exclude` prints, creating it if needed. Use that command rather than `.git/info/exclude`, because in a linked worktree `.git` is a file. The exclude file is never committed and applies to every worktree of the clone, so nothing in the repo hints at the folder. Don't edit `.gitignore`. Expect an approval prompt for the write. Without git, write nothing; the checklist covers it.
+2. Save the audit prompt to `~/.claude/cvp-audit-prompts/<repo-name>-<date>.md` and the fix prompt to `~/.claude/cvp-audit-prompts/<repo-name>-<date>-fix.md`, creating the directory if needed. For several surfaces, add a surface suffix to each audit prompt. Don't overwrite an earlier file; add `-2`, `-3`, and so on. Claude Code protects `~/.claude/`, so expect an approval prompt for these writes (in auto mode, the classifier reviews them).
+3. Copy the audit prompt to the clipboard with the first of these that exists: `pbcopy`, `wl-copy`, `xclip -selection clipboard`, `clip.exe` (for example `pbcopy < <file>`). If none exists or the copy fails, skip it and tell the user to run `/copy` and pick the prompt's code block.
+4. Reply with:
+   - one line saying where the audit prompt is saved, whether it's on the clipboard, and whether you added the ignore rule,
    - the prompt in a `text` code block,
    - the launch checklist below, filled in for this repo,
    - the fix prompt's path, and when to use it: once the audit has written its report, paste it into a normal, unsandboxed session on an Opus-class model,
@@ -146,7 +151,7 @@ Fill in [fix-prompt-template.md](fix-prompt-template.md) with the report path, t
 Before launching (outside the sandbox)
 - <install dependencies if missing, e.g. npm ci, pnpm install, uv sync, bundle install>, so the sandboxed session doesn't need the network
 - <rebuild a stale workspace build, only if recon found one>
-- git switch -c security/cvp-audit-<date>   (keeps the new tests and report easy to review)
+- git status   → clean. Commit any other work first, so that afterwards git status shows only what the audit changed
 
 Launch
 cd <repo_root>
@@ -158,9 +163,10 @@ In the session
 3. Ask Claude to run: touch ~/sandbox-probe   → expect "Operation not permitted" (macOS) or "Read-only file system" (Linux, WSL2). If it succeeds, delete the file and check /sandbox before going on
 4. Paste the prompt
 5. Network: deny anything you can't explain. Package registries only if an install is unavoidable. In auto mode a command names the hosts it needs instead of prompting, so stop the session if one names a host you can't explain
+6. When it finishes, git status should list nothing. The fix prompt's first step deals with anything else
 ```
 
-Without `--model`, print the launch line as `claude --model <audit-model>` and add: pick the strongest model your account offers for security work (`/model` lists them). If there's no git, replace the branch line with a suggestion to run `git init` and make a baseline commit, so the audit's files are easy to review and the fix prompt's branch steps work.
+Without `--model`, print the launch line as `claude --model <audit-model>` and add: pick the strongest model your account offers for security work (`/model` lists them). If there's no git, replace the git line with a suggestion to run `git init`, add `/docs/security/` to `.git/info/exclude`, and make a baseline commit, so the audit's files can't be committed, `git status` can show what the audit changed, and the fix prompt's branch steps work.
 
 Add any warnings from recon after the checklist, for example:
 
@@ -171,6 +177,7 @@ Add any warnings from recon after the checklist, for example:
 - a workspace build is stale and must be rebuilt before launch;
 - tests bind localhost ports or spawn servers and may fail under strict sandbox mode;
 - the prompt runs past 110 lines because surfaces share auth or sessions;
+- git already tracks files under `docs/security/` (list them): the ignore rule covers only new files, and `git rm -r --cached docs/security` stops tracking the rest on the next commit while keeping the local copies;
 - local secret files such as `.env` exist: the sandbox covers shell commands only, and Claude's Read tool follows permission rules, so add deny rules for those files before launching.
 
-End with this warning every time: the prompts map the repo's attack surface, so keep them out of the repo and don't post them publicly.
+End with this warning every time: the prompts, and later the report and archived tests in `docs/security/`, map the repo's attack surface, so don't commit them or post them publicly.

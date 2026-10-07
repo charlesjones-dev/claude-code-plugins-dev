@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.1] - 2026-10-07
+
+### Fixed
+
+#### AI-CVP Plugin (v1.0.0 → v1.0.1)
+
+- **`/cvp-defense-audit` audit prompt** — the audit session no longer leaves failing proof tests across the source tree, where a commit would turn CI red. It still writes each test where the repo keeps its tests and runs it, then moves it to `docs/security/tests/` under the same repo-relative path with `.disabled` appended (for example `docs/security/tests/src/auth/session.cvp.test.ts.disabled`). Before finishing, it checks `git status` for strays. The report now always goes to `docs/security/<date>-cvp-security-audit.md`, and the summary table lists each finding's archived test.
+- **`/cvp-defense-audit` ignore rule** — the planning session now adds `/docs/security/` to `.git/info/exclude` unless git already ignores it, so the report and archived tests stay out of commits in open-source repos and repos with confidential findings. The exclude file is never committed, so the repo carries no hint of the folder, and it applies to every worktree of the clone. The warnings list any files git already tracks under `docs/security/`. The rule also covers ai-security's reports in the same folder.
+- **Launch checklist** — drops the `security/cvp-audit-<date>` branch, which would now hold nothing. Instead it asks for a clean `git status` before launch and adds a final `git status` check that should come back empty.
+- **Fix prompt** — checks that `docs/security/` is ignored (adding the exclude line if it isn't) and archives any stray proof tests. It runs each proof from a temporary copy, and restores the proof test with `mv` (dropping `.disabled`, which removes the archived copy) on the fix branch. It never commits anything under `docs/security/`.
+- Marketplace metadata version bumped `2.11.0` → `2.11.1`.
+
 ## [2.11.0] - 2026-10-07
 
 ### Added
@@ -1319,7 +1331,8 @@ New plugin for Swift / iOS / macOS development whose primary job is to catch rel
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.11.0...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.11.1...HEAD
+[2.11.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.11.0...v2.11.1
 [2.11.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.10.0...v2.11.0
 [2.10.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.9.0...v2.10.0
 [2.9.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.8.1...v2.9.0
