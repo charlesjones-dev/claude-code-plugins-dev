@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.2] - 2026-10-07
+
+### Added
+
+#### AI-Statusline Plugin (v1.4.1 → v1.5.0)
+
+- **Sandbox indicator** — the Bash script template can show `Sandbox` in orange right after the effort level while Claude Code's Bash sandbox is on for the session, and hides it while the sandbox is off. New `SHOW_SANDBOX` toggle (default **off**). Existing status lines don't change; to add it, re-run `/statusline-wizard` and select it.
+  - The status line payload has no sandbox field, so the script resolves `sandbox.enabled` the way Claude Code does, taking the first layer that sets it: managed settings (`managed-settings.json` and `managed-settings.d/`), `--settings` on the `claude` command line (inline JSON or a file path, read from the process found through `$CLAUDE_PID` or by walking up the process tree), `.claude/settings.local.json` at the repository root (the main checkout's root in a worktree) and then in the starting directory, `.claude/settings.json`, and the user's `settings.json` (respecting `CLAUDE_CONFIG_DIR`). A `/sandbox` change shows up on the next refresh.
+  - On Linux and WSL2 the indicator stays hidden when `bwrap` or `socat` is missing, since the sandbox can't start without them. It can't read MDM profiles or server-managed settings, and the docs say to confirm with the `touch ~/sandbox-probe` check when it matters.
+  - Native Windows has no sandbox, so the PowerShell template has no indicator, and both wizards leave the option out on Windows.
+- `/statusline-wizard` and `/statusline-edit` — "Sandbox indicator" is a new option in the Project Display question. `/statusline-edit` leaves it out for scripts generated before 1.5.0 and points to `/statusline-wizard`.
+
+### Changed
+
+#### AI-CVP Plugin (v1.0.1 → v1.0.2)
+
+- **Launch checklist** — the audit session now starts with one command instead of the `/sandbox` panel and Shift+Tab: `claude --model <audit-model-id> --permission-mode auto --settings '{"sandbox":{"enabled":true,"autoAllowBashIfSandboxed":true,"allowUnsandboxedCommands":false,"failIfUnavailable":true}}'`.
+  - The settings last one session and write nothing to `.claude/settings.local.json`.
+  - Strict mode set through `--settings` makes the sandbox admin-required, so on Claude Code v2.1.285 or later the audited repo's own `.claude/settings.json` and `.claude/settings.local.json` can't loosen it (their `excludedCommands`, `allowWrite` and `allowedDomains` entries are ignored). The README's requirements now list v2.1.285.
+  - `failIfUnavailable` makes Claude Code exit at startup instead of running commands unsandboxed when the sandbox can't start.
+  - The checklist checks `/status` for `Command line arguments` instead of opening `/sandbox`, which can't change settings that come from the command line.
+- **Shorter reply** — `/cvp-defense-audit` no longer prints the audit prompt in the conversation. The reply gives the path to each prompt, whether the audit prompt is on the clipboard, whether the ignore rule was added, an audit checklist, a fix checklist and the warnings. The fix checklist covers phase 3: quit the audit session, start `claude --model opus` unsandboxed, copy the fix prompt with the same clipboard tool, and paste it. Without a clipboard tool, both checklists say to open the file and copy it, replacing the `/copy` fallback, which needed the prompt in the conversation.
+- Marketplace metadata version bumped `2.11.1` → `2.11.2`.
+
 ## [2.11.1] - 2026-10-07
 
 ### Fixed
@@ -1331,7 +1355,8 @@ New plugin for Swift / iOS / macOS development whose primary job is to catch rel
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.11.1...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.11.2...HEAD
+[2.11.2]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.11.1...v2.11.2
 [2.11.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.11.0...v2.11.1
 [2.11.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.10.0...v2.11.0
 [2.10.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.9.0...v2.10.0

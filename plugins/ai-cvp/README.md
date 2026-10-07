@@ -9,7 +9,7 @@ Plans a sandboxed security audit, so the strongest model you can use spends its 
 `/cvp-defense-audit` is phase 1 of a three-phase audit. It reads the repo, makes sure git ignores `docs/security/`, and then writes two prompts and a checklist:
 
 - **An audit prompt** to paste into a new, sandboxed Claude Code session. It names this repo's attacker goals, files, banned commands, secret paths, production hosts and test commands.
-- **A launch checklist** for that session: dependencies, a clean working tree, auto mode, strict sandbox mode, and a probe that confirms the sandbox is on.
+- **A launch checklist** for that session: dependencies, a clean working tree, a one-line launch that turns on auto mode and a strict sandbox, and a probe that confirms the sandbox is on.
 - **A fix prompt** for phase 3, which verifies each finding and fixes the ones you pick.
 
 CVP refers to [Anthropic's Cyber Verification Program](https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude-opus-and-sonnet), which gives qualifying security teams, open-source maintainers and researchers advanced cyber capabilities with fewer blocked requests. You don't need to be enrolled. The skill asks what authorizes the audit and writes only that into the prompt.
@@ -19,7 +19,7 @@ CVP refers to [Anthropic's Cyber Verification Program](https://support.claude.co
 | Phase | Where it runs | Model tier | Sandboxed? | Network? | Output |
 |---|---|---|---|---|---|
 | 1. Plan (`/cvp-defense-audit`) | A normal Claude Code session in the repo | Planning model: Opus-class | No | Only optional `gh` reads of GitHub alerts | Audit prompt, launch checklist and fix prompt, saved to `~/.claude/cvp-audit-prompts/`, plus a local ignore rule for `docs/security/` |
-| 2. Audit | A new session in the repo, in auto mode with `/sandbox` in strict mode | Audit model: the strongest security-capable model you can use | Yes, strict | None. Third-party services are mocked | A report in `docs/security/`, and one failing proof test per finding, archived as a `.disabled` file under `docs/security/tests/`. Nothing is fixed or committed |
+| 2. Audit | A new session in the repo, launched in auto mode with a strict sandbox | Audit model: the strongest security-capable model you can use | Yes, strict | None. Third-party services are mocked | A report in `docs/security/`, and one failing proof test per finding, archived as a `.disabled` file under `docs/security/tests/`. Nothing is fixed or committed |
 | 3. Fix | A normal session in the repo | Fixing model: Opus-class | No | Yes, for GitHub, CI and deploys, plus read-only provider checks you approve | Verified findings, a fix per change you pick with its proof test restored as the regression test, and an updated report |
 
 Opus-class means the current Opus model or one at least as capable (as of October 2026, Claude Opus 5.5). The audit model can be any model your account offers; some with stronger security capabilities require enrollment in the Cyber Verification Program.
@@ -36,7 +36,7 @@ Opus-class means the current Opus model or one at least as capable (as of Octobe
 4. Picks 5 to 9 attacker goals from [`attack-catalog.md`](skills/cvp-defense-audit/attack-catalog.md) and rewrites each in the repo's own actors, assets and files
 5. Fills in [`prompt-template.md`](skills/cvp-defense-audit/prompt-template.md): the rules for this repo, up to 8 files to read first, the goals, a retest section for earlier findings, open alerts, and how to prove each finding. That means the test framework, a file name with a `cvp` marker placed by the repo's convention, an existing test whose mocking to copy, the libraries to mock, the single-file run command for each package, and where to archive each test once it has run. It checks that every path it cites exists
 6. Fills in [`fix-prompt-template.md`](skills/cvp-defense-audit/fix-prompt-template.md) for phase 3
-7. Adds `/docs/security/` to `.git/info/exclude` unless git already ignores it, saves both prompts outside the repo, copies the audit prompt to the clipboard, and replies with the prompt, the filled-in launch checklist and any warnings, such as a stale workspace build or tests that bind localhost ports
+7. Adds `/docs/security/` to `.git/info/exclude` unless git already ignores it, saves both prompts outside the repo, copies the audit prompt to the clipboard, and replies with the path to each prompt, a checklist for the audit session and one for the fix session, and any warnings, such as a stale workspace build or tests that bind localhost ports. It doesn't print the prompts; open the files to read or edit them
 
 **Usage:**
 
@@ -53,17 +53,29 @@ The focus is optional: an area or a path. Most goals then land there, with enoug
 Follow the printed checklist. In short:
 
 1. Outside the sandbox, install dependencies and check that `git status` is clean
-2. Start `claude --model <audit-model-id>` in the repo, and check that the status bar shows `⏵⏵ auto mode on` (Shift+Tab cycles modes)
-3. Run `/sandbox`, choose auto-allow on the Mode tab, then turn on Strict sandbox mode on the Overrides tab
+2. Start the audit session in the repo with the checklist's launch line:
+   ```bash
+   claude --model <audit-model-id> --permission-mode auto --settings '{"sandbox":{"enabled":true,"autoAllowBashIfSandboxed":true,"allowUnsandboxedCommands":false,"failIfUnavailable":true}}'
+   ```
+3. Check that the status bar shows `⏵⏵ auto mode on`, and that `/status` lists `Command line arguments` under setting sources
 4. Ask Claude to run `touch ~/sandbox-probe`. It should fail with `Operation not permitted` on macOS, or `Read-only file system` on Linux and WSL2
 5. Paste the prompt, and deny any network access you can't explain
 6. When it finishes, check that `git status` lists nothing
+
+The launch line replaces the `/sandbox` panel. Its settings last for that session only and write no file:
+
+- `enabled` turns on the sandbox.
+- `autoAllowBashIfSandboxed` runs sandboxed commands without prompts (auto-allow).
+- `allowUnsandboxedCommands: false` turns on strict sandbox mode, so Claude can't retry a blocked command outside the sandbox. Set this way, it also makes the sandbox admin-required (Claude Code v2.1.285 or later): Claude Code ignores the repo's own `.claude/settings.json` and `.claude/settings.local.json` entries that would loosen it, such as `excludedCommands`, `allowWrite` and `allowedDomains`.
+- `failIfUnavailable` makes Claude Code exit at startup if the sandbox can't start, instead of running commands unsandboxed.
+
+`/sandbox` won't open in that session, because command-line settings outrank the file it saves to. If you use [ai-statusline](../ai-statusline/), turn on its sandbox indicator to see when your settings turn the sandbox on.
 
 The audit model maps the attack surface, hunts each goal, proves each finding with a failing test, and writes a report. It runs each test where the repo keeps its tests, then moves it to `docs/security/tests/` with `.disabled` appended, so no failing test is left in the source tree. It doesn't fix anything or commit.
 
 ### Phase 3: verify and fix
 
-Once the report is written, open a normal, unsandboxed session on an Opus-class model and paste the fix prompt (`<repo>-<date>-fix.md`). It:
+Once the report is written, quit the audit session, start a normal, unsandboxed session on an Opus-class model (`claude --model opus`), and paste the fix prompt (`<repo>-<date>-fix.md`). The reply's fix checklist gives the command that copies it to the clipboard. The fix session:
 
 - re-runs each Confirmed proof test outside the sandbox and downgrades any that don't fail for the reason the report gives;
 - proposes exact checks for what code alone couldn't settle (dashboards, CLIs, provider settings), and runs read-only ones only with your OK;
@@ -90,7 +102,7 @@ Commits, pushes and PRs wait for your consent. When the fixes have merged, run `
 
 ## Requirements
 
-- **Claude Code with `/sandbox` and auto mode.** The sandbox runs on macOS, Linux and WSL2. Linux and WSL2 also need `bubblewrap` and `socat`. On native Windows, Claude Code runs commands unsandboxed, so run the audit in WSL2. Auto mode needs a supported model, and an organization admin can turn it off. If your audit model doesn't offer auto mode, use accept-edits mode; the sandbox's auto-allow still runs sandboxed commands without prompts.
+- **Claude Code v2.1.285 or later, with the sandbox and auto mode.** Earlier versions let the audited repo's own settings loosen a sandbox set on the command line. The sandbox runs on macOS, Linux and WSL2. Linux and WSL2 also need `bubblewrap` and `socat`. On native Windows, Claude Code runs commands unsandboxed, so run the audit in WSL2. Auto mode needs a supported model, and an organization admin can turn it off. If your audit model doesn't offer auto mode, launch with `--permission-mode acceptEdits` instead; auto-allow still runs sandboxed commands without prompts. Managed settings outrank `--settings`, so if your organization sets the sandbox keys, theirs apply.
 - **Access to a strong audit model.** Some require enrollment, such as models offered through the Cyber Verification Program.
 - **`gh`, optionally,** signed in, to include open Dependabot and code-scanning alerts.
 - **Dependencies installed before launch,** so the sandboxed session doesn't need the network.
@@ -145,7 +157,7 @@ Then run `/ai-cvp:cvp-defense-audit` from the repo you want to audit. The short 
 - **Name:** AI-CVP Plugin
 - **Type:** AI Instruction Plugin (Skills)
 - **Skill:** `/cvp-defense-audit`
-- **Version:** 1.0.1
+- **Version:** 1.0.2
 - **License:** MIT
 - **Author:** Charles Jones
 

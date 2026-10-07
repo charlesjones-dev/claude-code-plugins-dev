@@ -22,7 +22,7 @@ Use this only on code the user owns or is authorized to test.
 This skill is phase 1 of a three-phase defensive audit:
 
 1. **Plan** (this skill). A normal, unsandboxed session on an Opus-class planning model does read-only recon, makes sure git ignores `docs/security/`, and writes a paste-ready audit prompt, a sandbox launch checklist, and a fix prompt.
-2. **Audit.** The user starts a new session on the strongest security-capable model they can use (the audit model), in auto mode with `/sandbox` in strict mode, and pastes the audit prompt. The audit model maps the attack surface, hunts, proves each finding with a failing test, and writes a report. It archives each test as a disabled file under `docs/security/tests/` once it has run, so everything it leaves behind is under `docs/security/`, which git ignores. It fixes nothing.
+2. **Audit.** The user starts a new session on the strongest security-capable model they can use (the audit model), launched in auto mode with a strict sandbox set on the command line, and pastes the audit prompt. The audit model maps the attack surface, hunts, proves each finding with a failing test, and writes a report. It archives each test as a disabled file under `docs/security/tests/` once it has run, so everything it leaves behind is under `docs/security/`, which git ignores. It fixes nothing.
 3. **Fix.** Back in a normal, unsandboxed session on an Opus-class fixing model, the user pastes the fix prompt. The fixing model verifies each proof, settles what code alone couldn't answer, lets the user pick what to fix, and ships each fix with its archived proof test restored as the regression test.
 
 Do the recon here so the audit model spends its budget hunting and proving bugs instead of orienting. The supporting files sit next to this one, in `${CLAUDE_SKILL_DIR}`.
@@ -139,45 +139,64 @@ Fill in [fix-prompt-template.md](fix-prompt-template.md) with the report path, t
 
 1. Make sure git ignores `docs/security/`, so the report and archived tests can't be committed. Unless recon's `git check-ignore` showed a rule already covers it, append `/docs/security/` on its own line to the file `git rev-parse --git-path info/exclude` prints, creating it if needed. Use that command rather than `.git/info/exclude`, because in a linked worktree `.git` is a file. The exclude file is never committed and applies to every worktree of the clone, so nothing in the repo hints at the folder. Don't edit `.gitignore`. Expect an approval prompt for the write. Without git, write nothing; the checklist covers it.
 2. Save the audit prompt to `~/.claude/cvp-audit-prompts/<repo-name>-<date>.md` and the fix prompt to `~/.claude/cvp-audit-prompts/<repo-name>-<date>-fix.md`, creating the directory if needed. For several surfaces, add a surface suffix to each audit prompt. Don't overwrite an earlier file; add `-2`, `-3`, and so on. Claude Code protects `~/.claude/`, so expect an approval prompt for these writes (in auto mode, the classifier reviews them).
-3. Copy the audit prompt to the clipboard with the first of these that exists: `pbcopy`, `wl-copy`, `xclip -selection clipboard`, `clip.exe` (for example `pbcopy < <file>`). If none exists or the copy fails, skip it and tell the user to run `/copy` and pick the prompt's code block.
-4. Reply with:
-   - one line saying where the audit prompt is saved, whether it's on the clipboard, and whether you added the ignore rule,
-   - the prompt in a `text` code block,
-   - the launch checklist below, filled in for this repo,
-   - the fix prompt's path, and when to use it: once the audit has written its report, paste it into a normal, unsandboxed session on an Opus-class model,
-   - warnings.
+3. Copy the audit prompt to the clipboard with the first of these that exists: `pbcopy`, `wl-copy`, `xclip -selection clipboard`, `clip.exe` (for example `pbcopy < <file>`). Note which one worked, because the fix checklist uses it too. If none exists or the copy fails, skip it, and the audit checklist tells the user to open the file instead.
+4. Reply in the format below and nothing else. Don't print either prompt: the files hold them, and the user opens or edits them there. Fill in every `<...>` and drop the lines that don't apply.
 
-```text
-Before launching (outside the sandbox)
-- <install dependencies if missing, e.g. npm ci, pnpm install, uv sync, bundle install>, so the sandboxed session doesn't need the network
-- <rebuild a stale workspace build, only if recon found one>
-- git status   → clean. Commit any other work first, so that afterwards git status shows only what the audit changed
+````markdown
+**Audit prompt:** `~/.claude/cvp-audit-prompts/<repo-name>-<date>.md` (<copied to the clipboard | not copied: no clipboard tool>)
+**Ignore rule:** <added `/docs/security/` to `.git/info/exclude` | already ignored by <file:line from git check-ignore -v> | no git yet, see the checklist>
 
-Launch
+### Audit checklist
+
+**Before launching**, outside the sandbox:
+- `<install command>`, so the sandboxed session doesn't need the network <only if dependencies are missing>
+- `<rebuild command>` <only if recon found a stale workspace build>
+- `git status` → clean. Commit any other work first, so that afterwards `git status` shows only what the audit changed
+
+**Launch**
+```bash
 cd <repo_root>
-claude --model <audit-model-id>
-
-In the session
-1. Status bar shows "⏵⏵ auto mode on" (Shift+Tab until it does). If this model doesn't offer auto mode, use "⏵⏵ accept edits on"
-2. /sandbox → Mode: auto-allow, then Overrides → Strict sandbox mode on
-3. Ask Claude to run: touch ~/sandbox-probe   → expect "Operation not permitted" (macOS) or "Read-only file system" (Linux, WSL2). If it succeeds, delete the file and check /sandbox before going on
-4. Paste the prompt
-5. Network: deny anything you can't explain. Package registries only if an install is unavoidable. In auto mode a command names the hosts it needs instead of prompting, so stop the session if one names a host you can't explain
-6. When it finishes, git status should list nothing. The fix prompt's first step deals with anything else
+claude --model <audit-model-id> --permission-mode auto --settings '{"sandbox":{"enabled":true,"autoAllowBashIfSandboxed":true,"allowUnsandboxedCommands":false,"failIfUnavailable":true}}'
 ```
+These settings last this session only, and the repo's own `.claude/` settings can't loosen them.
 
-Without `--model`, print the launch line as `claude --model <audit-model>` and add: pick the strongest model your account offers for security work (`/model` lists them). If there's no git, replace the git line with a suggestion to run `git init`, add `/docs/security/` to `.git/info/exclude`, and make a baseline commit, so the audit's files can't be committed, `git status` can show what the audit changed, and the fix prompt's branch steps work.
+**In the session**
+1. The status bar shows `⏵⏵ auto mode on`. If it doesn't, this model may not offer auto mode: quit and relaunch with `--permission-mode acceptEdits`
+2. `/status` → "Setting sources" includes "Command line arguments". Skip `/sandbox`: the launch line already turned on the sandbox, auto-allow and strict mode
+3. Ask Claude to run `touch ~/sandbox-probe`. Expect `Operation not permitted` (macOS) or `Read-only file system` (Linux, WSL2). If it succeeds, delete the file and quit: a settings file is widening the sandbox, so check `sandbox` in `~/.claude/settings.json`
+4. Paste the audit prompt from the clipboard <if it wasn't copied: "Open the audit prompt file, copy all of it, and paste it">
+5. Network: deny anything you can't explain. Allow package registries only if an install is unavoidable. In auto mode a command names the hosts it needs instead of prompting, so stop the session if one names a host you can't explain
+6. When it finishes, `git status` should list nothing. The fix prompt's first step deals with anything else
 
-Add any warnings from recon after the checklist, for example:
+**Fix prompt:** `~/.claude/cvp-audit-prompts/<repo-name>-<date>-fix.md`
 
-- tests need a database or cache, which the prompt tells the audit model to mock;
-- only `xcodebuild` is available, so some proofs may need running outside the sandbox;
-- a committed secret, by path and line;
-- Dependabot or code scanning is disabled (HTTP 403);
-- a workspace build is stale and must be rebuilt before launch;
-- tests bind localhost ports or spawn servers and may fail under strict sandbox mode;
-- the prompt runs past 110 lines because surfaces share auth or sessions;
-- git already tracks files under `docs/security/` (list them): the ignore rule covers only new files, and `git rm -r --cached docs/security` stops tracking the rest on the next commit while keeping the local copies;
-- local secret files such as `.env` exist: the sandbox covers shell commands only, and Claude's Read tool follows permission rules, so add deny rules for those files before launching.
+### Fix checklist
 
-End with this warning every time: the prompts, and later the report and archived tests in `docs/security/`, map the repo's attack surface, so don't commit them or post them publicly.
+Once the audit has written `docs/security/<date>-cvp-security-audit.md`:
+1. Quit the audit session
+2. Start a normal, unsandboxed session on an Opus-class model, so it can run the full checks, `gh` and CI:
+   ```bash
+   cd <repo_root>
+   claude --model opus
+   ```
+3. Run `<clipboard tool> < ~/.claude/cvp-audit-prompts/<repo-name>-<date>-fix.md` and paste the fix prompt <if there's no clipboard tool: "Open the fix prompt file, copy all of it, and paste it">
+4. It re-runs each proof test, shows a triage table and asks which findings to fix. Commits, pushes and PRs wait for your OK
+
+### Warnings
+- <each warning from recon>
+- These files map the repo's attack surface: both prompts now, and later the report and archived tests in `docs/security/`. Don't commit them or post them publicly.
+````
+
+- Keep the launch line on one line, exactly as above apart from the model ID. Without `--model`, write `<audit-model>` in place of the ID, and add after the code block: "Pick the strongest model your account offers for security work (`/model` lists them)."
+- Without git, replace the `git status` item with: run `git init`, add `/docs/security/` to `.git/info/exclude`, and make a baseline commit, so the audit's files can't be committed, `git status` can show what the audit changed, and the fix prompt's branch steps work.
+- For several surfaces, give each audit prompt its own **Audit prompt** line, naming its surface. Each one gets its own audit session with the same checklist. The clipboard holds the first prompt, and step 4 says to copy each of the others with `<clipboard tool> < <file>` before pasting it.
+- Always end the warnings with the attack-surface warning. Recon warnings come first, for example:
+  - tests need a database or cache, which the prompt tells the audit model to mock;
+  - only `xcodebuild` is available, so some proofs may need running outside the sandbox;
+  - a committed secret, by path and line;
+  - Dependabot or code scanning is disabled (HTTP 403);
+  - a workspace build is stale and must be rebuilt before launch;
+  - tests bind localhost ports or spawn servers and may fail under strict sandbox mode;
+  - the prompt runs past 110 lines because surfaces share auth or sessions;
+  - git already tracks files under `docs/security/` (list them): the ignore rule covers only new files, and `git rm -r --cached docs/security` stops tracking the rest on the next commit while keeping the local copies;
+  - local secret files such as `.env` exist: the sandbox covers shell commands only, and Claude's Read tool follows permission rules, so add deny rules for those files before launching.

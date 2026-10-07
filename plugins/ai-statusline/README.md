@@ -2,7 +2,7 @@
 
 **Status line customization for Claude Code.** Interactive setup and edit wizards for configuring a custom status line with progress bars and customizable display options.
 
-> **How this relates to the native `/statusline` command:** Claude Code ships a built-in `/statusline` command that covers baseline setup (describe what you want, or auto-configure from your shell prompt). This plugin goes further with richer, opinionated widgets: a Unicode progress bar with color thresholds, 5-hour/7-day rate-limit percentages with color coding, a month-to-date spend budget for Enterprise/API seats that have no rate limits, a reasoning-effort indicator with `/effort`-matched colors (including ultracode detection), session cost and duration segments, granular per-segment toggles, and a matching `/statusline-edit` flow for reconfiguring later without regenerating the script.
+> **How this relates to the native `/statusline` command:** Claude Code ships a built-in `/statusline` command that covers baseline setup (describe what you want, or auto-configure from your shell prompt). This plugin goes further with richer, opinionated widgets: a Unicode progress bar with color thresholds, 5-hour/7-day rate-limit percentages with color coding, a month-to-date spend budget for Enterprise/API seats that have no rate limits, a reasoning-effort indicator with `/effort`-matched colors (including ultracode detection), a sandbox indicator that appears while the Bash sandbox is on, session cost and duration segments, granular per-segment toggles, and a matching `/statusline-edit` flow for reconfiguring later without regenerating the script.
 
 ---
 
@@ -16,6 +16,12 @@ On an Enterprise or API seat with a monthly spend cap (no 5h/7d rate limits), wi
 
 ```
 Opus 5 (1M context) · high · 71k/1000k ░░░░░░░░░░ 7% · mo:$47.20/$2000 2.4% · my-project · main · 7m 48s · 4:52pm · v2.1.267
+```
+
+With the optional sandbox indicator enabled, `Sandbox` appears in orange after the effort level while the Bash sandbox is on:
+
+```
+Opus 5 (1M context) · high · Sandbox · 420k/1000k ▓▓▓▓░░░░░░ 42% · 5h:12% 7d:4% · my-project · main · 5m 23s · 2:45pm · v2.1.293
 ```
 
 ---
@@ -54,6 +60,7 @@ The wizard asks about four categories of display options:
 2. **Project Display** (what to show about your project)
    - Current directory name
    - Git branch name
+   - Sandbox indicator (Mac/Linux; disabled by default, and shown only while the Bash sandbox is on)
 
 3. **Session Display** (what to show about timing/costs)
    - Session duration
@@ -117,6 +124,7 @@ Edit your existing status line configuration.
 |--------|---------|-------------|
 | Model name | On | Display model name (e.g., "Opus 5 (1M context)") |
 | Effort level | On | Display reasoning effort level with `/effort`-matched colors |
+| Sandbox indicator | Off | Display `Sandbox` in orange after the effort level while the Bash sandbox is on (Mac/Linux only) |
 | Token count | On | Display token usage (e.g., "420k/1000k") |
 | Progress bar | On | Display visual progress bar with percentage |
 | Current directory | On | Display current working directory name |
@@ -196,6 +204,22 @@ The segment reflects live `/effort` changes and is hidden entirely when the curr
 
 **Ultracode detection:** Claude Code reports ultracode as plain `xhigh` in the status line payload, so the scripts scan the session transcript for the most recent `/effort` command output to tell them apart. If a session never ran `/effort`, the payload value is shown as-is.
 
+### Sandbox Indicator
+
+Shows `Sandbox` in orange, right after the effort level, while Claude Code's [Bash sandbox](https://code.claude.com/docs/en/sandboxing) is on for the session. It's hidden while the sandbox is off. It's disabled by default: select it in the wizard, or set `SHOW_SANDBOX=true`.
+
+The status line payload doesn't say whether the sandbox is on, so the script works it out from your settings the way Claude Code does. The first of these that sets `sandbox.enabled` wins:
+
+1. Managed settings: `managed-settings.json` and `managed-settings.d/` in `/Library/Application Support/ClaudeCode/` (macOS) or `/etc/claude-code/` (Linux, WSL2)
+2. `--settings` on the `claude` command line, as inline JSON or a file path, such as `claude --settings '{"sandbox": {"enabled": true}}'`
+3. `.claude/settings.local.json`, where `/sandbox` saves its choices (at the repository root, or the main checkout's root in a worktree)
+4. `.claude/settings.json` in the directory Claude Code started in
+5. `~/.claude/settings.json`
+
+Turning the sandbox on or off with `/sandbox` shows up on the next refresh.
+
+The indicator reflects your settings. It can't confirm that the sandbox started, and it can't read MDM profiles or server-managed settings. On Linux and WSL2 it stays hidden when `bwrap` or `socat` is missing, because the sandbox can't start without them, but other startup failures go unnoticed. When it matters, such as before a security audit, ask Claude to run `touch ~/sandbox-probe` and check that it fails. The sandbox doesn't run on native Windows, so the PowerShell script has no sandbox indicator.
+
 ---
 
 ## How It Works
@@ -257,6 +281,7 @@ After running the wizard, you can manually edit the configuration variables at t
 ```bash
 SHOW_MODEL=true           # Show model name
 SHOW_EFFORT=true          # Show reasoning effort level
+SHOW_SANDBOX=false        # Show "Sandbox" while the Bash sandbox is on
 SHOW_TOKEN_COUNT=true     # Show token usage count
 SHOW_PROGRESS_BAR=true    # Show visual progress bar
 SHOW_DIRECTORY=true       # Show current directory name
@@ -328,7 +353,7 @@ The script couldn't write to `~/.claude/statusline-spend/` (read-only home direc
 ## Plugin Details
 
 - **Name:** AI-Statusline
-- **Version:** 1.4.1
+- **Version:** 1.5.0
 - **Type:** UI Customization
 - **Features:**
   - Skills: `/statusline-wizard`, `/statusline-edit`

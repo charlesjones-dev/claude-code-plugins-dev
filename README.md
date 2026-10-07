@@ -1,6 +1,6 @@
 # Claude Code Plugins for Developers
 
-[![Version](https://img.shields.io/badge/version-2.11.1-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
+[![Version](https://img.shields.io/badge/version-2.11.2-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/charlesjones-dev/claude-code-plugins-dev.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/stargazers)
 
@@ -25,7 +25,7 @@ Claude Code plugins for code audits, release checks and day-to-day git and proje
 | [ai-security](plugins/ai-security/) | Security audits with Markdown/JSON reports that track findings across runs, a live-site dependency scan, and settings and supply-chain hardening. Complements native `/security-review` | `/security-init`, `/security-audit`, `/security-scan-dependencies`, `/security-supply-chain` | `security-auditor`, `security-dependency-scanner` |
 | [ai-seo](plugins/ai-seo/) | SEO audits that catch deprecated patterns LLMs still generate, with framework-specific fixes | `/seo-audit`, `/seo-fix`, `/seo-schema` | - |
 | [ai-slop](plugins/ai-slop/) | Audits user-facing copy, layouts and metadata for AI-written tells and factual errors, like a privacy policy that misses the trackers the code loads | `/slop-audit` | - |
-| [ai-statusline](plugins/ai-statusline/) | Adds progress bars, rate-limit widgets, a month-to-date spend budget for accounts without rate limits, and an effort-level indicator to Claude Code's native `/statusline` | `/statusline-wizard`, `/statusline-edit` | - |
+| [ai-statusline](plugins/ai-statusline/) | Adds progress bars, rate-limit widgets, a month-to-date spend budget for accounts without rate limits, and effort-level and sandbox indicators to Claude Code's native `/statusline` | `/statusline-wizard`, `/statusline-edit` | - |
 | [ai-swift](plugins/ai-swift/) | Swift/iOS/macOS release checks that catch Xcode Cloud and TestFlight blockers before upload | `/swift-preflight`, `/swift-diagnose`, `/swift-ci-scaffold`, `/swift-verify`, `/swift-concurrency-review` | `swift-release-auditor` |
 | [ai-workflow](plugins/ai-workflow/) | Preflight checks, a commit-push-PR ship skill, a Development Principles generator and CLAUDE.md behavior rules | `/workflow-preflight`, `/workflow-ship`, `/workflow-principles`, `/workflow-rules` | - |
 | [ai-writing](plugins/ai-writing/) | Rewrites text to remove AI writing patterns | `/writing-humanize` | - |

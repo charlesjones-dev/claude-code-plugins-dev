@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Claude Code plugins for code audits, release checks and day-to-day git and project workflows.",
-    "version": "2.11.1",
+    "version": "2.11.2",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -160,8 +160,8 @@
     {
       "name": "ai-statusline",
       "source": "./plugins/ai-statusline",
-      "description": "Builds on Claude Code's native /statusline with a context progress bar, 5h/7d rate limits, a month-to-date spend budget for Enterprise/API seats without rate limits, the reasoning-effort level, cost and duration, and a wizard to change any of it",
-      "version": "1.4.1",
+      "description": "Builds on Claude Code's native /statusline with a context progress bar, 5h/7d rate limits, a month-to-date spend budget for Enterprise/API seats without rate limits, the reasoning-effort level, a sandbox indicator, cost and duration, and a wizard to change any of it",
+      "version": "1.5.0",
       "keywords": [
         "ai",
         "statusline",
@@ -423,7 +423,7 @@
       "name": "ai-cvp",
       "source": "./plugins/ai-cvp",
       "description": "Reads a repo you own or are authorized to test and writes a tailored prompt for a sandboxed security audit on the strongest model you can use, with a launch checklist and a follow-up prompt for verifying and fixing what the audit proves",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "keywords": [
         "ai",
         "security",

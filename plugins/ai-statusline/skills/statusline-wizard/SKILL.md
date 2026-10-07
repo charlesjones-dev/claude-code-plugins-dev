@@ -34,6 +34,9 @@ Use AskUserQuestion with these grouped questions:
 **Question 2 - Project Display** (multiSelect: true):
 - Current directory - default selected
 - Git branch - default selected
+- Sandbox indicator - NOT selected by default. Description: "Shows 'Sandbox' in orange after the effort level while Claude Code's Bash sandbox is on for this session, whether /sandbox, a settings file or claude --settings turned it on. Hidden when it's off."
+
+On Windows, leave out the Sandbox indicator option. The sandbox doesn't run on native Windows, so the PowerShell script has no sandbox segment.
 
 **Question 3 - Session Display** (multiSelect: true):
 - Session duration - default selected
@@ -128,6 +131,7 @@ Use the AskUserQuestion tool to gather user preferences. Group questions logical
 **Question 2: Project Information**
 - Show current directory (default: yes)
 - Show git branch (default: yes)
+- Show sandbox indicator (default: no; Mac/Linux only, hidden while the sandbox is off)
 
 **Question 3: Session Information**
 - Show session cost (default: no)
@@ -197,6 +201,7 @@ Run `chmod +x ~/.claude/statusline.sh` to make the script executable.
 
 SHOW_MODEL=true           # Show model name (e.g., "Claude Opus 4.8")
 SHOW_EFFORT=true          # Show reasoning effort level (e.g., "high")
+SHOW_SANDBOX=false        # Show "Sandbox" when Claude Code's Bash sandbox is enabled for this session
 SHOW_TOKEN_COUNT=true     # Show token usage count (e.g., "50k/100k")
 SHOW_PROGRESS_BAR=true    # Show visual progress bar
 SHOW_DIRECTORY=true       # Show current directory name
@@ -301,6 +306,7 @@ blue='\033[94m'
 magenta='\033[35m'
 cyan='\033[36m'
 gray='\033[90m'
+orange='\033[38;5;208m'
 
 # Build output segments
 output=""
@@ -324,6 +330,95 @@ if [ "$SHOW_EFFORT" = true ] && [ -n "$effort_level" ]; then
   esac
   [ -n "$output" ] && output="$output · "
   output="$output${effort_fmt}"
+fi
+
+# Sandbox (shown when Claude Code's Bash sandbox is enabled for this session)
+# The payload has no sandbox field, so this resolves sandbox.enabled the way Claude
+# Code does. The first source that sets it wins: managed settings, --settings on the
+# claude command line, .claude/settings.local.json, .claude/settings.json, then user
+# settings. MDM profiles and server-managed settings can't be read from here.
+sandbox_value() { jq -r '.sandbox.enabled | select(type == "boolean")' 2>/dev/null; }
+
+if [ "$SHOW_SANDBOX" = true ]; then
+  os_name=$(uname -s)
+  project_dir=$(echo "$input" | jq -r '.workspace.project_dir // .workspace.current_dir // empty')
+  sandbox_on=""
+
+  # Managed settings: later managed-settings.d drop-ins override earlier ones and managed-settings.json
+  if [ "$os_name" = Darwin ]; then managed_dir="/Library/Application Support/ClaudeCode"; else managed_dir=/etc/claude-code; fi
+  managed_files=("$managed_dir/managed-settings.json" "$managed_dir"/managed-settings.d/*.json)
+  for ((i=${#managed_files[@]}-1; i>=0; i--)); do
+    [ -z "$sandbox_on" ] && [ -f "${managed_files[i]}" ] && sandbox_on=$(sandbox_value < "${managed_files[i]}")
+  done
+
+  # --settings on the claude command line, as inline JSON or a file path
+  if [ -z "$sandbox_on" ]; then
+    claude_pid=${CLAUDE_PID:-}
+    if [ -z "$claude_pid" ]; then
+      pid=$PPID
+      for _ in 1 2 3 4; do
+        [ "${pid:-0}" -gt 1 ] 2>/dev/null || break
+        case "$(ps -o comm= -p "$pid" 2>/dev/null)" in
+          claude|*/claude) claude_pid=$pid; break ;;
+        esac
+        pid=$(ps -o ppid= -p "$pid" 2>/dev/null | tr -d ' ')
+      done
+    fi
+    if [ -n "$claude_pid" ]; then
+      cli_settings=$(ps -ww -o args= -p "$claude_pid" 2>/dev/null | awk '{
+        line = " " $0
+        if (!match(line, / --settings[ =]/)) exit
+        s = substr(line, RSTART + RLENGTH)
+        if (substr(s, 1, 1) != "{") { split(s, parts, " "); print parts[1]; exit }
+        for (j = 1; j <= length(s); j++) {
+          c = substr(s, j, 1)
+          if (q) { if (e) e = 0; else if (c == "\\") e = 1; else if (c == "\"") q = 0 }
+          else if (c == "\"") q = 1
+          else if (c == "{") d++
+          else if (c == "}" && --d == 0) { print substr(s, 1, j); exit }
+        }
+      }')
+      case "$cli_settings" in
+        "") ;;
+        "{"*) sandbox_on=$(printf '%s' "$cli_settings" | sandbox_value) ;;
+        /*) [ -f "$cli_settings" ] && sandbox_on=$(sandbox_value < "$cli_settings") ;;
+        *) [ -f "$project_dir/$cli_settings" ] && sandbox_on=$(sandbox_value < "$project_dir/$cli_settings") ;;
+      esac
+    fi
+  fi
+
+  # Project settings. In a git repo Claude Code keeps settings.local.json at the
+  # repository root (the main checkout's root in a worktree), and that copy wins over
+  # one left in the starting directory.
+  if [ -z "$sandbox_on" ] && [ -n "$project_dir" ]; then
+    project_files=()
+    git_common=$(git -C "$project_dir" rev-parse --git-common-dir 2>/dev/null)
+    if [ -n "$git_common" ]; then
+      case "$git_common" in /*) ;; *) git_common="$project_dir/$git_common" ;; esac
+      repo_root=$(cd "$git_common/.." 2>/dev/null && pwd -P)
+      if [ -n "$repo_root" ] && [ "$repo_root" != "$(cd "$HOME" 2>/dev/null && pwd -P)" ]; then
+        project_files+=("$repo_root/.claude/settings.local.json")
+      fi
+    fi
+    project_files+=("$project_dir/.claude/settings.local.json" "$project_dir/.claude/settings.json")
+    for f in "${project_files[@]}"; do
+      [ -z "$sandbox_on" ] && [ -f "$f" ] && sandbox_on=$(sandbox_value < "$f")
+    done
+  fi
+
+  # User settings
+  user_settings="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/settings.json"
+  [ -z "$sandbox_on" ] && [ -f "$user_settings" ] && sandbox_on=$(sandbox_value < "$user_settings")
+
+  # On Linux and WSL2 the sandbox can't start without bubblewrap and socat
+  if [ "$sandbox_on" = true ] && [ "$os_name" = Linux ]; then
+    { command -v bwrap && command -v socat; } >/dev/null 2>&1 || sandbox_on=false
+  fi
+
+  if [ "$sandbox_on" = true ]; then
+    [ -n "$output" ] && output="$output · "
+    output="$output${orange}Sandbox${reset}"
+  fi
 fi
 
 # Token count and progress bar
@@ -859,6 +954,7 @@ Write-Host -NoNewline ($segments -join $sep)
 |----------|---------|-------------|
 | SHOW_MODEL | true | Display model name (e.g., "Claude Opus 4.8") |
 | SHOW_EFFORT | true | Display reasoning effort level with /effort-matched colors |
+| SHOW_SANDBOX | false | Display "Sandbox" in orange after the effort level while Claude Code's Bash sandbox is on (Bash script only) |
 | SHOW_TOKEN_COUNT | true | Display token usage (e.g., "50k/100k") |
 | SHOW_PROGRESS_BAR | true | Display visual progress bar with percentage |
 | SHOW_DIRECTORY | true | Display current working directory name |
@@ -895,3 +991,6 @@ The spend segment exists for accounts that have no rolling rate limits (Enterpri
 - Ultracode reports as plain `xhigh` in the payload, so the scripts detect it by grepping the session transcript (`.transcript_path`) for the most recent `/effort` command output ("Set effort level to …"); if a session starts in ultracode without `/effort` ever being run, it displays as `xhigh`
 - The rate-limit segment reads `.rate_limits.five_hour` / `.rate_limits.seven_day`, which the host only sends for plans with rolling usage windows (Pro/Max). Enterprise seats and API-billed accounts on a monthly spend cap receive no `rate_limits` key at all, so with `SHOW_RATE_LIMITS=true` the segment is hidden rather than showing zeros. Those users should enable `SHOW_SPEND_BUDGET` (and set `SPEND_LIMIT_USD` to their cap) to get a comparable month-to-date view
 - The context percentage prefers the host-provided `.context_window.used_percentage` (newer Claude Code versions) and falls back to computing it from `current_usage` for older versions
+- The status line payload has no sandbox field, so the sandbox segment resolves `sandbox.enabled` from the settings layers in Claude Code's order, where the first layer that sets it wins: managed settings (`managed-settings.json` and `managed-settings.d/` in `/Library/Application Support/ClaudeCode/` or `/etc/claude-code/`), `--settings` on the `claude` command line (inline JSON or a file path, read from the process found through `$CLAUDE_PID` or by walking up the process tree), `.claude/settings.local.json` (at the repository root, or the main checkout's root in a worktree, then the starting directory), `.claude/settings.json` in `workspace.project_dir`, and `~/.claude/settings.json` (or `$CLAUDE_CONFIG_DIR/settings.json`). A `/sandbox` change shows up on the next render
+- The sandbox segment shows the configured state. It can't read MDM profiles or server-managed settings, and on Linux and WSL2 it stays hidden when `bwrap` or `socat` is missing, because the sandbox can't start without them. Other startup failures, such as an AppArmor rule that blocks bubblewrap, aren't detected, so for an audit, confirm with a probe such as `touch ~/sandbox-probe`, which should fail
+- The PowerShell script has no sandbox segment, because the sandbox doesn't run on native Windows

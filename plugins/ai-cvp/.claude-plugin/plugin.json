@@ -1,6 +1,6 @@
 {
   "name": "ai-cvp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Reads a repo you own or are authorized to test and writes a tailored prompt for a sandboxed security audit on the strongest model you can use, with a launch checklist and a follow-up prompt for verifying and fixing what the audit proves",
   "author": {
     "name": "Charles Jones",
