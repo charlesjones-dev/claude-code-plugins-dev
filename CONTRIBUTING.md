@@ -31,17 +31,20 @@ Security problems go through [SECURITY.md](SECURITY.md), not a public issue.
 
    The root `.claude-plugin/marketplace.json` lists every plugin. Its entry and the plugin's own `plugin.json` must keep the same name, version, description, author and keywords.
 
-3. Test it. Validate the manifests, then load your clone as a local marketplace and run the skill you changed:
+3. Test it. Validate the manifests:
 
    ```
    claude plugin validate plugins/{plugin-name}
    claude plugin validate .
    ```
 
+   Then, from a project to try it on, start Claude Code with the plugin loaded from your clone and run the skill you changed as `/{plugin-name}:{skill-name}`:
+
    ```
-   /plugin marketplace add /path/to/your/clone
-   /plugin install {plugin-name}@claude-code-plugins-dev
+   claude --plugin-dir /path/to/your/clone/plugins/{plugin-name}
    ```
+
+   The plugin loads for that session only, and nothing is installed or written to your settings. If you already installed the plugin from this marketplace, your clone's copy replaces it for the session. After more edits, run `/reload-plugins`.
 
 4. Leave version numbers and `CHANGELOG.md` alone. They're updated at release.
 

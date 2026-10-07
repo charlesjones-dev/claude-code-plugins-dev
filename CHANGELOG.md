@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.0] - 2026-10-07
+
+### Added
+
+#### AI-CVP Plugin (new — v1.0.0)
+
+New plugin for planning a defensive security audit of code you own or are authorized to test. The audit itself runs in a strict sandbox on the strongest security-capable model you can use.
+
+- `/cvp-defense-audit` — phase 1 of a three-phase audit. The planning session does read-only recon and writes a paste-ready audit prompt, a sandbox launch checklist and a fix prompt. The audit session (auto mode, `/sandbox` in strict mode) maps the attack surface, writes one failing test per finding as proof, and writes a report without fixing anything. The fixing session verifies each proof and ships each fix with its proof test as the regression test.
+  - Asks what authorizes the audit (Cyber Verification Program enrollment, ownership or maintenance, or authorized third-party testing) and writes only that into the prompt. It never claims enrollment by default, and stops if there's no authorization.
+  - Recon covers entry points, auth and tenancy, untrusted-input sinks, billing, secrets (names only), integrations, CI and supply chain, deploy config, the test harness and earlier audits. With `gh` signed in, it adds open Dependabot and code-scanning alerts and notes when either feature is disabled.
+  - Picks 5 to 9 attacker goals from `attack-catalog.md` (web apps and APIs, Apple apps, libraries, CLIs and Claude Code plugins, Home Assistant integrations, static sites) and rewrites each in the repo's own actors, assets and files.
+  - The prompt names the test framework, a file name with a `cvp` marker (`*.cvp.test.ts`, `test_cvp_*.py`) placed by the repo's convention, an existing test whose mocking to copy, libraries to mock because they call the network during verification, the single-file run command for each package, and a report path that matches the repo's audit naming. Recon also flags stale workspace builds and tests that bind localhost ports.
+  - `fix-prompt-template.md` drives phase 3: re-run each proof outside the sandbox, propose checks for what code couldn't settle, triage, fix only what you pick on branches from the integration branch, never merge the audit branch, and update the report's status for each finding.
+  - Saves both prompts to `~/.claude/cvp-audit-prompts/`, copies the audit prompt to the clipboard (`pbcopy`, `wl-copy`, `xclip` or `clip.exe`), and warns that the files map the attack surface and shouldn't be committed or posted.
+  - Model-agnostic: `--model <audit-model-id>` fills in the launch line, and the skill refers to the planning, audit and fixing models by tier rather than by name.
+- Marketplace metadata version bumped `2.10.0` → `2.11.0` (new plugin).
+
+### Changed
+
+- **CONTRIBUTING.md** — test a fix by loading the plugin from your clone with `claude --plugin-dir`, instead of adding the clone as a local marketplace. The flag needs no install, and for that session it replaces an installed copy of the same plugin.
+
 ## [2.10.0] - 2026-10-06
 
 AEO and GEO are now separate plugins. AEO (Answer Engine Optimization) is about being *the* direct answer in a featured snippet, voice reply or answer box. GEO (Generative Engine Optimization) is about being cited and mentioned inside AI answers that draw on many sources. ai-geo's direct-answer checks moved to the new ai-aeo plugin, and both plugins were checked against vendor documentation current as of October 2026.
@@ -1297,7 +1319,8 @@ New plugin for Swift / iOS / macOS development whose primary job is to catch rel
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.10.0...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.11.0...HEAD
+[2.11.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.10.0...v2.11.0
 [2.10.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.9.0...v2.10.0
 [2.9.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.8.1...v2.9.0
 [2.8.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.8.0...v2.8.1

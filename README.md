@@ -1,10 +1,10 @@
 # Claude Code Plugins for Developers
 
-[![Version](https://img.shields.io/badge/version-2.10.0-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
+[![Version](https://img.shields.io/badge/version-2.11.0-blue.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/charlesjones-dev/claude-code-plugins-dev.svg)](https://github.com/charlesjones-dev/claude-code-plugins-dev/stargazers)
 
-Claude Code plugins for code audits, release checks and day-to-day git and project workflows. There are 16 plugins; each adds its own slash commands, so install only the ones you need.
+Claude Code plugins for code audits, release checks and day-to-day git and project workflows. There are 17 plugins; each adds its own slash commands, so install only the ones you need.
 
 ## Available Plugins
 
@@ -16,6 +16,7 @@ Claude Code plugins for code audits, release checks and day-to-day git and proje
 | [ai-ado](plugins/ai-ado/) | Azure DevOps work items, hour logging and timesheets through the Azure DevOps MCP server | `/ado-init`, `/ado-work-items`, `/ado-create-feature`, `/ado-create-story`, `/ado-create-task`, `/ado-log-story-work`, `/ado-timesheet-report` | - |
 | [ai-aeo](plugins/ai-aeo/) | Answer Engine Optimization: checks that pages are ready to be the direct answer in featured snippets, voice assistants and answer boxes, maps questions to pages and builds FAQ sections | `/aeo-audit`, `/aeo-fix`, `/aeo-questions`, `/aeo-faq` | - |
 | [ai-compliance](plugins/ai-compliance/) | License audits of open-source dependencies, plus NOTICE and ATTRIBUTION file generation | `/compliance-license-audit`, `/compliance-notice-generate` | - |
+| [ai-cvp](plugins/ai-cvp/) | Plans a sandboxed security audit on the strongest model you can use: read-only recon, a tailored audit prompt and launch checklist, and a prompt for verifying and fixing what the audit proves | `/cvp-defense-audit` | - |
 | [ai-geo](plugins/ai-geo/) | Generative Engine Optimization: AI crawler rules, topical authority, evidence, authorship and third-party validation checks for being cited in AI answers, plus llms.txt | `/geo-audit`, `/geo-fix`, `/geo-llms-txt` | - |
 | [ai-git](plugins/ai-git/) | .gitignore generation, commit and push, PR creation, and a Codex review loop | `/git-init`, `/git-commit-push`, `/git-commit-push-pr`, `/git-pr-codex-loop` | - |
 | [ai-knowledge](plugins/ai-knowledge/) | Git-versioned team knowledge base in `docs/kb/`, browsable in Obsidian, next to Claude Code's per-machine auto memory | `/kb-init`, `/kb-learn`, `/kb-add`, `/kb-query`, `/kb-import`, `/kb-ingest`, `/kb-harvest`, `/kb-discover`, `/kb-absorb`, `/kb-remove`, `/kb-load`, `/kb-list`, `/kb-search`, `/kb-prune`, `/kb-auto`, `/kb-organize`, `/kb-upgrade` | - |

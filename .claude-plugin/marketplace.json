@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Claude Code plugins for code audits, release checks and day-to-day git and project workflows.",
-    "version": "2.10.0",
+    "version": "2.11.0",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -411,6 +411,32 @@
         "legal",
         "privacy-policy",
         "fact-checking",
+        "skills"
+      ],
+      "author": {
+        "name": "Charles Jones",
+        "url": "https://charlesjones.dev"
+      },
+      "repository": "https://github.com/charlesjones-dev/claude-code-plugins-dev"
+    },
+    {
+      "name": "ai-cvp",
+      "source": "./plugins/ai-cvp",
+      "description": "Reads a repo you own or are authorized to test and writes a tailored prompt for a sandboxed security audit on the strongest model you can use, with a launch checklist and a follow-up prompt for verifying and fixing what the audit proves",
+      "version": "1.0.0",
+      "keywords": [
+        "ai",
+        "security",
+        "audit",
+        "defensive",
+        "vulnerability",
+        "sandbox",
+        "auto-mode",
+        "cyber-verification-program",
+        "cvp",
+        "threat-modeling",
+        "proof-of-concept",
+        "regression-tests",
         "skills"
       ],
       "author": {
