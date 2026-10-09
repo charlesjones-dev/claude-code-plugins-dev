@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.3] - 2026-10-09
+
+### Fixed
+
+#### AI-CVP Plugin (v1.0.2 → v1.0.3)
+
+- **Audit prompt output contract** — an audit whose sandbox blocked the repo's own test harness invented its own layout: a misnamed report, different finding IDs, no test-path column, and live source files outside `docs/security/tests/`. The final `git status` check passed because git ignores `docs/security/`, and the fix prompt pointed at files that didn't exist. The archive rule was a step ("once it has run, move it"), so it never fired when no test ran in the source tree. The prompt now ends with one output contract that describes the end state:
+  - the report at exactly the prompt's path, even if the audit runs on a later date, with `CVP-NN` IDs and each test's archived path in the summary table;
+  - every proof test, helper and fixture at `docs/security/tests/<path it would run from>.disabled`, whether or not it ever sat in the source tree;
+  - alternative-harness scripts and run logs in `docs/security/harness/`, with no extension the repo's compiler, test runner, formatter or linter picks up, since most of those tools don't read git's ignore rules;
+  - build staging in a `mktemp -d` folder outside the repo.
+- **Contract check** — before finishing, the audit model runs `find docs/security -type f ! -path '<report>' ! -path 'docs/security/tests/*.disabled' ! -path 'docs/security/harness/*'`, which should print nothing, and `git status --porcelain`. When `docs/security/` already holds earlier reports, the check adds `-newermt` with the planning time so it lists only the audit's files, and the contract says to leave earlier files alone.
+- **Alternative harness** — when the sandbox blocks the repo's test command, the audit model may build its own harness under the contract. A result counts as Confirmed only if the test would also compile and run unchanged in the real project, and the report gives the command that runs each such test there.
+- **Fix prompt** — step 1 no longer assumes the contract held. It runs the same check, moves the newest `.md` directly under `docs/security/` to the expected report path if the report isn't there, moves misplaced tests into `docs/security/tests/<path>.disabled` (including tests stored relative to a test target's folder), disables source-extension files in `docs/security/harness/`, tells you what moved, reruns the check, and then uses the report's own IDs. Step 2 runs every test the sandbox kept from running through the real project, checks that each one actually ran, and tries to settle Unconfirmed findings with local tests, never real servers. When the project file lists sources explicitly (XcodeGen, or an Xcode project without synchronized folders), it regenerates or updates the project whenever a test moves in or out.
+- **Apple apps** — recon now warns that the strict sandbox can block `xcodegen` and `xcodebuild` entirely, not just the test run: Foundation writes temp files under `getconf DARWIN_USER_TEMP_DIR` rather than `$TMPDIR`, and the sandbox denies writes there. For apps whose only harness is `xcodebuild`, the checklist offers an optional launch line that adds that folder to `sandbox.filesystem.allowWrite`. Tested on an XcodeGen iOS app under Claude Code 2.1.295 and Xcode 27: with the line, `xcodegen generate` and `xcodebuild build-for-testing` (DerivedData under `$TMPDIR`, `-disable-sandbox` for macro plugins) succeed in the sandbox. `xcodebuild test` still fails on iOS and macOS, because the simulator and `testmanagerd` are out of reach, so tests run through an alternative harness and the fix session reruns them.
+- **Project MCP servers** — recon checks `.mcp.json` and `.claude/settings*.json` for servers that start without a prompt (`enableAllProjectMcpServers`, `enabledMcpjsonServers`). MCP tools run outside the sandbox, so the reply warns about them, the checklist says to disable them with `/mcp` before pasting the prompt, and the audit prompt tells the audit model not to call MCP tools.
+- **Launch checklist** — the final step runs the contract check as well as `git status`; anything either prints is normalized by the fix prompt's first step.
+- Marketplace metadata version bumped `2.11.2` → `2.11.3`.
+
 ## [2.11.2] - 2026-10-07
 
 ### Added
@@ -1355,7 +1374,8 @@ New plugin for Swift / iOS / macOS development whose primary job is to catch rel
 
 - README.md, CLAUDE.md, individual plugin READMEs, and MIT license
 
-[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.11.2...HEAD
+[Unreleased]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.11.3...HEAD
+[2.11.3]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.11.2...v2.11.3
 [2.11.2]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.11.1...v2.11.2
 [2.11.1]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.11.0...v2.11.1
 [2.11.0]: https://github.com/charlesjones-dev/claude-code-plugins-dev/compare/v2.10.0...v2.11.0

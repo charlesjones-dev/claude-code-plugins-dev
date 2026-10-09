@@ -4,7 +4,8 @@ Phase 3. Fill every `{PLACEHOLDER}`, delete each `{IF_...}` line whose condition
 
 ## Placeholder notes
 
-- `{REPORT_PATH}`, `{TEST_NAME_PATTERN}`, `{TEST_COMMAND}`, and `{INFRA}`: the same values as the audit prompt. For several surfaces, list every report and its test command.
+- `{REPORT_PATH}`, `{TEST_NAME_PATTERN}`, `{TEST_COMMAND}`, `{TOOLED_EXTENSIONS}`, `{CONTRACT_CHECK}`, and `{INFRA}`: the same values as the audit prompt. For several surfaces, list every report, its check, and its test command.
+- `{EXPLICIT_SOURCES_STEP}`: only when the project file lists sources explicitly (recon item 10); otherwise delete the `{IF_EXPLICIT_SOURCES}` line. For XcodeGen: "run `xcodegen generate` whenever a test file enters or leaves the source tree". For an Xcode project without synchronized folders: "add a test file to the {TEST_TARGET} target when it enters the source tree, and remove the reference when it leaves".
 - `{INTEGRATION_BRANCH}`: the branch PRs target, from recon item 13.
 - `{CHECK_COMMANDS}`: the full test suite, lint, and typecheck, as the repo runs them (package scripts, Makefile, or CI workflow).
 - `{CONVENTIONS}`: where the repo states its commit, PR, and review rules (CLAUDE.md, CONTRIBUTING.md, a PR template). If nothing is written down, use "the style of recent commits and PRs".
@@ -13,12 +14,13 @@ Phase 3. Fill every `{PLACEHOLDER}`, delete each `{IF_...}` line whose condition
 ---
 
 ```text
-The security audit of {NAME} is done. The audit session wrote {REPORT_PATH}
-and archived one failing proof test per Confirmed finding ({TEST_NAME_PATTERN})
-under docs/security/tests/, each at the repo-relative path it runs from with
-`.disabled` appended. Git ignores docs/security/. This session isn't
-sandboxed. Verify the findings, help me choose what to fix, and fix only what
-I pick.
+The security audit of {NAME} is done. Its prompt asked for the report at
+{REPORT_PATH}, one failing proof test per Confirmed finding
+({TEST_NAME_PATTERN}) at docs/security/tests/<the repo-relative path it runs
+from>.disabled, and any harness scripts and logs in docs/security/harness/.
+Audits don't always keep to that layout, so step 1 checks it. Git ignores
+docs/security/. This session isn't sandboxed. Verify the findings, help me
+choose what to fix, and fix only what I pick.
 
 ## Rules
 - Commit, push, or open a PR only after I say so. Follow {CONVENTIONS}.
@@ -28,25 +30,50 @@ I pick.
   report and archived tests stay local. Proof tests fail by design, so one
   enters the source tree only together with its fix.
 - Don't print secret values. Cite them by path and line.
+{IF_EXPLICIT_SOURCES: "- This project lists its sources explicitly, so {EXPLICIT_SOURCES_STEP}."}
 
-## 1. Read
+## 1. Read and normalize
 - Check that git ignores docs/security/, with
   `git check-ignore -q docs/security/probe`. If it exits non-zero, append
   `/docs/security/` to the file `git rev-parse --git-path info/exclude` prints,
   and tell me. Don't edit .gitignore.
 - Run `git status`. It should list nothing. Move any cvp test or helper it
-  lists into docs/security/tests/ the way the audit archives them. Show me any
-  other change before doing anything else.
-- Read {REPORT_PATH} and every archived proof test it cites.
+  lists into docs/security/tests/ as described below. Show me any other change
+  before doing anything else.
+- List `find docs/security -type f`, then run this check, which should print
+  nothing: `{CONTRACT_CHECK}`
+  If it prints files, normalize them:
+  - The report is {REPORT_PATH}. If that file doesn't exist, move the newest
+    .md file directly under docs/security/ there.
+  - Move each proof test, helper, or fixture to docs/security/tests/<the
+    repo-relative path it runs from>.disabled. A file stored by name only, or
+    relative to a test target's folder, belongs under that folder; check the
+    project config. Update the test paths the report cites.
+  - Move other audit files, such as harness scripts and logs, to
+    docs/security/harness/.
+  - Tell me which file is the report and what moved, from where to where,
+    then run the check again.
+- Whatever the check printed, append `.disabled` to any file in
+  docs/security/harness/ that ends in {TOOLED_EXTENSIONS}, and tell me.
+- Read the report and every proof test it cites. From here on, use the
+  report's own finding IDs.
 {IF_TRACKING_RULES: "- Read {TRACKING_RULES} and follow them for every report update."}
 
-## 2. Verify each Confirmed finding
+## 2. Verify the findings
 Run each proof test here, outside the sandbox: copy it, and any archived
 helper it imports, from docs/security/tests/ to its source path without
-`.disabled`, run it with `{TEST_COMMAND}`, then delete the copies. Check that it fails for the reason the
-report gives, not because of a missing mock, network access, or setup. If it
-passes, or fails for another reason, downgrade the finding to Unconfirmed and
-say why. Read the code path yourself before you accept a severity.
+`.disabled`, run it with `{TEST_COMMAND}`, then delete the copies. Check that
+it fails for the reason the report gives, not because of a missing mock,
+network access, or setup. If it passes, or fails for another reason, downgrade
+the finding to Unconfirmed and say why. Read the code path yourself before you
+accept a severity.
+- For each test the audit skipped, or ran only through an alternative
+  harness, because of the sandbox: run it through the real project with the
+  command the report gives. Make sure it actually runs: the run's test count
+  must include it, and a run that executes no tests proves nothing.
+- Try to settle Unconfirmed or Plausible findings with local tests, such as a
+  loopback listener standing in for a remote server or a read of the system
+  log. Never test against real servers.
 
 ## 3. Settle what the code couldn't
 For each item the report says to check in {INFRA}, propose the exact check: the

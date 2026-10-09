@@ -32,7 +32,7 @@ Raw material for step 3. Pick the items that apply, then rewrite each in the rep
 7. **OAuth:** PKCE, state checks, redirect handling, refresh and revocation, scopes requested versus needed.
 8. **Build config:** secrets in committed xcconfig files or the compiled binary.
 
-Verification note: `swift test` on a SwiftPM package is the friendliest option inside the sandbox. `xcodebuild test` may be blocked there. If so, the audit model should give the exact command to run outside the sandbox, or mark the finding Unconfirmed with static evidence.
+Verification note: `swift test` on a SwiftPM package is the friendliest option inside the sandbox. `xcodebuild test` doesn't run there, and without the optional Apple launch line, neither do `xcodegen` and `xcodebuild` builds. The audit model may then use an alternative harness, such as `swiftc` plus `xcrun xctest` on macOS, under the prompt's output contract: each test stays at `docs/security/tests/<path>.disabled`, staged `.swift` copies go in a `mktemp -d` directory and are deleted after each run, and build scripts and run logs go in `docs/security/harness/` with no `.swift` file there. A result counts as Confirmed only if the test would also compile and run unchanged in the real project. For each proof, the report gives the `xcodebuild test` command that runs it through the real project, and the fix session runs it.
 
 ## Libraries and packages (npm, PyPI, SwiftPM, crates, gems)
 

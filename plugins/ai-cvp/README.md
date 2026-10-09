@@ -19,7 +19,7 @@ CVP refers to [Anthropic's Cyber Verification Program](https://support.claude.co
 | Phase | Where it runs | Model tier | Sandboxed? | Network? | Output |
 |---|---|---|---|---|---|
 | 1. Plan (`/cvp-defense-audit`) | A normal Claude Code session in the repo | Planning model: Opus-class | No | Only optional `gh` reads of GitHub alerts | Audit prompt, launch checklist and fix prompt, saved to `~/.claude/cvp-audit-prompts/`, plus a local ignore rule for `docs/security/` |
-| 2. Audit | A new session in the repo, launched in auto mode with a strict sandbox | Audit model: the strongest security-capable model you can use | Yes, strict | None. Third-party services are mocked | A report in `docs/security/`, and one failing proof test per finding, archived as a `.disabled` file under `docs/security/tests/`. Nothing is fixed or committed |
+| 2. Audit | A new session in the repo, launched in auto mode with a strict sandbox | Audit model: the strongest security-capable model you can use | Yes, strict | None. Third-party services are mocked | A report in `docs/security/`, one failing proof test per finding, archived as a `.disabled` file under `docs/security/tests/`, and any alternative-harness scripts and logs in `docs/security/harness/`. Nothing is fixed or committed |
 | 3. Fix | A normal session in the repo | Fixing model: Opus-class | No | Yes, for GitHub, CI and deploys, plus read-only provider checks you approve | Verified findings, a fix per change you pick with its proof test restored as the regression test, and an updated report |
 
 Opus-class means the current Opus model or one at least as capable (as of October 2026, Claude Opus 5.5). The audit model can be any model your account offers; some with stronger security capabilities require enrollment in the Cyber Verification Program.
@@ -32,9 +32,9 @@ Opus-class means the current Opus model or one at least as capable (as of Octobe
 
 1. Classifies the project (web app or API, Apple app, library, CLI or Claude Code plugin, Home Assistant integration, static site) and works out the owner from LICENSE, the manifest and the remote
 2. Asks what authorizes the audit: enrollment in the Cyber Verification Program, ownership or maintenance of the code, or an authorized third-party engagement. It never claims enrollment you didn't state
-3. Does read-only recon: entry points, auth and tenancy, untrusted-input sinks, billing, secrets (names only), integrations, CI and supply chain, deploy config, the test harness and earlier audits. With `gh` signed in, it also reads open Dependabot and code-scanning alerts. On a large repo, a read-only Explore subagent does the breadth sweep while the skill reads the auth, tenancy, webhook and encryption code itself
+3. Does read-only recon: entry points, auth and tenancy, untrusted-input sinks, billing, secrets (names only), integrations, CI and supply chain, deploy config, the test harness, earlier audits and project MCP servers. With `gh` signed in, it also reads open Dependabot and code-scanning alerts. On a large repo, a read-only Explore subagent does the breadth sweep while the skill reads the auth, tenancy, webhook and encryption code itself
 4. Picks 5 to 9 attacker goals from [`attack-catalog.md`](skills/cvp-defense-audit/attack-catalog.md) and rewrites each in the repo's own actors, assets and files
-5. Fills in [`prompt-template.md`](skills/cvp-defense-audit/prompt-template.md): the rules for this repo, up to 8 files to read first, the goals, a retest section for earlier findings, open alerts, and how to prove each finding. That means the test framework, a file name with a `cvp` marker placed by the repo's convention, an existing test whose mocking to copy, the libraries to mock, the single-file run command for each package, and where to archive each test once it has run. It checks that every path it cites exists
+5. Fills in [`prompt-template.md`](skills/cvp-defense-audit/prompt-template.md): the rules for this repo, up to 8 files to read first, the goals, a retest section for earlier findings, open alerts, and how to prove each finding. That means the test framework, a file name with a `cvp` marker placed by the repo's convention, an existing test whose mocking to copy, the libraries to mock, the single-file run command for each package, and an output contract: where the report, each test and any harness files end up, plus a check the audit runs before it finishes. It checks that every path it cites exists
 6. Fills in [`fix-prompt-template.md`](skills/cvp-defense-audit/fix-prompt-template.md) for phase 3
 7. Adds `/docs/security/` to `.git/info/exclude` unless git already ignores it, saves both prompts outside the repo, copies the audit prompt to the clipboard, and replies with the path to each prompt, a checklist for the audit session and one for the fix session, and any warnings, such as a stale workspace build or tests that bind localhost ports. It doesn't print the prompts; open the files to read or edit them
 
@@ -60,7 +60,7 @@ Follow the printed checklist. In short:
 3. Check that the status bar shows `⏵⏵ auto mode on`, and that `/status` lists `Command line arguments` under setting sources
 4. Ask Claude to run `touch ~/sandbox-probe`. It should fail with `Operation not permitted` on macOS, or `Read-only file system` on Linux and WSL2
 5. Paste the prompt, and deny any network access you can't explain
-6. When it finishes, check that `git status` lists nothing
+6. When it finishes, check that `git status` lists nothing and that the checklist's `find` check prints nothing
 
 The launch line replaces the `/sandbox` panel. Its settings last for that session only and write no file:
 
@@ -69,15 +69,26 @@ The launch line replaces the `/sandbox` panel. Its settings last for that sessio
 - `allowUnsandboxedCommands: false` turns on strict sandbox mode, so Claude can't retry a blocked command outside the sandbox. Set this way, it also makes the sandbox admin-required (Claude Code v2.1.285 or later): Claude Code ignores the repo's own `.claude/settings.json` and `.claude/settings.local.json` entries that would loosen it, such as `excludedCommands`, `allowWrite` and `allowedDomains`.
 - `failIfUnavailable` makes Claude Code exit at startup if the sandbox can't start, instead of running commands unsandboxed.
 
+For an Apple app whose only harness is `xcodebuild`, the checklist also offers an optional launch line that adds the per-user temp folder (`getconf DARWIN_USER_TEMP_DIR`) to `sandbox.filesystem.allowWrite`. Foundation writes its temp files there rather than in `$TMPDIR`, so without it `xcodegen` and `xcodebuild` fail before compiling. With it, `xcodegen` and `xcodebuild build-for-testing` work, given DerivedData under `$TMPDIR` and `-disable-sandbox` for the compiler's macro plugins. `xcodebuild test` still doesn't, because the simulator and `testmanagerd` are out of reach. The extra folder is shared by every app you run, which is why the line is optional.
+
 `/sandbox` won't open in that session, because command-line settings outrank the file it saves to. If you use [ai-statusline](../ai-statusline/), turn on its sandbox indicator to see when your settings turn the sandbox on.
 
-The audit model maps the attack surface, hunts each goal, proves each finding with a failing test, and writes a report. It runs each test where the repo keeps its tests, then moves it to `docs/security/tests/` with `.disabled` appended, so no failing test is left in the source tree. It doesn't fix anything or commit.
+The audit model maps the attack surface, hunts each goal, proves each finding with a failing test, and writes a report. It doesn't fix anything or commit. The prompt ends with an output contract that describes the end state rather than steps, so it holds however the runs went:
+
+- the report at the exact path the prompt names;
+- each test, helper and fixture at `docs/security/tests/<path it runs from>.disabled`, whether or not it ever sat in the source tree;
+- anything else it keeps, such as alternative-harness scripts and run logs, in `docs/security/harness/`, with no extension the repo's compiler, test runner, formatter or linter picks up;
+- build staging in a temp folder outside the repo.
+
+Before it finishes, the audit model runs a `find` check against that layout and `git status`. If the sandbox blocks the repo's own test command, it may build an alternative harness, but a result counts as Confirmed only if the test would also compile and run unchanged in the real project, and the report gives the command that runs it there.
 
 ### Phase 3: verify and fix
 
 Once the report is written, quit the audit session, start a normal, unsandboxed session on an Opus-class model (`claude --model opus`), and paste the fix prompt (`<repo>-<date>-fix.md`). The reply's fix checklist gives the command that copies it to the clipboard. The fix session:
 
+- checks the audit's files against the output contract first, moves anything misplaced (a misnamed report, live test files, harness files with source extensions) into the expected layout, and tells you what moved;
 - re-runs each Confirmed proof test outside the sandbox and downgrades any that don't fail for the reason the report gives;
+- runs the tests the sandbox kept from running through the real project, checks that each one actually ran, and tries to settle Unconfirmed findings with local tests, never real servers;
 - proposes exact checks for what code alone couldn't settle (dashboards, CLIs, provider settings), and runs read-only ones only with your OK;
 - shows a triage table (ID, severity, verified, effort, proposed grouping) and asks which to fix;
 - fixes each pick on a branch from your integration branch, moves its archived proof test back into place (dropping `.disabled`) as the regression test, and runs the full test suite, lint and typecheck;
@@ -116,6 +127,7 @@ Commits, pushes and PRs wait for your consent. When the fixes have merged, run `
 | `.git/info/exclude` | Phase 1 | A `/docs/security/` line, unless git already ignores the folder |
 | `docs/security/<date>-cvp-security-audit.md` | Phase 2 | The audit report |
 | `docs/security/tests/<path>.disabled` | Phase 2 | One proof test per finding, stored under the repo-relative path it runs from, with `cvp` in its file name |
+| `docs/security/harness/` | Phase 2 | Only if the audit needed an alternative harness: its scripts and run logs |
 
 Phase 1 doesn't change any file git tracks. Claude Code protects `~/.claude/`, so expect an approval prompt for the prompt files (in auto mode, the classifier reviews them instead).
 
@@ -123,13 +135,14 @@ These files are sensitive. They map your attack surface: entry points, weak spot
 
 Git ignores `docs/security/`, so the report and tests stay local, even in an open-source repo. The rule goes in `.git/info/exclude` rather than `.gitignore`, so it's never committed and nothing in the repo hints at the folder. It applies to this clone and all its worktrees. If you copy `docs/security/` into another clone, add the line there too. The rule also covers the reports ai-security's `/security-audit` and `/security-scan-dependencies` write there. Files git already tracks in `docs/security/` stay tracked, and the skill lists them in its warnings.
 
-Proof tests fail by design, so the audit doesn't leave one in the source tree, where a commit would turn CI red. The `.disabled` suffix keeps the usual test, type-check and lint patterns from matching the archived copies. Each one keeps its original path, so the fix session restores it with a single `mv` once its fix is in.
+Proof tests fail by design, so the audit doesn't leave one in the source tree, where a commit would turn CI red. The `.disabled` suffix keeps the usual test, type-check and lint patterns from matching the archived copies. Most of those tools don't read git's ignore rules, so a live source file anywhere under `docs/security/` could still be compiled, formatted or linted, and the contract allows none. Each one keeps its original path, so the fix session restores it with a single `mv` once its fix is in.
 
 ## Authorization and safety
 
 - Use this only on code you own or are authorized to test. The skill asks what authorizes the audit and writes only that into the prompt. It doesn't claim Cyber Verification Program enrollment unless you say you're enrolled, and it stops if you have no authorization.
 - The audit prompt limits scope to this repository, bans network requests to production and third parties, requires every third-party service to be mocked, and forbids changing application code, committing and switching branches.
 - Recon in phase 1 is read-only. It doesn't run the app, tests, builds, installs or anything that loads secrets, and it cites a committed secret by path and line, never by value. Phase 1 changes no file git tracks. Its one write inside the repo is the `docs/security/` line in `.git/info/exclude`.
+- MCP servers run outside the sandbox. Recon flags project MCP servers that start without a prompt, the checklist says to turn them off with `/mcp` before pasting the prompt, and the audit prompt tells the audit model not to call MCP tools.
 - Strict sandbox mode stops Claude from retrying a blocked command outside the sandbox. The sandbox covers shell commands only: Claude's Read, Edit and Write tools follow your permission rules instead, and sandboxed commands can read most of your machine by default. Add deny rules for secret files before launching (`/security-init` in [ai-security](../ai-security/) writes them), and see `sandbox.credentials` in the [sandboxing docs](https://code.claude.com/docs/en/sandboxing).
 
 ### Related plugins
@@ -157,7 +170,7 @@ Then run `/ai-cvp:cvp-defense-audit` from the repo you want to audit. The short 
 - **Name:** AI-CVP Plugin
 - **Type:** AI Instruction Plugin (Skills)
 - **Skill:** `/cvp-defense-audit`
-- **Version:** 1.0.2
+- **Version:** 1.0.3
 - **License:** MIT
 - **Author:** Charles Jones
 

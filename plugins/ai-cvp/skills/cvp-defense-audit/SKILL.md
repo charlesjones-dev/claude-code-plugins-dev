@@ -13,6 +13,7 @@ allowed-tools:
   - Bash(git check-ignore *)
   - Bash(git rev-parse *)
   - Bash(git ls-files *)
+  - Bash(getconf DARWIN_USER_TEMP_DIR)
 ---
 
 # CVP defense audit
@@ -22,7 +23,7 @@ Use this only on code the user owns or is authorized to test.
 This skill is phase 1 of a three-phase defensive audit:
 
 1. **Plan** (this skill). A normal, unsandboxed session on an Opus-class planning model does read-only recon, makes sure git ignores `docs/security/`, and writes a paste-ready audit prompt, a sandbox launch checklist, and a fix prompt.
-2. **Audit.** The user starts a new session on the strongest security-capable model they can use (the audit model), launched in auto mode with a strict sandbox set on the command line, and pastes the audit prompt. The audit model maps the attack surface, hunts, proves each finding with a failing test, and writes a report. It archives each test as a disabled file under `docs/security/tests/` once it has run, so everything it leaves behind is under `docs/security/`, which git ignores. It fixes nothing.
+2. **Audit.** The user starts a new session on the strongest security-capable model they can use (the audit model), launched in auto mode with a strict sandbox set on the command line, and pastes the audit prompt. The audit model maps the attack surface, hunts, proves each finding with a failing test, and writes a report. The prompt ends with an output contract: the report at a fixed path, each test stored as a disabled file under `docs/security/tests/`, anything else it keeps under `docs/security/harness/`, and a check to run before finishing. Everything it leaves behind is under `docs/security/`, which git ignores. It fixes nothing.
 3. **Fix.** Back in a normal, unsandboxed session on an Opus-class fixing model, the user pastes the fix prompt. The fixing model verifies each proof, settles what code alone couldn't answer, lets the user pick what to fix, and ships each fix with its archived proof test restored as the regression test.
 
 Do the recon here so the audit model spends its budget hunting and proving bugs instead of orienting. The supporting files sit next to this one, in `${CLAUDE_SKILL_DIR}`.
@@ -91,12 +92,14 @@ Collect each item with file paths. Verify every path you plan to cite exists.
     - Whether tests run offline without secrets (setup files, mocks, in-memory databases). Find an existing test that already mocks the framework (stubbed framework globals, mocked database or cache modules) to name as the pattern to copy. If tests have no database or cache, note that plainly.
     - Tests that bind localhost ports or spawn servers. They may fail under strict sandbox mode.
     - Commands the audit model must not run because they load secrets or hit live services, such as a dev script wrapped in a secret-manager wrapper, or seed, migration, deploy, publish, and release scripts.
-    - For Apple apps, whether a SwiftPM package allows `swift test` or only `xcodebuild test` exists.
+    - For Apple apps, whether a SwiftPM package allows `swift test` or only `xcodebuild test` exists, and whether the project file lists sources explicitly (an XcodeGen `project.yml`, or a `project.pbxproj` without `PBXFileSystemSynchronizedRootGroup`). When the only harness is `xcodebuild` (plus XcodeGen if present), the strict sandbox may block it entirely, not just the test run. Foundation writes its temp files under the per-user temp directory rather than `$TMPDIR`, and the sandbox denies writes there, so `xcodegen` and `xcodebuild` fail before compiling ("Couldn't create workspace arena folder"). Run `getconf DARWIN_USER_TEMP_DIR` for the optional launch line in step 6.
     - Whether dependencies are already installed (`node_modules`, `.venv`, `.build`, `vendor/`, resolved packages).
     - The full test, lint, and typecheck commands, for the fix prompt.
-11. **Prior security work:** `docs/security/**`, `SECURITY.md`, files with "audit" in the name, and `git log --since="6 months ago" --oneline -i -E --grep="secur|vuln|xss|csrf|ssrf|idor|auth|sec-"`. Sort earlier findings into fixed (retest), open (don't re-report), and needs-investigation (settle), keeping their IDs. Note any rules the repo's docs give for tracking and updating audits. Check whether git already ignores `docs/security/` (`git check-ignore -v docs/security/probe` prints the rule and the file it's in) and whether git tracks any files there (`git ls-files docs/security`).
+    - The file extensions the repo's compiler, test runner, formatter, and linter pick up, for the output contract. Note whether their configs exclude `docs/`; most default globs (vitest, jest, pytest, swiftformat, swiftlint) don't read git's ignore rules.
+11. **Prior security work:** `docs/security/**`, `SECURITY.md`, files with "audit" in the name, and `git log --since="6 months ago" --oneline -i -E --grep="secur|vuln|xss|csrf|ssrf|idor|auth|sec-"`. Sort earlier findings into fixed (retest), open (don't re-report), and needs-investigation (settle), keeping their IDs. Note any rules the repo's docs give for tracking and updating audits. Check whether git already ignores `docs/security/` (`git check-ignore -v docs/security/probe` prints the rule and the file it's in) and whether git tracks any files there (`git ls-files docs/security`). Note any files already in `docs/security/` that the output contract's check wouldn't match (earlier reports, for example), because the check then needs a time filter.
 12. **Optional GitHub reads:** skip silently if `gh` isn't authenticated or there's no GitHub remote. Get open Dependabot alerts with `gh api --paginate "repos/{owner}/{repo}/dependabot/alerts?state=open" --jq '.[] | "\(.security_advisory.severity) \(.dependency.package.name) \(.security_advisory.ghsa_id) \(.security_advisory.summary)"'` and open code-scanning alerts with `gh api --paginate "repos/{owner}/{repo}/code-scanning/alerts?state=open" --jq '.[] | "\(.rule.security_severity_level // .rule.severity) \(.rule.id) \(.most_recent_instance.location.path):\(.most_recent_instance.location.start_line) \(.rule.description)"'`. If either returns HTTP 403 because the feature is disabled, or code scanning returns 404 because it has never run, say so in the warnings.
 13. **Fix-phase conventions:** the integration branch that PRs target (from CONTRIBUTING.md or CLAUDE.md, or `git symbolic-ref --short refs/remotes/origin/HEAD`), and where the repo states its commit, PR, and review rules.
+14. **Project MCP servers:** servers in `.mcp.json`, and whether `.claude/settings.json` or `.claude/settings.local.json` turns them on without a prompt (`enableAllProjectMcpServers`, `enabledMcpjsonServers`). MCP servers run outside the sandbox, so their tools can build, run, write files, or reach the network for the audit model. An Xcode MCP server, for example, can build and run the app.
 
 For a large repo, hand the breadth sweep (items 2, 4, 7, 8, and the harness search in 10) to an Explore subagent with a precise list of what to return. Read the critical files yourself: auth middleware, tenancy guard, webhook handlers, encryption.
 
@@ -119,12 +122,15 @@ Fill in [prompt-template.md](prompt-template.md).
 - The read-first list should hold at most 8 docs, all relevant to security.
 - Name the exact test framework, where new tests go, the test to copy, what to mock, and the run command:
   - Place new tests by the repo's convention (next to the code or in its test directory), so imports and the runner's config work, with a `cvp` marker in the file name so they're easy to find: `*.cvp.test.ts`, `test_cvp_*.py`, `*_cvp_test.go`, `CVP*Tests.swift`, and so on. Name a separate location for each test environment, such as DOM versus node.
-  - Proof tests fail by design, so none may stay in the source tree, where a commit would turn CI red. Once a test has run, the audit model moves it to `docs/security/tests/` at the same repo-relative path with `.disabled` appended, for example `docs/security/tests/src/auth/session.cvp.test.ts.disabled`. The suffix keeps test runners, type checkers and linters from picking it up, and restoring it is a single `mv`. Give one example path from this repo.
+  - Proof tests fail by design, so none may stay in the source tree, where a commit would turn CI red. The output contract at the end of the prompt says where everything goes, as an end state rather than a step, so it holds even when no test ever runs in the source tree: each test, helper, and fixture at `docs/security/tests/<the repo-relative path it would run from>.disabled`, for example `docs/security/tests/src/auth/session.cvp.test.ts.disabled`. The suffix keeps test runners, type checkers and linters from picking it up, and restoring it is a single `mv`. Give one example path from this repo.
+  - Fill the contract's `{TOOLED_EXTENSIONS}` from recon item 10, and its `{CONTRACT_CHECK}` with the real report path, as [prompt-template.md](prompt-template.md) describes. Don't restate the contract elsewhere in the prompt.
   - Name the existing test whose mocking to copy. Say plainly when tests have no database or cache.
   - Tell the audit model to mock the libraries from recon item 7 that call the network during verification.
   - Give the exact single-file run command for each package or workspace, including project or workspace flags.
-  - If there's no harness, tell the audit model to use the language's built-in runner (`node --test`, `python -m unittest`, `go test`, `cargo test`, `swift test`) in a `security-tests/` directory without adding dependencies, and to archive those tests the same way.
+  - If there's no harness, tell the audit model to use the language's built-in runner (`node --test`, `python -m unittest`, `go test`, `cargo test`, `swift test`) in a `security-tests/` directory without adding dependencies. The contract covers those tests too.
+  - When the project file lists sources explicitly, say how to add and remove a test file, as the `{TEST_SETUP}` note describes.
   - If tests bind localhost ports or spawn servers, say they may fail in the sandbox and to call handlers in-process where it can.
+  - For an Apple app whose only harness is `xcodebuild`, prepare the audit model in `{TEST_SETUP}` for the method's alternative-harness fallback, so it works whichever launch line the user picks. With the optional Apple launch line from step 6, `xcodegen generate` and `xcodebuild build-for-testing -derivedDataPath "$TMPDIR/cvp-derived-data" 'OTHER_SWIFT_FLAGS=$(inherited) -disable-sandbox'` work in the sandbox, which shows a test compiles in the real project. That flag turns off only the compiler's own sandbox for macro plugins, which fails when nested inside this one. Without that line, both fail with permission errors. Either way, no `xcodebuild test` run works in the sandbox, because the simulator and `testmanagerd` are out of reach, so tests run through an alternative harness such as `swiftc` plus `xcrun xctest` on macOS. Give the `xcodebuild test` command for the real project too; the report repeats it for each proof, and the fix session runs it.
 - Include the retest section only if earlier findings exist, and the dependency section only if there are open alerts.
 - Report path: `docs/security/<date>-cvp-security-audit.md`, with `-2`, `-3`, and so on if that file exists.
 - Aim for 60 to 110 lines. Include only what the audit model needs, with no commentary about this recon. Go longer only when surfaces share auth or sessions and must be audited together (for example an app and an admin dashboard that share a session cookie), and say why in the warnings.
@@ -133,7 +139,7 @@ Fill in [prompt-template.md](prompt-template.md).
 
 ## 5. Write the fix prompt
 
-Fill in [fix-prompt-template.md](fix-prompt-template.md) with the report path, the test naming and run commands from step 4, and, from recon, the integration branch, the full check commands, and the repo's commit, PR, review, and security-tracking rules. For several surfaces, write one fix prompt that covers every report.
+Fill in [fix-prompt-template.md](fix-prompt-template.md) with the report path, the contract check, the tooled extensions, the test naming and run commands from step 4, and, from recon, the integration branch, the full check commands, whether the project file lists sources explicitly, and the repo's commit, PR, review, and security-tracking rules. For several surfaces, write one fix prompt that covers every report.
 
 ## 6. Deliver
 
@@ -160,19 +166,25 @@ claude --model <audit-model-id> --permission-mode auto --settings '{"sandbox":{"
 ```
 These settings last this session only, and the repo's own `.claude/` settings can't loosen them.
 
+<only for an Apple app whose only harness is xcodebuild:> Optional: to let `xcodegen` and `xcodebuild` builds work in the sandbox, launch with this line instead. It adds one writable folder, the per-user temp folder that every app you run shares. Test runs stay blocked either way.
+```bash
+claude --model <audit-model-id> --permission-mode auto --settings '{"sandbox":{"enabled":true,"autoAllowBashIfSandboxed":true,"allowUnsandboxedCommands":false,"failIfUnavailable":true,"filesystem":{"allowWrite":["<getconf DARWIN_USER_TEMP_DIR output>"]}}}'
+```
+
 **In the session**
 1. The status bar shows `⏵⏵ auto mode on`. If it doesn't, this model may not offer auto mode: quit and relaunch with `--permission-mode acceptEdits`
 2. `/status` → "Setting sources" includes "Command line arguments". Skip `/sandbox`: the launch line already turned on the sandbox, auto-allow and strict mode
 3. Ask Claude to run `touch ~/sandbox-probe`. Expect `Operation not permitted` (macOS) or `Read-only file system` (Linux, WSL2). If it succeeds, delete the file and quit: a settings file is widening the sandbox, so check `sandbox` in `~/.claude/settings.json`
-4. Paste the audit prompt from the clipboard <if it wasn't copied: "Open the audit prompt file, copy all of it, and paste it">
-5. Network: deny anything you can't explain. Allow package registries only if an install is unavoidable. In auto mode a command names the hosts it needs instead of prompting, so stop the session if one names a host you can't explain
-6. When it finishes, `git status` should list nothing. The fix prompt's first step deals with anything else
+4. Run `/mcp` and disable <servers>. MCP tools run outside the sandbox <only if recon item 14 found project MCP servers that start without a prompt>
+5. Paste the audit prompt from the clipboard <if it wasn't copied: "Open the audit prompt file, copy all of it, and paste it">
+6. Network: deny anything you can't explain. Allow package registries only if an install is unavoidable. In auto mode a command names the hosts it needs instead of prompting, so stop the session if one names a host you can't explain
+7. When it finishes, `git status` should list nothing, and `<the contract check>` should print nothing. If either prints anything, the fix prompt's first step normalizes it
 
 **Fix prompt:** `~/.claude/cvp-audit-prompts/<repo-name>-<date>-fix.md`
 
 ### Fix checklist
 
-Once the audit has written `docs/security/<date>-cvp-security-audit.md`:
+Once the audit session has finished (its report should be at `docs/security/<date>-cvp-security-audit.md`):
 1. Quit the audit session
 2. Start a normal, unsandboxed session on an Opus-class model, so it can run the full checks, `gh` and CI:
    ```bash
@@ -187,12 +199,13 @@ Once the audit has written `docs/security/<date>-cvp-security-audit.md`:
 - These files map the repo's attack surface: both prompts now, and later the report and archived tests in `docs/security/`. Don't commit them or post them publicly.
 ````
 
-- Keep the launch line on one line, exactly as above apart from the model ID. Without `--model`, write `<audit-model>` in place of the ID, and add after the code block: "Pick the strongest model your account offers for security work (`/model` lists them)."
+- Keep the launch line on one line, exactly as above apart from the model ID. The optional Apple line differs only by its `filesystem.allowWrite` entry, which holds the path `getconf DARWIN_USER_TEMP_DIR` printed during recon. Without `--model`, write `<audit-model>` in place of the ID, and add after the code block: "Pick the strongest model your account offers for security work (`/model` lists them)."
 - Without git, replace the `git status` item with: run `git init`, add `/docs/security/` to `.git/info/exclude`, and make a baseline commit, so the audit's files can't be committed, `git status` can show what the audit changed, and the fix prompt's branch steps work.
-- For several surfaces, give each audit prompt its own **Audit prompt** line, naming its surface. Each one gets its own audit session with the same checklist. The clipboard holds the first prompt, and step 4 says to copy each of the others with `<clipboard tool> < <file>` before pasting it.
+- For several surfaces, give each audit prompt its own **Audit prompt** line, naming its surface. Each one gets its own audit session with the same checklist. The clipboard holds the first prompt, and step 5 says to copy each of the others with `<clipboard tool> < <file>` before pasting it.
 - Always end the warnings with the attack-surface warning. Recon warnings come first, for example:
   - tests need a database or cache, which the prompt tells the audit model to mock;
-  - only `xcodebuild` is available, so some proofs may need running outside the sandbox;
+  - only `xcodebuild` is available (plus XcodeGen, if present): the strict sandbox blocks it entirely unless the optional Apple launch line is used, and blocks every `xcodebuild` test run even then. The prompt lets the audit model fall back to an alternative harness, and the fix session reruns those proofs through the real project;
+  - project MCP servers start without a prompt (name them): disable them with `/mcp` before pasting the prompt, because their tools run outside the sandbox;
   - a committed secret, by path and line;
   - Dependabot or code scanning is disabled (HTTP 403);
   - a workspace build is stale and must be rebuilt before launch;
